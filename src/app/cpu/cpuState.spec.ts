@@ -263,7 +263,7 @@ describe('operations', () => {
     });
 
     // RAM: C000: 01 02 03 04 05 06 07 08 09 0A 0B 0C 
-    // RAM: 2000: 00 C0 00 10 01
+    // RAM: 2000: 00 C0 00 10 01 10 00
     // RAM: 05: 03 C0 FF 
     // RAM: 10: 03 C0 
     // REGISTERS: RX: 0x05 RY: 0x06 
@@ -275,7 +275,8 @@ describe('operations', () => {
     // IndexedIndirectX: 2002 => 04
     // IndirectIndexedY: 2003 => 0A
     // ZeroPageX: 2004 => C0 
-    // ZeroPageY: 
+    // ZeroPageY: 2004 => FF
+    // Indirect: 2005 => 0010 => C003 => 04
 
     interface IGetValueTest {
         pc: Address;
@@ -331,6 +332,11 @@ describe('operations', () => {
         mode: AddressingModes.ZeroPage,
         expected: 0x03,
         description: 'returns the value based on the zero page at the program counter for zero page mode'
+    }, {
+        pc: 0x2005,
+        mode: AddressingModes.Indirect,
+        expected: 0x04,
+        description: 'returns the value based using the program counter to get an address, then reading the address from that location'
     }];
 
     describe('getValue', () => {
@@ -346,6 +352,8 @@ describe('operations', () => {
             cpu.memory[0x2002] = 0x00;
             cpu.memory[0x2003] = 0x10;
             cpu.memory[0x2004] = 0x01;
+            cpu.memory[0x2005] = 0x10;
+            cpu.memory[0x2006] = 0x00;
             let addr = 0xC000;
             for (let val = 0x01; val <= 0x0C; val += 1) {
                 cpu.memory[addr] = val;
