@@ -109,6 +109,46 @@ describe('reducer', () => {
 
   });
 
+  describe('run', () => {
+
+      it('should do nothing if not in a running state', () => {
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Run,
+              iterations: 5
+          })).toEqual(defaultCpu);
+      });
+
+      it('should catch exceptions and set the error state', () => {
+          let expected: Cpu = initialCpuState();
+          expected.rPC += 1;
+          expected.controls.errorState = true;
+          expected.controls.errorMessage = INVALID_OP;
+          defaultCpu.controls.runningState = true;
+          freezeCpu(defaultCpu);
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Run,
+              iterations: 5
+          })).toEqual(expected);
+      });
+
+      it('should execute as many operations as the iterations are set', () => {
+          for (let count = 0; count < 80; count += 1) {
+              defaultCpu.memory[defaultCpu.rPC + count * 2] = 0xA9; // LDA immediate
+              defaultCpu.memory[defaultCpu.rPC + count * 2 + 1] = count; // LDA#$<count>
+          }
+          defaultCpu.controls.runningState = true;
+          let expected = cloneCpu(defaultCpu);
+          freezeCpu(defaultCpu);
+          expected.rPC += 70 * 2;
+          expected.rA = 69;
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Run,
+              iterations: 70
+          })).toEqual(expected);
+      });
+
+  });
+
   describe('poke', () => {
       it('should handle poke by updating the memory location to the value', () => {
 

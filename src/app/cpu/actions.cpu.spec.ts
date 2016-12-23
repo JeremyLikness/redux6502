@@ -3,7 +3,8 @@ import { Actions,
     cpuStop,
     cpuHalt,
     cpuReset,
-    cpuStep
+    cpuStep,
+    cpuRun
 } from './actions.cpu';
 
 import { TestBed } from '@angular/core/testing';
@@ -26,6 +27,13 @@ describe('actions', () => {
         type: Actions.Poke,
         address: 1,
         value: 2});
+    });
+
+    it('should create run action when cpuRun is called', () => {
+        expect(cpuRun(2)).toEqual({
+            type: Actions.Run,
+            iterations: 2
+        });
     });
 
     let tuples: IActionPair[] = [

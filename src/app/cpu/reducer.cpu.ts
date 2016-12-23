@@ -2,9 +2,19 @@ import { Memory } from './constants';
 
 import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
-import { Actions, IAction, IPokeAction } from './actions.cpu';
+import { Actions, IAction, IPokeAction, IRunAction } from './actions.cpu';
 
-export const cpuReducer = (state: Cpu, action: IAction | IPokeAction) => {
+const step = (cpu: Cpu) => {
+    try {
+        cpu.execute();
+    } catch (ex) {
+        cpu.controls.errorState = true;
+        cpu.controls.runningState = false;
+        cpu.controls.errorMessage = (<Error>ex).message;
+    }
+};
+
+export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunAction) => {
 
     switch (action.type) {
 
@@ -29,14 +39,18 @@ export const cpuReducer = (state: Cpu, action: IAction | IPokeAction) => {
             if (state.controls.errorState === true || state.controls.runningState === false) {
                 return stepCpu;
             }
-            try {
-                stepCpu.execute();
-            } catch (ex) {
-                stepCpu.controls.errorState = true;
-                stepCpu.controls.runningState = false;
-                stepCpu.controls.errorMessage = (<Error>ex).message;
-            }
+            step(stepCpu);
             return stepCpu;
+
+        case Actions.Run:
+            let runCpu = cloneCpu(state),
+                runAction = action as IRunAction,
+                iterations = runAction.iterations;
+            while (runCpu.controls.errorState === false && runCpu.controls.runningState === true && iterations) {
+                step(runCpu);
+                iterations -= 1;
+            }
+            return runCpu;
 
         case Actions.Stop:
             let stopCpu = cloneCpu(state);
