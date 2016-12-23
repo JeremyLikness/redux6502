@@ -13,14 +13,14 @@ export interface IAction {
 
 export interface IPokeAction extends IAction {
     address: number;
-    value: number;
+    value: number[];
 }
 
 export interface IRunAction extends IAction {
     iterations: number;
 }
 
-export const cpuPoke = (address: number, value: number) => ({
+export const cpuPoke = (address: number, value: number[]) => ({
     type: Actions.Poke,
     address,
     value

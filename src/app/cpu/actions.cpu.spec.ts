@@ -23,10 +23,10 @@ describe('actions', () => {
     });
 
     it('should create poke action when cpuPoke is called', () => {
-      expect(cpuPoke(1, 2)).toEqual({
+      expect(cpuPoke(1, [2])).toEqual({
         type: Actions.Poke,
         address: 1,
-        value: 2});
+        value: [2]});
     });
 
     it('should create run action when cpuRun is called', () => {

@@ -4,6 +4,8 @@ import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
 import { Actions, IAction, IPokeAction, IRunAction } from './actions.cpu';
 
+import { poke } from './globals';
+
 const step = (cpu: Cpu) => {
     try {
         cpu.execute();
@@ -21,7 +23,7 @@ export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunActio
         case Actions.Poke:
             let pokeCpu = cloneCpu(state),
                 pokeAction = action as IPokeAction;
-            pokeCpu.memory[pokeAction.address & Memory.Max] = (pokeAction.value & Memory.ByteMask);
+            poke(pokeCpu, pokeAction.address, pokeAction.value);
             return pokeCpu;
 
         case Actions.Halt:

@@ -151,7 +151,6 @@ describe('reducer', () => {
 
   describe('poke', () => {
       it('should handle poke by updating the memory location to the value', () => {
-
           let expected: Cpu = initialCpuState();
           expected.memory[1] = 2;
 
@@ -160,7 +159,21 @@ describe('reducer', () => {
           expect(cpuReducer(defaultCpu, {
               type: Actions.Poke,
               address: 1,
-              value: 2
+              value: [2]
+          })).toEqual(expected);
+      });
+
+      it('should handle multiple bytes', () => {
+          let expected: Cpu = initialCpuState();
+          expected.memory[1] = 2;
+          expected.memory[2] = 3;
+
+          freezeCpu(defaultCpu);
+
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Poke,
+              address: 1,
+              value: [2, 3]
           })).toEqual(expected);
       });
 
@@ -173,7 +186,7 @@ describe('reducer', () => {
           expect(cpuReducer(defaultCpu, {
               type: Actions.Poke,
               address: Memory.Size + 1,
-              value: 2
+              value: [2]
           })).toEqual(expected);
       });
 
@@ -186,7 +199,7 @@ describe('reducer', () => {
           expect(cpuReducer(defaultCpu, {
               type: Actions.Poke,
               address: 1,
-              value: Memory.ByteMask + 3
+              value: [Memory.ByteMask + 3]
           })).toEqual(expected);
       });
   });
