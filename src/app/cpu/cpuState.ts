@@ -26,7 +26,6 @@ const OP_CODES: IOpCodes[] = [];
     NopFamily
 ].forEach(ctor => OP_CODES.push(new ctor()));
 
-
 export class CpuStats {
     public started: Date;
     public ellapsedMilliseconds: number;
