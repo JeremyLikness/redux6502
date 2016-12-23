@@ -2,8 +2,18 @@
 
 import { TestBed, async } from '@angular/core/testing';
 
-import { Memory, Flags, Address, Byte, AddressingModes } from './constants';
-import { Cpu, initialCpuState, cloneCpu, computeBranch } from './cpuState';
+import { Memory, Flags } from './constants';
+
+import { Cpu, initialCpuState, cloneCpu } from './cpuState';
+
+import {
+    Address,
+    Byte,
+    AddressingModes,
+    poke,
+    setFlags,
+    computeBranch
+} from './globals';
 
 const freeze = (cpu: Cpu) => {
     Object.freeze(cpu);
@@ -35,6 +45,65 @@ describe('initialCpuState', () => {
         expect(cpu.memory).toEqual(Array(Memory.Size).fill(0x00));
     });
 
+});
+
+describe('poke', () => {
+
+    let cpu: Cpu = null;
+
+    beforeEach(() => {
+        TestBed.configureTestingModule({ declarations: [ poke ]});
+        cpu = initialCpuState();
+    });
+
+    it('should poke the value', () => {
+        poke(cpu, 0xC000, [0x7F]);
+        expect(cpu.memory[0xC000]).toBe(0x7F);
+    });
+
+    it('should force 8-bits', () => {
+        poke(cpu, 0xC000, [0x101]);
+        expect(cpu.memory[0xC000]).toBe(0x01);
+    });
+
+    it('should handle multiple bytes', () => {
+        poke(cpu, 0xC000, [0x7F, 0x8E]);
+        expect(cpu.memory[0xC000]).toBe(0x7F);
+        expect(cpu.memory[0xC001]).toBe(0x8E);
+    });
+
+    it('should limit to appropriate addresses', () => {
+        poke(cpu, 0xFFFF, [0x7F, 0x8E]);
+        expect(cpu.memory[0xFFFF]).toBe(0x7F);
+        expect(cpu.memory[0x0]).toBe(0x8E);
+    });
+});
+
+describe('setFlags', () => {
+
+    beforeEach(() => {
+        TestBed.configureTestingModule({ declarations: [ setFlags ]});
+    });
+
+    it('should set the negative flag when high bit value set', () => {
+        let result = setFlags(Flags.InitialState, 0x80);
+        expect(result & Flags.NegativeFlag).toBeTruthy();
+    });
+
+    it('should reset the negative flag when high bit value not set', () => {
+        let result = setFlags(0xFF & Flags.ZeroFlagReset, 0x7F);
+        expect(result & Flags.NegativeFlag).toBeFalsy();
+    });
+
+    it('should set the zero flag when value is zero', () => {
+        let result = setFlags(Flags.InitialState, 0x00);
+        expect(result & Flags.ZeroFlag).toBeTruthy();
+    });
+
+    it('should reset the zero flag when value is not zero', () => {
+        let result = setFlags(0xFF & Flags.NegativeFlagReset, 0x01);
+        expect(result & Flags.ZeroFlag).toBeFalsy();
+    });
 });
 
 describe('cloneCpu', () => {

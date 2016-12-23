@@ -1,16 +1,22 @@
-import { Memory, Address, Byte, ZeroPage, Flag, Word, AddressingModes } from './constants';
+import {
+    Address,
+    Byte,
+    ZeroPage,
+    Flag,
+    Word,
+    AddressingModes,
+    Register,
+    RAM,
+    IOpCodes,
+    ICpu,
+    computeBranch
+} from './globals';
 
-export type Register = number;
-export type RAM = number[];
-export type OpCodeValue = number;
+import { Memory } from './constants';
 
-export interface IOpCode {
-    name: string;
-    value: OpCodeValue;
-    mode: AddressingModes;
-    size: number;
-    execute: (cpu: Cpu) => void;
-}
+import { LdaFamily } from './opCodes/lda';
+
+const OP_CODES = [ new LdaFamily() ];
 
 export class CpuStats {
     public started: Date;
@@ -27,17 +33,9 @@ export class CpuControls {
     public errorMessage: string;
 }
 
-export const computeBranch = (address: Address, offset: Byte) => {
-    let result = 0;
-    if (offset > Memory.BranchBack) {
-        result = (address - (Memory.BranchOffset - offset));
-    } else {
-        result = address + offset;
-    }
-    return result;
-};
+interface IOpCodeMap { [opCode: number]: IOpCodes; };
 
-export class Cpu {
+export class Cpu implements ICpu {
 
     public debug: boolean;
 
@@ -55,6 +53,16 @@ export class Cpu {
     public stats: CpuStats;
 
     public controls: CpuControls;
+
+    private _opCodeMap: IOpCodeMap = {};
+
+    constructor() {
+        OP_CODES.forEach(family => {
+            family.codes.forEach(code => {
+                this._opCodeMap[code] = family;
+            });
+        });
+    }
 
     public checkFlag(flag: Flag): boolean {
         return (this.rP & flag) > 0;
@@ -146,7 +154,6 @@ export class Cpu {
         }
     }
 }
-
 export const cloneCpu = (cpu: Cpu) => {
     let clonedStats = Object.assign(new CpuStats(), cpu.stats);
     let clonedControls = Object.assign(new CpuControls, cpu.controls);
