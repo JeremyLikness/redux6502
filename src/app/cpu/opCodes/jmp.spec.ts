@@ -21,7 +21,6 @@ describe('jmp', () => {
     it('sets the program counter for an absolute jump', () => {
         cpu.memory[cpu.rPC] = 0x11;
         cpu.memory[cpu.rPC + 1] = 0xC0;
-        console.log(cpu.getValue(4));
         jmp.execute(cpu, 0x4C);
         expect(cpu.rPC).toBe(0xC011);
     });

@@ -15,12 +15,17 @@ import {
 import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
 
 import { LdaFamily } from './opCodes/lda';
+import { JmpFamily } from './opCodes/jmp';
 import { NopFamily } from './opCodes/nop';
 
-const OP_CODES = [
-    new LdaFamily(),
-    new NopFamily()
-];
+const OP_CODES: IOpCodes[] = [];
+
+[
+    LdaFamily,
+    JmpFamily,
+    NopFamily
+].forEach(ctor => OP_CODES.push(new ctor()));
+
 
 export class CpuStats {
     public started: Date;
@@ -61,11 +66,9 @@ export class Cpu implements ICpu {
     private _opCodeMap: IOpCodeMap = {};
 
     constructor() {
-        OP_CODES.forEach(family => {
-            family.codes.forEach(code => {
-                this._opCodeMap[code] = family;
-            });
-        });
+        OP_CODES.forEach(family =>
+            family.codes.forEach(code =>
+        this._opCodeMap[code] = family));
     }
 
     public execute(): void {
