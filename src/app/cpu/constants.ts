@@ -38,3 +38,5 @@ export const MEMORY_OVERFLOW = 'Memory overflow.';
 export const INVALID_OP = 'Invalid op code.';
 
 export const LDA = 'LDA';
+export const JMP = 'JMP';
+export const NOP = 'NOP';

@@ -1,4 +1,10 @@
-# Redux6502
+# Redux 6502
+
+A 6502 emulator built with Angular 2, TypeScript, and Redux. 
+
+Based on specifications post on [6502.org](http://6502.org/tutorials/6502opcodes.html). 
+
+Authored by [@JeremyLikness](https://twitter.com/jeremylikness). 
 
 This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.20-4.
 

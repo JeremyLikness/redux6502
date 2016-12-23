@@ -303,6 +303,16 @@ describe('operations', () => {
             freeze(cpu);
             expect(cpu.addrIndirect()).toBe(0xD020);
         });
+        it('does not carrry when on a page boundary to compute the new location', () => {
+            cpu.memory[0x200] = 0xFF;
+            cpu.memory[0x201] = 0xC0;
+            cpu.memory[0xC000] = 0xAA;
+            cpu.memory[0xC0FF] = 0x21;
+            cpu.memory[0xC100] = 0xBB;
+            cpu.rPC = 0x200;
+            freeze(cpu);
+            expect(cpu.addrIndirect()).toBe(0xAA21);
+        });
     });
 
     // C000: 02 RX: 02 => 04: 20 D0 => D020 

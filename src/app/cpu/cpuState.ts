@@ -15,8 +15,12 @@ import {
 import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
 
 import { LdaFamily } from './opCodes/lda';
+import { NopFamily } from './opCodes/nop';
 
-const OP_CODES = [ new LdaFamily() ];
+const OP_CODES = [
+    new LdaFamily(),
+    new NopFamily()
+];
 
 export class CpuStats {
     public started: Date;
@@ -110,8 +114,12 @@ export class Cpu implements ICpu {
     }
 
     public addrIndirect(): Address {
-        let addressLocation: Address = this.addrPopWord();
-        let newAddress: Address = this.peek(addressLocation) + (this.peek(addressLocation + 1) << Memory.BitsInByte);
+        let addressBaseLow: Byte = this.addrPop();
+        let addressBaseHigh: Byte = this.addrPop(0x01);
+        let addressNextLow: Byte = (addressBaseLow + 1) & Memory.ByteMask;
+        let addressLocation: Address = addressBaseLow + (addressBaseHigh << Memory.BitsInByte);
+        let addressLocationNext: Address = addressNextLow + (addressBaseHigh << Memory.BitsInByte);
+        let newAddress: Address = this.peek(addressLocation) + (this.peek(addressLocationNext) << Memory.BitsInByte);
         return newAddress & Memory.Max;
     }
 

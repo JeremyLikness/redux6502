@@ -107,7 +107,7 @@ const apply = (cpu: Cpu, test: ITestLoadAccumulator) => {
     poke(cpu, test.setUpAddress, test.setUpBytes);
     cpu.rX = test.xValue;
     cpu.rY = test.yValue;
-}
+};
 
 describe('lda', () => {
 
