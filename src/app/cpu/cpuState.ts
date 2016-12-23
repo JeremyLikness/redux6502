@@ -18,7 +18,7 @@ import { LdaFamily } from './opCodes/lda';
 import { JmpFamily } from './opCodes/jmp';
 import { NopFamily } from './opCodes/nop';
 
-const OP_CODES: IOpCodes[] = [];
+const OP_CODES: IOpCodes[] = []; // "static" list of constructed op code families
 
 [
     LdaFamily,
