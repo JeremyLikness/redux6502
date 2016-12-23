@@ -1,6 +1,6 @@
 import { Actions } from './actions.cpu';
 
-import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
+import { Memory, INVALID_OP } from './constants';
 
 import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
