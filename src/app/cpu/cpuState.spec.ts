@@ -166,6 +166,28 @@ describe('operations', () => {
         cpu = initialCpuState();
     });
 
+    describe('execute', () => {
+
+        it('should throw error for invalid op code', () => {
+            expect(() => cpu.execute()).toThrow();
+        });
+
+        it('should run the op code and advance the program counter', () => {
+            let pc = cpu.rPC;
+            cpu.memory[cpu.rPC] = 0xA9; // LDA immediate 
+            cpu.memory[cpu.rPC + 1] = 0x7F; // LDA #$7F 
+            cpu.execute();
+            expect(cpu.rPC).toBe(pc + 0x02);
+            expect(cpu.rA).toBe(0x7F);
+        });
+
+        it('should throw an exception if the program counter rolls past end of memory', () => {
+            cpu.rPC = Memory.Max;
+            cpu.memory[Memory.Max] = 0xA9; // LDA immediate 
+            expect(() => cpu.execute()).toThrow();
+        });
+    });
+
     describe('checkFlag', () => {
 
         it('should return true when flag is set', () => {

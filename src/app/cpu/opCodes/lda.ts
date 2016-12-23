@@ -1,10 +1,11 @@
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
+import { LDA } from '../constants';
 
 export class LdaBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
-        super('LDA', value, mode, size, cpu => {
+        super(LDA, value, mode, size, cpu => {
             let target = cpu.getValue(mode), pc = size - 1;
             cpu.rA = target;
             cpu.rP = setFlags(cpu.rP, cpu.rA);
@@ -63,7 +64,7 @@ class LdaIndirectY extends LdaBase {
 
 export class LdaFamily extends OpCodeFamily {
     constructor() {
-        super('LDA');
+        super(LDA);
         super.register(
             new LdaImmediate(),
             new LdaZeroPage(),

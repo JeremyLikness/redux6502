@@ -12,7 +12,7 @@ import {
     computeBranch
 } from './globals';
 
-import { Memory } from './constants';
+import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
 
 import { LdaFamily } from './opCodes/lda';
 
@@ -62,6 +62,20 @@ export class Cpu implements ICpu {
                 this._opCodeMap[code] = family;
             });
         });
+    }
+
+    public execute(): void {
+        let opCode = this.memory[this.rPC];
+        this.rPC += 1;
+        let opFamily = this._opCodeMap[opCode];
+        if (opFamily) {
+            opFamily.execute(this, opCode);
+            if (this.rPC > Memory.Max) {
+                throw new Error(MEMORY_OVERFLOW);
+            }
+        } else {
+            throw new Error(INVALID_OP);
+        }
     }
 
     public checkFlag(flag: Flag): boolean {

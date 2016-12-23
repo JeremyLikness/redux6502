@@ -1,6 +1,6 @@
 import { Actions } from './actions.cpu';
 
-import { Memory } from './constants';
+import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
 
 import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
@@ -72,6 +72,41 @@ describe('reducer', () => {
       expect(cpuReducer(defaultCpu, {
           type: Actions.Halt
         })).toEqual(expected);
+  });
+
+  describe('step', () => {
+
+      it('should do nothing if not in a running state', () => {
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Step
+          })).toEqual(defaultCpu);
+      });
+
+      it('should catch exceptions and set the error state', () => {
+          let expected: Cpu = initialCpuState();
+          expected.rPC += 1;
+          expected.controls.errorState = true;
+          expected.controls.errorMessage = INVALID_OP;
+          defaultCpu.controls.runningState = true;
+          freezeCpu(defaultCpu);
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Step
+          })).toEqual(expected);
+      });
+
+      it('should execute one operation and advance the program counter', () => {
+          defaultCpu.memory[defaultCpu.rPC] = 0xA9; // LDA immediate
+          defaultCpu.memory[defaultCpu.rPC + 1] = 0x7F; // LDA #$7F 
+          defaultCpu.controls.runningState = true;
+          let expected = cloneCpu(defaultCpu);
+          freezeCpu(defaultCpu);
+          expected.rPC += 2;
+          expected.rA = 0x7F;
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Step
+          })).toEqual(expected);
+      });
+
   });
 
   describe('poke', () => {

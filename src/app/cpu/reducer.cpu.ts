@@ -25,7 +25,18 @@ export const cpuReducer = (state: Cpu, action: IAction | IPokeAction) => {
             return initialCpuState();
 
         case Actions.Step:
-            throw new Error('Not implemented.');
+            let stepCpu = cloneCpu(state);
+            if (state.controls.errorState === true || state.controls.runningState === false) {
+                return stepCpu;
+            }
+            try {
+                stepCpu.execute();
+            } catch (ex) {
+                stepCpu.controls.errorState = true;
+                stepCpu.controls.runningState = false;
+                stepCpu.controls.errorMessage = (<Error>ex).message;
+            }
+            return stepCpu;
 
         case Actions.Stop:
             let stopCpu = cloneCpu(state);

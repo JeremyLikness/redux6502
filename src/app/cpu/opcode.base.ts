@@ -42,7 +42,7 @@ export class OpCodeFamily implements IOpCodes {
     public register(...ops: IOpCode[]) {
         ops.forEach(opCode => {
             if (opCode.name !== this.name) {
-                throw new Error('Cannot register op code ' + opCode.name + ' with family ' + this.name);
+                throw new Error(`Cannot register op code ${opCode.name} with family ${this.name}`);
             }
             this.codes.push(opCode.value);
             this._codeMap[opCode.mode] = opCode;
@@ -55,7 +55,7 @@ export class OpCodeFamily implements IOpCodes {
         if (mode !== undefined) {
             this._codeMap[mode].execute(cpu);
         } else {
-            throw new Error('Invalid op code for ' + this.name + ' family.');
+            throw new Error(`Invalid op code for ${this.name} family.`);
         }
     }
 }
