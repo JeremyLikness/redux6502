@@ -52,6 +52,7 @@ export interface ICpu {
     addrZeroPageX: () => Address;
     addrZeroPageY: () => ZeroPage;
     getValue: (mode: AddressingModes) => Byte;
+    addrForMode: (mode: AddressingModes) => Word;
 }
 
 export interface IOpCode {

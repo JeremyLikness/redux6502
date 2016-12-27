@@ -154,31 +154,59 @@ export class Cpu implements ICpu {
         return zeroPage;
     }
 
-    public getValue(mode: AddressingModes): Byte {
+    public addrForMode(mode: AddressingModes): Word {
         switch (mode) {
             case AddressingModes.Absolute:
-                return this.peek(this.addrPopWord());
+                return this.addrPopWord();
             case AddressingModes.AbsoluteX:
-                return this.peek(this.addrAbsoluteX());
+                return this.addrAbsoluteX();
             case AddressingModes.AbsoluteY:
-                return this.peek(this.addrAbsoluteY());
-            case AddressingModes.Immediate:
-                return this.addrPop();
+                return this.addrAbsoluteY();
             case AddressingModes.IndexedIndirectX:
-                return this.peek(this.addrIndexedIndirectX());
+                return this.addrIndexedIndirectX();
             case AddressingModes.IndirectIndexedY:
-                return this.peek(this.addrIndirectIndexedY());
+                return this.addrIndirectIndexedY();
             case AddressingModes.Indirect:
-                return this.peek(this.addrIndirect());
+                return this.addrIndirect();
             case AddressingModes.Relative:
                 let branch = this.addrPop();
                 return computeBranch(this.rPC, branch);
             case AddressingModes.ZeroPage:
-                return this.peek(this.addrPop());
+                return this.addrPop();
             case AddressingModes.ZeroPageX:
-                return this.peek(this.addrZeroPageX());
+                return this.addrZeroPageX();
             case AddressingModes.ZeroPageY:
-                return this.peek(this.addrZeroPageY());
+                return this.addrZeroPageY();
+            default:
+                return null;
+        }
+    }
+
+    public getValue(mode: AddressingModes): Byte {
+        let addr = this.addrForMode(mode);
+        switch (mode) {
+            case AddressingModes.Absolute:
+                return this.peek(addr);
+            case AddressingModes.AbsoluteX:
+                return this.peek(addr);
+            case AddressingModes.AbsoluteY:
+                return this.peek(addr);
+            case AddressingModes.Immediate:
+                return this.addrPop();
+            case AddressingModes.IndexedIndirectX:
+                return this.peek(addr);
+            case AddressingModes.IndirectIndexedY:
+                return this.peek(addr);
+            case AddressingModes.Indirect:
+                return this.peek(addr);
+            case AddressingModes.Relative:
+                return addr;
+            case AddressingModes.ZeroPage:
+                return this.peek(addr);
+            case AddressingModes.ZeroPageX:
+                return this.peek(addr);
+            case AddressingModes.ZeroPageY:
+                return this.peek(addr);
             default:
                 return null;
         }

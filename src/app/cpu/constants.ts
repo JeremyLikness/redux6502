@@ -48,6 +48,7 @@ export const LDX = 'LDX';
 export const LDY = 'LDY';
 export const JMP = 'JMP';
 export const NOP = 'NOP';
+export const STA = 'STA';
 export const TAX = 'TAX';
 export const TAY = 'TAY';
 export const TYA = 'TYA';
