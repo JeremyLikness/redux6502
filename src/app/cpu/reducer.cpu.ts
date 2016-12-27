@@ -2,7 +2,7 @@ import { Memory } from './constants';
 
 import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
-import { Actions, IAction, IPokeAction, IRunAction } from './actions.cpu';
+import { Actions, IAction, IPokeAction, IRunAction, ISetPCAction } from './actions.cpu';
 
 import { poke } from './globals';
 
@@ -17,9 +17,15 @@ const step = (cpu: Cpu) => {
     }
 };
 
-export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunAction) => {
+export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunAction | ISetPCAction) => {
 
     switch (action.type) {
+
+        case Actions.SetPC:
+            let setCpu = cloneCpu(state),
+                setAction = action as ISetPCAction;
+            setCpu.rPC = setAction.address & Memory.Max;
+            return setCpu;
 
         case Actions.Poke:
             let pokeCpu = cloneCpu(state),
@@ -36,6 +42,17 @@ export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunActio
 
         case Actions.Reset:
             return initialCpuState();
+
+        case Actions.Start:
+            let startCpu = cloneCpu(state);
+            if (startCpu.controls.runningState || startCpu.controls.errorState) {
+                return startCpu;
+            }
+            startCpu.controls.runningState = true;
+            startCpu.stats.instructionCount = 0;
+            startCpu.stats.lastCheck = 0;
+            startCpu.stats.started = new Date();
+            return startCpu;
 
         case Actions.Step:
             let stepCpu = cloneCpu(state);

@@ -151,6 +151,36 @@ describe('reducer', () => {
 
   });
 
+  describe('start', () => {
+      it('should do nothing if already started', () => {
+          let expected = initialCpuState();
+          defaultCpu.controls.runningState = expected.controls.runningState = true;
+          freezeCpu(defaultCpu);
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.Start
+          })).toEqual(expected);
+      });
+
+      it('should do nothing if error state', () => {
+            let expected = initialCpuState();
+            defaultCpu.controls.errorState = expected.controls.errorState = true;
+            freezeCpu(defaultCpu);
+            expect(cpuReducer(defaultCpu, {
+                type: Actions.Start
+            })).toEqual(expected);
+      });
+
+      it('should set the start time and zero stats', () => {
+          defaultCpu.stats.instructionCount = 1;
+          freezeCpu(defaultCpu);
+          let actual = cpuReducer(defaultCpu, {
+              type: Actions.Start
+          }) as Cpu;
+          expect(actual.stats.started).not.toBeNull();
+          expect(actual.stats.instructionCount).toBe(0);
+      });
+  });
+
   describe('poke', () => {
       it('should handle poke by updating the memory location to the value', () => {
           let expected: Cpu = initialCpuState();
@@ -202,6 +232,32 @@ describe('reducer', () => {
               type: Actions.Poke,
               address: 1,
               value: [Memory.ByteMask + 3]
+          })).toEqual(expected);
+      });
+  });
+
+  describe('setPC', () => {
+      it('should handle program counter by updating the PC to the value', () => {
+          let expected: Cpu = initialCpuState();
+          expected.rPC = 0xC000;
+
+          freezeCpu(defaultCpu);
+
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.SetPC,
+              address: 0xC000
+          })).toEqual(expected);
+      });
+
+      it('should handle overflow addresses', () => {
+          let expected: Cpu = initialCpuState();
+          expected.rPC = 0x01;
+
+          freezeCpu(defaultCpu);
+
+          expect(cpuReducer(defaultCpu, {
+              type: Actions.SetPC,
+              address: 0x10001
           })).toEqual(expected);
       });
   });

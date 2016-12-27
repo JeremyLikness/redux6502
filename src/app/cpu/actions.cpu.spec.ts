@@ -3,7 +3,9 @@ import { Actions,
     cpuStop,
     cpuHalt,
     cpuReset,
+    cpuSetPC,
     cpuStep,
+    cpuStart,
     cpuRun
 } from './actions.cpu';
 
@@ -29,6 +31,12 @@ describe('actions', () => {
         value: [2]});
     });
 
+    it('should create set program counter action when cpuSetPC is called', () => {
+      expect(cpuSetPC(1)).toEqual({
+        type: Actions.SetPC,
+        address: 1});
+    });
+
     it('should create run action when cpuRun is called', () => {
         expect(cpuRun(2)).toEqual({
             type: Actions.Run,
@@ -40,7 +48,8 @@ describe('actions', () => {
         {action: cpuStop, actionType: Actions.Stop},
         {action: cpuHalt, actionType: Actions.Halt},
         {action: cpuReset, actionType: Actions.Reset},
-        {action: cpuStep, actionType: Actions.Step}
+        {action: cpuStep, actionType: Actions.Step},
+        {action: cpuStart, actionType: Actions.Start}
     ];
 
     tuples.forEach(tuple => {
