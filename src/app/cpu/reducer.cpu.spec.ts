@@ -86,7 +86,7 @@ describe('reducer', () => {
           let expected: Cpu = initialCpuState();
           expected.rPC += 1;
           expected.controls.errorState = true;
-          expected.controls.errorMessage = INVALID_OP;
+          expected.controls.errorMessage = INVALID_OP + ' (0)';
           defaultCpu.controls.runningState = true;
           freezeCpu(defaultCpu);
           expect(cpuReducer(defaultCpu, {
@@ -102,6 +102,7 @@ describe('reducer', () => {
           freezeCpu(defaultCpu);
           expected.rPC += 2;
           expected.rA = 0x7F;
+          expected.stats.instructionCount = 1;
           expect(cpuReducer(defaultCpu, {
               type: Actions.Step
           })).toEqual(expected);
@@ -122,7 +123,7 @@ describe('reducer', () => {
           let expected: Cpu = initialCpuState();
           expected.rPC += 1;
           expected.controls.errorState = true;
-          expected.controls.errorMessage = INVALID_OP;
+          expected.controls.errorMessage = INVALID_OP + ' (0)';
           defaultCpu.controls.runningState = true;
           freezeCpu(defaultCpu);
           expect(cpuReducer(defaultCpu, {
@@ -141,6 +142,7 @@ describe('reducer', () => {
           freezeCpu(defaultCpu);
           expected.rPC += 70 * 2;
           expected.rA = 69;
+          expected.stats.instructionCount = 70;
           expect(cpuReducer(defaultCpu, {
               type: Actions.Run,
               iterations: 70

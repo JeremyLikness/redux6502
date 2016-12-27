@@ -9,6 +9,7 @@ import { poke } from './globals';
 const step = (cpu: Cpu) => {
     try {
         cpu.execute();
+        cpu.stats.instructionCount += 1;
     } catch (ex) {
         cpu.controls.errorState = true;
         cpu.controls.runningState = false;

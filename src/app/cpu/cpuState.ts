@@ -20,6 +20,7 @@ import { LdyFamily } from './opCodes/ldy';
 import { JmpFamily } from './opCodes/jmp';
 import { NopFamily } from './opCodes/nop';
 import { RegisterFamily } from './opCodes/registers';
+import { StaFamily } from './opCodes/sta';
 
 const OP_CODES: IOpCodes[] = []; // "static" list of constructed op code families
 
@@ -29,7 +30,8 @@ const OP_CODES: IOpCodes[] = []; // "static" list of constructed op code familie
     LdyFamily,
     JmpFamily,
     NopFamily,
-    RegisterFamily
+    RegisterFamily,
+    StaFamily
 ].forEach(ctor => OP_CODES.push(new ctor()));
 
 export class CpuStats {
@@ -86,7 +88,7 @@ export class Cpu implements ICpu {
                 throw new Error(MEMORY_OVERFLOW);
             }
         } else {
-            throw new Error(INVALID_OP);
+            throw new Error(INVALID_OP + ` (${opCode})`);
         }
     }
 
