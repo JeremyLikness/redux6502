@@ -6,3 +6,6 @@ install:
     - npm install 
 script: 
     - ng test --watch=false --single-run=true --browsers=PhantomJS
+deploy:
+    skip_cleanuip: true
+    - ng github-pages:deploy 
