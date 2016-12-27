@@ -7,5 +7,5 @@ install:
 script: 
     - ng test --watch=false --single-run=true --browsers=PhantomJS
 deploy:
-    skip_cleanuip: true
+    skip_cleanup: true
     - ng github-pages:deploy 
