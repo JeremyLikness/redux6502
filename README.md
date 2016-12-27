@@ -2,6 +2,8 @@
 
 A 6502 emulator built with Angular 2, TypeScript, and Redux. 
 
+![Build Status](https://api.travis-ci.org/JeremyLikness/redux6502.svg?branch=master)
+
 Based on specifications post on [6502.org](http://6502.org/tutorials/6502opcodes.html). 
 
 Authored by [@JeremyLikness](https://twitter.com/jeremylikness). 
