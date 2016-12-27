@@ -34,11 +34,6 @@ describe('Base Op Code Tests', () => {
             family = new OpCodeFamily('TST');
         });
 
-        it('errors on registration of an invalid op code', () => {
-            let badOpCode = new BaseOpCode('TNT', 0x02, AddressingModes.Immediate, 0x03, oCpu => {});
-            expect(() => family.register(badOpCode)).toThrow();
-        });
-
         it('errors on trying to execute an invalid op code', () => {
             expect(() => family.execute(cpu, 0x01)).toThrow();
         });

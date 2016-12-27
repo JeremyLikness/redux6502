@@ -27,13 +27,11 @@ export class BaseOpCode implements IOpCode {
     }
 }
 
-interface IOpCodeMap { [mode: number]: IOpCode; };
-interface IModeMap { [opCode: number]: AddressingModes; }
+interface IOpCodeMap { [opCode: number]: IOpCode; };
 
 export class OpCodeFamily implements IOpCodes {
 
     private _codeMap: IOpCodeMap = {};
-    private _modeMap: IModeMap = {};
 
     public codes: OpCodeValue[] = [];
 
@@ -41,21 +39,17 @@ export class OpCodeFamily implements IOpCodes {
 
     public register(...ops: IOpCode[]) {
         ops.forEach(opCode => {
-            if (opCode.name !== this.name) {
-                throw new Error(`Cannot register op code ${opCode.name} with family ${this.name}`);
-            }
             this.codes.push(opCode.value);
-            this._codeMap[opCode.mode] = opCode;
-            this._modeMap[opCode.value] = opCode.mode;
+            this._codeMap[opCode.value] = opCode;
         });
     }
 
     public execute(cpu: ICpu, opCode: OpCodeValue) {
-        let mode = this._modeMap[opCode];
-        if (mode !== undefined) {
-            this._codeMap[mode].execute(cpu);
+        let operation = this._codeMap[opCode];
+        if (operation !== undefined) {
+            operation.execute(cpu);
         } else {
-            throw new Error(`Invalid op code for ${this.name} family.`);
+            throw new Error(`Invalid op code ${opCode} for ${this.name} family.`);
         }
     }
 }

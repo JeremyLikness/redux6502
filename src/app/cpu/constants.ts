@@ -37,6 +37,18 @@ export const AddressingModeCount = 12; // number of addressing modes available
 export const MEMORY_OVERFLOW = 'Memory overflow.';
 export const INVALID_OP = 'Invalid op code.';
 
+export const REGISTERS = 'Registers';
+
+export const DEX = 'DEX';
+export const DEY = 'DEY';
+export const INX = 'INX';
+export const INY = 'INY';
 export const LDA = 'LDA';
+export const LDX = 'LDX';
+export const LDY = 'LDY';
 export const JMP = 'JMP';
 export const NOP = 'NOP';
+export const TAX = 'TAX';
+export const TAY = 'TAY';
+export const TYA = 'TYA';
+export const TXA = 'TXA';

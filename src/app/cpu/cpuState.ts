@@ -15,15 +15,21 @@ import {
 import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
 
 import { LdaFamily } from './opCodes/lda';
+import { LdxFamily } from './opCodes/ldx';
+import { LdyFamily } from './opCodes/ldy';
 import { JmpFamily } from './opCodes/jmp';
 import { NopFamily } from './opCodes/nop';
+import { RegisterFamily } from './opCodes/registers';
 
 const OP_CODES: IOpCodes[] = []; // "static" list of constructed op code families
 
 [
     LdaFamily,
+    LdxFamily,
+    LdyFamily,
     JmpFamily,
-    NopFamily
+    NopFamily,
+    RegisterFamily
 ].forEach(ctor => OP_CODES.push(new ctor()));
 
 export class CpuStats {
