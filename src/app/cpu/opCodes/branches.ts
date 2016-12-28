@@ -49,8 +49,8 @@ import { BRANCH_FAMILY, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS, Memory, Flags } 
 
 export class BranchBase extends BaseOpCode {
 
-    constructor(value: OpCodeValue, mode: AddressingModes, predicate: (cpu: ICpu) => boolean) {
-        super(BRANCH_FAMILY, value, mode, 0x02, cpu => {
+    constructor(value: OpCodeValue, predicate: (cpu: ICpu) => boolean) {
+        super(BRANCH_FAMILY, value, AddressingModes.Relative, 0x02, cpu => {
             if (predicate(cpu)) {
               cpu.rPC = computeBranch(cpu.rPC, cpu.addrPop());
             } else {
@@ -64,14 +64,14 @@ export class BranchFamily extends OpCodeFamily {
     constructor() {
         super(BRANCH_FAMILY);
         super.register(
-            new BranchBase(0x10, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.NegativeFlag)),
-            new BranchBase(0x30, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.NegativeFlag)),
-            new BranchBase(0x50, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.OverflowFlag)),
-            new BranchBase(0x70, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.OverflowFlag)),
-            new BranchBase(0x90, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.CarryFlag)),
-            new BranchBase(0xB0, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.CarryFlag)),
-            new BranchBase(0xD0, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.ZeroFlag)),
-            new BranchBase(0xF0, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.ZeroFlag)),
+            new BranchBase(0x10, cpu => !cpu.checkFlag(Flags.NegativeFlag)),
+            new BranchBase(0x30, cpu => cpu.checkFlag(Flags.NegativeFlag)),
+            new BranchBase(0x50, cpu => !cpu.checkFlag(Flags.OverflowFlag)),
+            new BranchBase(0x70, cpu => cpu.checkFlag(Flags.OverflowFlag)),
+            new BranchBase(0x90, cpu => !cpu.checkFlag(Flags.CarryFlag)),
+            new BranchBase(0xB0, cpu => cpu.checkFlag(Flags.CarryFlag)),
+            new BranchBase(0xD0, cpu => !cpu.checkFlag(Flags.ZeroFlag)),
+            new BranchBase(0xF0, cpu => cpu.checkFlag(Flags.ZeroFlag)),
         );
     }
 }

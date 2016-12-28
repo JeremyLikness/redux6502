@@ -8,8 +8,8 @@ These instructions are implied mode, have a length of one byte and require two m
 MNEMONIC                       HEX
 CLC (CLear Carry)              $18
 SEC (SEt Carry)                $38
-CLI (CLear Interrupt)          $58
-SEI (SEt Interrupt)            $78
+CLI (CLear Interrupt)          $58 ** no support right now
+SEI (SEt Interrupt)            $78 ** no support right now
 CLV (CLear oVerflow)           $B8
 CLD (CLear Decimal)            $D8
 SED (SEt Decimal)              $F8
@@ -40,3 +40,36 @@ the overflow flag is 0 (-127 + -1 = -128). The overflow flag is not affected by 
 shifts and logical operations i.e. only ADC, BIT, CLV, PLP, RTI and SBC affect it. There is no op code to set the 
 overflow but a BIT test on an RTS instruction will do the trick.
 */
+
+import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import {
+  OpCodeValue,
+  AddressingModes,
+  Byte,
+  setFlags,
+  ICpu,
+  Flag,
+  computeBranch } from '../globals';
+import { FLAG_FAMILY, CLC, CLD, CLV, SEC, SED, Memory, Flags } from '../constants';
+
+export class FlagBase extends BaseOpCode {
+
+    constructor(value: OpCodeValue, flag: Flag, set = true) {
+        super(FLAG_FAMILY, value, AddressingModes.Single, 0x01, cpu => {
+            cpu.rP = cpu.setFlag(cpu.rP, flag, set);
+        });
+    }
+}
+
+export class FlagFamily extends OpCodeFamily {
+    constructor() {
+        super(FLAG_FAMILY);
+        super.register(
+            new FlagBase(0x18, Flags.CarryFlag, false),
+            new FlagBase(0x38, Flags.CarryFlag),
+            new FlagBase(0xB8, Flags.OverflowFlag, false),
+            new FlagBase(0xD8, Flags.DecimalFlag, false),
+            new FlagBase(0xF8, Flags.DecimalFlag)
+        );
+    }
+}

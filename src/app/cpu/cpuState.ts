@@ -15,6 +15,7 @@ import {
 import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
 
 import { BranchFamily } from './opcodes/branches';
+import { FlagFamily } from './opcodes/flagOps';
 import { LdaFamily } from './opCodes/lda';
 import { LdxFamily } from './opCodes/ldx';
 import { LdyFamily } from './opCodes/ldy';
@@ -27,6 +28,7 @@ const OP_CODES: IOpCodes[] = []; // "static" list of constructed op code familie
 
 [
     BranchFamily,
+    FlagFamily,
     LdaFamily,
     LdxFamily,
     LdyFamily,

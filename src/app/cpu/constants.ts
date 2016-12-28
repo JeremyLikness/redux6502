@@ -38,6 +38,7 @@ export const MEMORY_OVERFLOW = 'Memory overflow.';
 export const INVALID_OP = 'Invalid op code.';
 
 export const BRANCH_FAMILY = 'Branches';
+export const FLAG_FAMILY = 'Flags';
 export const REGISTERS = 'Registers';
 
 export const BCC = 'BCC';
@@ -48,6 +49,9 @@ export const BNE = 'BNE';
 export const BPL = 'BPL';
 export const BVC = 'BVC';
 export const BVS = 'BVS';
+export const CLC = 'CLC';
+export const CLD = 'CLD';
+export const CLV = 'CLV';
 export const DEX = 'DEX';
 export const DEY = 'DEY';
 export const INX = 'INX';
@@ -57,6 +61,8 @@ export const LDX = 'LDX';
 export const LDY = 'LDY';
 export const JMP = 'JMP';
 export const NOP = 'NOP';
+export const SEC = 'SEC';
+export const SED = 'SED';
 export const STA = 'STA';
 export const TAX = 'TAX';
 export const TAY = 'TAY';

@@ -6,7 +6,7 @@ import { Flags } from '../constants';
 
 import { TestBed } from '@angular/core/testing';
 
-import { BranchFamily } from './branches';
+import { BranchFamily as BranchOps } from './branches';
 
 interface IBranchTest {
     opCode: OpCodeValue;
@@ -116,15 +116,15 @@ let testBranches: IBranchTest[] = [{
 
 describe('branches', () => {
 
-    let branches: BranchFamily = null;
+    let branchOps: BranchOps = null;
     let cpu: Cpu = null;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ BranchFamily ]
+            declarations: [ BranchOps ]
         });
 
-        branches = new BranchFamily();
+        branchOps = new BranchOps();
         cpu = initialCpuState();
         cpu.rPC = 0xC000;
         cpu.memory[0xC000] = 0x20;
@@ -135,7 +135,7 @@ describe('branches', () => {
             if (test.set) {
                 cpu.rP |= test.flag;
             }
-            branches.execute(cpu, test.opCode);
+            branchOps.execute(cpu, test.opCode);
             expect(cpu.rPC).toBe(test.PC);
         });
     });
