@@ -17,8 +17,17 @@ const step = (cpu: Cpu) => {
     }
 };
 
-export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunAction | ISetPCAction) => {
+const timelapse = (cpu: Cpu) => {
+    if (cpu.stats.started) {
+        let now = new Date(),
+        diff = (now.getTime() - cpu.stats.started.getTime());
+        cpu.stats.ellapsedMilliseconds = diff;
+        cpu.stats.instructionsPerSecond = cpu.stats.instructionCount / (diff / 1000);
+    }
+};
 
+export const cpuReducer: (state: Cpu, action: IAction | IPokeAction | IRunAction | ISetPCAction) => Cpu =
+    (state: Cpu, action: IAction | IPokeAction | IRunAction | ISetPCAction) => {
     switch (action.type) {
 
         case Actions.SetPC:
@@ -60,6 +69,7 @@ export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunActio
                 return stepCpu;
             }
             step(stepCpu);
+            timelapse(stepCpu);
             return stepCpu;
 
         case Actions.Run:
@@ -70,6 +80,7 @@ export const cpuReducer = (state: Cpu, action: IAction | IPokeAction | IRunActio
                 step(runCpu);
                 iterations -= 1;
             }
+            timelapse(runCpu);
             return runCpu;
 
         case Actions.Stop:

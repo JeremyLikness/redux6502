@@ -108,6 +108,25 @@ describe('reducer', () => {
           })).toEqual(expected);
       });
 
+      it('should compute instructions and timelapse', () => {
+          defaultCpu.memory[defaultCpu.rPC] = 0xA9; // LDA immediate
+          defaultCpu.memory[defaultCpu.rPC + 1] = 0x7F; // LDA #$7F 
+          defaultCpu.controls.runningState = true;
+          defaultCpu.stats.started = new Date();
+
+          freezeCpu(defaultCpu);
+
+          let result = cpuReducer(defaultCpu, {
+              type: Actions.Step
+          }) as Cpu;
+
+          expect(result.stats.instructionCount).toBe(1);
+          expect(result.stats.ellapsedMilliseconds).toBeGreaterThan(0);
+          expect(result.stats.instructionsPerSecond).toBeGreaterThan(0);
+          console.log(`Ran ${result.stats.instructionCount} op in ${result.stats.ellapsedMilliseconds}ms` +
+            ` at ${result.stats.instructionsPerSecond} ips`);
+      });
+
   });
 
   describe('run', () => {
@@ -138,15 +157,21 @@ describe('reducer', () => {
               defaultCpu.memory[defaultCpu.rPC + count * 2 + 1] = count; // LDA#$<count>
           }
           defaultCpu.controls.runningState = true;
-          let expected = cloneCpu(defaultCpu);
+          defaultCpu.stats.started = new Date();
+
           freezeCpu(defaultCpu);
-          expected.rPC += 70 * 2;
-          expected.rA = 69;
-          expected.stats.instructionCount = 70;
-          expect(cpuReducer(defaultCpu, {
+
+          let result = cpuReducer(defaultCpu, {
               type: Actions.Run,
               iterations: 70
-          })).toEqual(expected);
+          });
+
+          expect(result.rPC).toEqual(defaultCpu.rPC + 70 * 2);
+          expect(result.rA).toEqual(69);
+          expect(result.stats.instructionCount).toBe(70);
+
+          console.log(`Ran ${result.stats.instructionCount} ops in ${result.stats.ellapsedMilliseconds}ms` +
+            ` at ${result.stats.instructionsPerSecond} ips`);
       });
 
   });
