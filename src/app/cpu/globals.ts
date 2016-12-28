@@ -104,3 +104,54 @@ export const computeBranch = (address: Address, offset: Byte) => {
     }
     return result;
 };
+
+export interface IAddWithCarryResult {
+    flag: Flag;
+    result: Byte;
+}
+
+export const addWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
+    let carry = flag & Flags.CarryFlag ? 1 : 0,
+        temp = accumulator + target + carry;
+
+    if (flag & Flags.DecimalFlag) {
+        if (((accumulator ^ target ^ temp) & 0x10) === 0x10) {
+            temp += 0x06;
+        }
+        if ((temp & 0xF0) > 0x90) {
+            temp += 0x60;
+        }
+    }
+
+    if (((accumulator ^ temp) & (target ^ temp) & 0x80) === 0x80) {
+        flag |= Flags.OverflowFlagSet;
+    } else {
+        flag &= Flags.OverflowFlagReset;
+    }
+
+    if ((temp & 0x100) === 0x100) {
+        flag |= Flags.CarryFlagSet;
+    } else {
+        flag &= Flags.CarryFlagReset;
+    }
+
+    if (temp === 0) {
+        flag |= Flags.ZeroFlagSet;
+    } else {
+        flag &= Flags.ZeroFlagReset;
+    }
+
+    if (temp & Flags.NegativeFlag) {
+        flag |= Flags.NegativeFlagSet;
+    } else {
+        flag &= Flags.NegativeFlagReset;
+    }
+
+    return {
+        flag: flag,
+        result: temp & Memory.ByteMask
+    } as IAddWithCarryResult;
+};
+
+export const subtractWithCarry = (flag: Flag, accumulator: Byte, target: Byte) =>
+    addWithCarry(flag, ~accumulator, target);
