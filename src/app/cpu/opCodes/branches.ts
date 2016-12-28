@@ -37,6 +37,7 @@ the BVC instruction will take 3 cycles no matter what address it is located at.
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import {
   OpCodeValue,
   AddressingModes,
@@ -60,6 +61,7 @@ export class BranchBase extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class BranchFamily extends OpCodeFamily {
     constructor() {
         super(BRANCH_FAMILY);

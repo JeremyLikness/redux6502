@@ -13,6 +13,7 @@ Absolute,Y    LDX $4400,Y   $BE  3   4+
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
+import { IsOpCode } from '../opCodeBridge';
 import { LDX } from '../constants';
 
 export class LdxBase extends BaseOpCode {
@@ -57,6 +58,7 @@ class LdxAbsoluteY extends LdxBase {
     }
 }
 
+@IsOpCode
 export class LdxFamily extends OpCodeFamily {
     constructor() {
         super(LDX);

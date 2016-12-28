@@ -10,6 +10,7 @@ NOP is used to reserve space for future modifications or effectively REM out exi
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import { AddressingModes } from '../globals';
 import { NOP } from '../constants';
 
@@ -20,6 +21,7 @@ export class Nop extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class NopFamily extends OpCodeFamily {
     constructor() {
         super(NOP);

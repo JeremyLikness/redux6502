@@ -15,6 +15,7 @@ Indirect,Y    LDA ($44),Y   $B1  2   5+
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
 import { LDA } from '../constants';
 
@@ -78,6 +79,7 @@ class LdaIndirectY extends LdaBase {
     }
 }
 
+@IsOpCode
 export class LdaFamily extends OpCodeFamily {
     constructor() {
         super(LDA);

@@ -18,6 +18,7 @@ address from $30FF and the high byte from $3000.
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes } from '../globals';
 import { JMP } from '../constants';
 
@@ -30,6 +31,7 @@ export class JmpHandler extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class JmpFamily extends OpCodeFamily {
     constructor() {
         super(JMP);

@@ -14,29 +14,8 @@ import {
 
 import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
 
-import { BranchFamily } from './opcodes/branches';
-import { FlagFamily } from './opcodes/flagOps';
-import { LdaFamily } from './opCodes/lda';
-import { LdxFamily } from './opCodes/ldx';
-import { LdyFamily } from './opCodes/ldy';
-import { JmpFamily } from './opCodes/jmp';
-import { NopFamily } from './opCodes/nop';
-import { RegisterFamily } from './opCodes/registers';
-import { StaFamily } from './opCodes/sta';
-
-const OP_CODES: IOpCodes[] = []; // "static" list of constructed op code families
-
-[
-    BranchFamily,
-    FlagFamily,
-    LdaFamily,
-    LdxFamily,
-    LdyFamily,
-    JmpFamily,
-    NopFamily,
-    RegisterFamily,
-    StaFamily
-].forEach(ctor => OP_CODES.push(new ctor()));
+// static list of registered op codes, is then mapped into the IOpCodeMap in the ctor()
+import { OP_CODES } from './opCodeBridge';
 
 export class CpuStats {
     public started: Date;

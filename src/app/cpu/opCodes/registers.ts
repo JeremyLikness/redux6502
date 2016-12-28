@@ -17,6 +17,7 @@ INY (INcrement Y)        $C8
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import { AddressingModes, setFlags, ICpu, OpCodeValue } from '../globals';
 import { REGISTERS, TAX, TXA, DEX, INX, TAY, TYA, DEY, INY, Memory } from '../constants';
 
@@ -26,6 +27,7 @@ export class RegisterOpCode extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class RegisterFamily extends OpCodeFamily {
     constructor() {
         super(REGISTERS);

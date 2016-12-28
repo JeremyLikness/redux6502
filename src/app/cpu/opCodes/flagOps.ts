@@ -42,6 +42,7 @@ overflow but a BIT test on an RTS instruction will do the trick.
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import {
   OpCodeValue,
   AddressingModes,
@@ -61,6 +62,7 @@ export class FlagBase extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class FlagFamily extends OpCodeFamily {
     constructor() {
         super(FLAG_FAMILY);

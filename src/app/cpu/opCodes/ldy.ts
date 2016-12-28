@@ -12,6 +12,7 @@ Absolute,X    LDY $4400,X   $BC  3   4+
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
 import { LDY } from '../constants';
 
@@ -57,6 +58,7 @@ class LdyAbsoluteX extends LdyBase {
     }
 }
 
+@IsOpCode
 export class LdyFamily extends OpCodeFamily {
     constructor() {
         super(LDY);

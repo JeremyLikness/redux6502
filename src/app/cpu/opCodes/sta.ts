@@ -14,6 +14,7 @@ Indirect,Y    STA ($44),Y   $91  2   6
 */
 
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags, ICpu } from '../globals';
 import { STA, Memory } from '../constants';
 
@@ -27,6 +28,7 @@ export class StaBase extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class StaFamily extends OpCodeFamily {
     constructor() {
         super(STA);
