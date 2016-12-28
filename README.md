@@ -2,13 +2,24 @@
 
 A 6502 emulator built with Angular 2, TypeScript, and Redux. 
 
-![Build Status](https://api.travis-ci.org/JeremyLikness/redux6502.svg?branch=master)
+![Build Status](https://api.travis-ci.org/JeremyLikness/redux6502.svg?branch=master) 
 
-Based on specifications post on [6502.org](http://6502.org/tutorials/6502opcodes.html). 
+[last build details](https://travis-ci.org/JeremyLikness/redux6502/)
+
+
+Based on specifications posted at [6502.org](http://6502.org/tutorials/6502opcodes.html). 
 
 Authored by [@JeremyLikness](https://twitter.com/jeremylikness). 
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.20-4.
+This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.24.
+
+## Background 
+
+The purpose of this project is to provide a robust example of an Angular 2 app written with TypeScript that leverages Redux with proper unit tests. The basic emulation is a pure state machine that simply manages memory and operations. Additional components will overlay the CPU state to provide services such as graphics output, console, compilation of source, and eventually input and output. 
+
+This project builds on previous work with a [Angular 2 6502 Emulator](https://github.com/JeremyLikness/6502emulator) that did not use Redux, and an even older version written with [TypeScript and Angular 1.x](http://t6502.codeplex.com/SourceControl/latest#Source/T6502/default.htm). 
+
+I do accept pull requests if you wish to contribute to help accelerate development. 
 
 ## Development server
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
