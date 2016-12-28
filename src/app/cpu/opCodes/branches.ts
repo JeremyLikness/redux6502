@@ -35,3 +35,43 @@ This means that
   LABEL NOP
 the BVC instruction will take 3 cycles no matter what address it is located at.
 */
+
+import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import {
+  OpCodeValue,
+  AddressingModes,
+  Byte,
+  setFlags,
+  ICpu,
+  Flag,
+  computeBranch } from '../globals';
+import { BRANCH_FAMILY, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS, Memory, Flags } from '../constants';
+
+export class BranchBase extends BaseOpCode {
+
+    constructor(value: OpCodeValue, mode: AddressingModes, predicate: (cpu: ICpu) => boolean) {
+        super(BRANCH_FAMILY, value, mode, 0x02, cpu => {
+            if (predicate(cpu)) {
+              cpu.rPC = computeBranch(cpu.rPC, cpu.addrPop());
+            } else {
+              cpu.rPC += 1;
+            }
+        });
+    }
+}
+
+export class BranchFamily extends OpCodeFamily {
+    constructor() {
+        super(BRANCH_FAMILY);
+        super.register(
+            new BranchBase(0x10, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.NegativeFlag)),
+            new BranchBase(0x30, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.NegativeFlag)),
+            new BranchBase(0x50, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.OverflowFlag)),
+            new BranchBase(0x70, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.OverflowFlag)),
+            new BranchBase(0x90, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.CarryFlag)),
+            new BranchBase(0xB0, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.CarryFlag)),
+            new BranchBase(0xD0, AddressingModes.Relative, cpu => !cpu.checkFlag(Flags.ZeroFlag)),
+            new BranchBase(0xF0, AddressingModes.Relative, cpu => cpu.checkFlag(Flags.ZeroFlag)),
+        );
+    }
+}

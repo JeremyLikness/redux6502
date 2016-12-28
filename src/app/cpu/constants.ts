@@ -37,8 +37,17 @@ export const AddressingModeCount = 12; // number of addressing modes available
 export const MEMORY_OVERFLOW = 'Memory overflow.';
 export const INVALID_OP = 'Invalid op code.';
 
+export const BRANCH_FAMILY = 'Branches';
 export const REGISTERS = 'Registers';
 
+export const BCC = 'BCC';
+export const BCS = 'BCS';
+export const BEQ = 'BEQ';
+export const BMI = 'BMI';
+export const BNE = 'BNE';
+export const BPL = 'BPL';
+export const BVC = 'BVC';
+export const BVS = 'BVS';
 export const DEX = 'DEX';
 export const DEY = 'DEY';
 export const INX = 'INX';
