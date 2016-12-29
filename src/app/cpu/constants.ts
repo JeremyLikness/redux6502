@@ -42,6 +42,7 @@ export const FLAG_FAMILY = 'Flags';
 export const REGISTERS = 'Registers';
 
 export const ADC = 'ADC';
+export const AND = 'AND';
 export const BCC = 'BCC';
 export const BCS = 'BCS';
 export const BEQ = 'BEQ';
