@@ -78,6 +78,7 @@ export const SBC = 'SBC';
 export const SEC = 'SEC';
 export const SED = 'SED';
 export const STA = 'STA';
+export const STX = 'STX';
 export const RTS = 'RTS';
 export const TAX = 'TAX';
 export const TAY = 'TAY';
