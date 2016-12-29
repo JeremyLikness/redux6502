@@ -16,7 +16,7 @@ import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
 import { IsOpCode } from '../opCodeBridge';
 import { LDX } from '../constants';
 
-export class LdxBase extends BaseOpCode {
+class LdxBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(LDX, value, mode, size, cpu => {

@@ -19,7 +19,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
 import { ORA } from '../constants';
 
-export class OrBase extends BaseOpCode {
+class OrBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(ORA, value, mode, size, cpu => {

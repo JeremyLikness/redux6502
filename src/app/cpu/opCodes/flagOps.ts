@@ -53,7 +53,7 @@ import {
   computeBranch } from '../globals';
 import { FLAG_FAMILY, CLC, CLD, CLV, SEC, SED, Memory, Flags } from '../constants';
 
-export class FlagBase extends BaseOpCode {
+class FlagBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, flag: Flag, set = true) {
         super(FLAG_FAMILY, value, AddressingModes.Single, 0x01, cpu => {

@@ -19,7 +19,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { AddressingModes, setFlags, ICpu, OpCodeValue } from '../globals';
 import { STACK, TXS, TSX, PHA, PLA, PHP, PLP, Memory } from '../constants';
 
-export class StackOpCode extends BaseOpCode {
+class StackOpCode extends BaseOpCode {
     constructor(name: string, opCode: OpCodeValue, execute: (cpu: ICpu) => void) {
         super(name, opCode, AddressingModes.Single, 0x01, execute);
     }

@@ -24,7 +24,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags, addWithCarry } from '../globals';
 import { ADC } from '../constants';
 
-export class AdcBase extends BaseOpCode {
+class AdcBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(ADC, value, mode, size, cpu => {

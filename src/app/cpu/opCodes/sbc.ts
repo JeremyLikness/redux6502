@@ -26,7 +26,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags, subtractWithCarry } from '../globals';
 import { SBC } from '../constants';
 
-export class SbcBase extends BaseOpCode {
+class SbcBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(SBC, value, mode, size, cpu => {

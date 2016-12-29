@@ -48,7 +48,7 @@ import {
   computeBranch } from '../globals';
 import { BRANCH_FAMILY, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS, Memory, Flags } from '../constants';
 
-export class BranchBase extends BaseOpCode {
+class BranchBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, predicate: (cpu: ICpu) => boolean) {
         super(BRANCH_FAMILY, value, AddressingModes.Relative, 0x02, cpu => {

@@ -19,7 +19,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
 import { AND } from '../constants';
 
-export class AndBase extends BaseOpCode {
+class AndBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(AND, value, mode, size, cpu => {

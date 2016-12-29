@@ -21,7 +21,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { AddressingModes, setFlags, ICpu, OpCodeValue } from '../globals';
 import { REGISTERS, TAX, TXA, DEX, INX, TAY, TYA, DEY, INY, Memory } from '../constants';
 
-export class RegisterOpCode extends BaseOpCode {
+class RegisterOpCode extends BaseOpCode {
     constructor(name: string, opCode: OpCodeValue, execute: (cpu: ICpu) => void) {
         super(name, opCode, AddressingModes.Single, 0x01, execute);
     }

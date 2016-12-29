@@ -19,7 +19,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
 import { EOR } from '../constants';
 
-export class XorBase extends BaseOpCode {
+class XorBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(EOR, value, mode, size, cpu => {

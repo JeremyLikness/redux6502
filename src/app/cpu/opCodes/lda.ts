@@ -19,7 +19,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags } from '../globals';
 import { LDA } from '../constants';
 
-export class LdaBase extends BaseOpCode {
+class LdaBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(LDA, value, mode, size, cpu => {

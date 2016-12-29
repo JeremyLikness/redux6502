@@ -18,7 +18,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes, Byte, setFlags, ICpu } from '../globals';
 import { STA, Memory } from '../constants';
 
-export class StaBase extends BaseOpCode {
+class StaBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(STA, value, mode, size, cpu => {

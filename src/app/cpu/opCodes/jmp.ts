@@ -22,7 +22,7 @@ import { IsOpCode } from '../opCodeBridge';
 import { OpCodeValue, AddressingModes } from '../globals';
 import { JMP } from '../constants';
 
-export class JmpHandler extends BaseOpCode {
+class JmpHandler extends BaseOpCode {
 
     constructor(opCode: OpCodeValue, mode: AddressingModes) {
         super(JMP, opCode, mode, 0x03, cpu => {
