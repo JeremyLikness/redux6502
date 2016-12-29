@@ -6,9 +6,9 @@ import { Cpu, initialCpuState } from '../cpuState';
 
 import { TestBed } from '@angular/core/testing';
 
-import { AndFamily } from './and';
+import { XorFamily } from './eor';
 
-interface ITestAndAccumulator {
+interface ITestXorAccumulator {
     programCounter: Address;
     programCounterAfter: Address;
     setUpAddress: Address;
@@ -19,81 +19,81 @@ interface ITestAndAccumulator {
     test: string;
 }
 
-let tests: ITestAndAccumulator[] = [{
+let tests: ITestXorAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
-    opCode: 0x29,
+    opCode: 0x49,
     setUpAddress: 0x00,
-    setUpBytes: [0xFF],
+    setUpBytes: [0x03],
     xValue: 0x0,
     yValue: 0x0,
-    test: 'AND immediate logically ands the correct byte'
+    test: 'XOR immediate exlusive ors the correct byte'
 }, {
     programCounter: 0x00,
     programCounterAfter: 0x01,
-    opCode: 0x25,
+    opCode: 0x45,
     setUpAddress: 0x00,
-    setUpBytes: [0x01, 0xFF],
+    setUpBytes: [0x01, 0x03],
     xValue: 0x0,
     yValue: 0x0,
-    test: 'AND zero page logically ands the correct byte'
+    test: 'XOR zero page exlusive ors the correct byte'
 }, {
     programCounter: 0x00,
     programCounterAfter: 0x01,
-    opCode: 0x35,
+    opCode: 0x55,
     setUpAddress: 0x00,
-    setUpBytes: [0x01, 0x00, 0xFF],
+    setUpBytes: [0x01, 0x00, 0x03],
     xValue: 0x01,
     yValue: 0x0,
-    test: 'AND zero page, X logically ands the correct byte'
+    test: 'XOR zero page, X exlusive ors the correct byte'
 }, {
     programCounter: 0x00,
     programCounterAfter: 0x02,
-    opCode: 0x2D,
+    opCode: 0x4D,
     setUpAddress: 0x00,
-    setUpBytes: [0x02, 0x00, 0xFF],
+    setUpBytes: [0x02, 0x00, 0x03],
     xValue: 0x00,
     yValue: 0x0,
-    test: 'AND absolute logically ands the correct byte'
+    test: 'XOR absolute exlusive ors the correct byte'
 }, {
     programCounter: 0x00,
     programCounterAfter: 0x02,
-    opCode: 0x3D,
+    opCode: 0x5D,
     setUpAddress: 0x00,
-    setUpBytes: [0x02, 0x00, 0x00, 0xFF],
+    setUpBytes: [0x02, 0x00, 0x00, 0x03],
     xValue: 0x01,
     yValue: 0x0,
-    test: 'AND absolute, X logically ands the correct byte'
+    test: 'XOR absolute, X exlusive ors the correct byte'
 }, {
     programCounter: 0x00,
     programCounterAfter: 0x02,
-    opCode: 0x39,
+    opCode: 0x59,
     setUpAddress: 0x00,
-    setUpBytes: [0x02, 0x00, 0x00, 0xFF],
+    setUpBytes: [0x02, 0x00, 0x00, 0x03],
     xValue: 0x0,
     yValue: 0x01,
-    test: 'AND absolute, Y logically ands the correct byte'
+    test: 'XOR absolute, Y exlusive ors the correct byte'
 }, {
     programCounter: 0x00,
     programCounterAfter: 0x01,
-    opCode: 0x21,
+    opCode: 0x41,
     setUpAddress: 0x00,
-    setUpBytes: [0x00, 0x03, 0x00, 0xFF],
+    setUpBytes: [0x00, 0x03, 0x00, 0x03],
     xValue: 0x01,
     yValue: 0x0,
-    test: 'AND indexed, indirect X logically ands the correct byte'
+    test: 'XOR indexed, indirect X exlusive ors the correct byte'
 }, {
     programCounter: 0x00,
     programCounterAfter: 0x01,
-    opCode: 0x31,
+    opCode: 0x51,
     setUpAddress: 0x00,
-    setUpBytes: [0x00, 0x00, 0xFF],
+    setUpBytes: [0x00, 0x00, 0x03],
     xValue: 0x0,
     yValue: 0x02,
-    test: 'AND indirect, indexed Y logically ands the correct byte'
+    test: 'XOR indirect, indexed Y exlusive ors the correct byte'
 }];
 
-const apply = (cpu: Cpu, test: ITestAndAccumulator) => {
+const apply = (cpu: Cpu, test: ITestXorAccumulator) => {
     cpu.rPC = test.programCounter;
     cpu.rA = 0x01;
     poke(cpu, test.setUpAddress, test.setUpBytes);
@@ -103,15 +103,15 @@ const apply = (cpu: Cpu, test: ITestAndAccumulator) => {
 
 describe('AND', () => {
 
-    let and: AndFamily = null;
+    let xor: XorFamily = null;
     let cpu: Cpu = null;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ AndFamily ]
+            declarations: [ XorFamily ]
         });
 
-        and = new AndFamily();
+        xor = new XorFamily();
         cpu = initialCpuState();
 
     });
@@ -119,15 +119,16 @@ describe('AND', () => {
     describe('flags', () => {
 
         it('sets the sign flag', () => {
-            cpu.rA = 0xFF;
-            cpu.memory[cpu.rPC] = 0x81;
-            and.execute(cpu, 0x29);
+            cpu.rA = 0x01;
+            cpu.memory[cpu.rPC] = 0x80;
+            xor.execute(cpu, 0x49);
             expect(cpu.rP & Flags.NegativeFlag).toBeTruthy();
         });
 
         it('sets the zero flag', () => {
-            cpu.rA = 0x00;
-            and.execute(cpu, 0x29);
+            cpu.rA = 0x01;
+            cpu.memory[cpu.rPC] = 0x01;
+            xor.execute(cpu, 0x49);
             expect(cpu.rP & Flags.ZeroFlag).toBeTruthy();
         });
 
@@ -136,8 +137,8 @@ describe('AND', () => {
     tests.forEach(test => {
         it(test.test, () => {
             apply(cpu, test);
-            and.execute(cpu, test.opCode);
-            expect(cpu.rA).toBe(0x01);
+            xor.execute(cpu, test.opCode);
+            expect(cpu.rA).toBe(0x02);
             expect(cpu.rPC).toBe(test.programCounterAfter);
         });
     });
