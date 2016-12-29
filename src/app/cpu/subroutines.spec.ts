@@ -70,4 +70,30 @@ describe('sample programs', () => {
             perf(cpu);
         });
     });
+
+    describe('JSR and RTS', () => {
+/*
+    C000: LDX #$00 
+    C002: JSR $C007
+    C005: TXA 
+    C006: 0x00 
+    C007: LDX #$7F
+    C009: RTS 
+*/
+        it('successfully returns from the subroutine', () => {
+            store.dispatch(
+                cpuPoke(
+                    0xC000,
+                    [0xA2, 0x00, 0x20, 0x07, 0xC0, 0x8A, 0x00, 0xA2, 0x7F, 0x60]
+                )
+            );
+            store.dispatch(cpuSetPC(0xC000));
+            store.dispatch(cpuStart());
+            store.dispatch(cpuRun(255));
+            let cpu = store.getState();
+            expect(cpu.rPC).toBe(0xC007);
+            expect(cpu.rA).toBe(0x7F);
+            perf(cpu);
+        });
+    });
 });

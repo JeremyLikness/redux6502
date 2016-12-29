@@ -52,6 +52,8 @@ export interface ICpu {
     addrZeroPageX: () => Address;
     addrZeroPageY: () => ZeroPage;
     getValue: (mode: AddressingModes) => Byte;
+    stackPush: (value: Byte) => void;
+    stackPop: () => Byte;
     addrForMode: (mode: AddressingModes) => Word;
 }
 

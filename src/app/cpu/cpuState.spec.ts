@@ -473,4 +473,48 @@ describe('operations', () => {
         });
     });
 
+    describe('stackPush', () => {
+
+        it ('adds the value to the stack', () => {
+            let stackPosition = cpu.rSP - 1;
+            cpu.stackPush(0x7F);
+            expect(cpu.memory[stackPosition + Memory.Stack]).toBe(0x7F);
+        });
+
+        it ('reduces the stack pointer', () => {
+            let stackPosition = cpu.rSP - 1;
+            cpu.stackPush(0x7F);
+            expect(cpu.rSP).toBe(stackPosition);
+        });
+
+        it ('enforces an 8-bit value', () => {
+            let stackPosition = cpu.rSP - 1;
+            cpu.stackPush(0x17F);
+            expect(cpu.memory[stackPosition + Memory.Stack]).toBe(0x7F);
+        });
+
+        it ('throws when the stack is full', () => {
+            cpu.rSP = -1;
+            expect(() => cpu.stackPush(0x7F)).toThrow();
+        });
+    });
+
+    describe('stackPop', () => {
+        it ('returns the last value pushed to the stack', () => {
+            cpu.stackPush(0x7F);
+            expect(cpu.stackPop()).toBe(0x7F);
+        });
+
+        it('advances the stack pointer', () => {
+            cpu.stackPush(0x7F);
+            let pointer = cpu.rSP + 1;
+            cpu.stackPop();
+            expect(cpu.rSP).toBe(pointer);
+        });
+
+        it('throws when the stack is empty', () => {
+            expect(() => cpu.stackPop()).toThrow();
+        });
+    });
+
 });

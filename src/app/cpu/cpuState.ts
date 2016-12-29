@@ -12,7 +12,7 @@ import {
     computeBranch
 } from './globals';
 
-import { Memory, INVALID_OP, MEMORY_OVERFLOW } from './constants';
+import { Memory, INVALID_OP, MEMORY_OVERFLOW, STACK_OVERFLOW, STACK_EMPTY } from './constants';
 
 // static list of registered op codes, is then mapped into the IOpCodeMap in the ctor()
 import { OP_CODES } from './opCodeBridge';
@@ -194,6 +194,25 @@ export class Cpu implements ICpu {
                 return this.peek(addr);
             default:
                 return null;
+        }
+    }
+
+    public stackPush(value: Byte): void {
+        if (this.rSP >= 0x0) {
+            this.rSP -= 1;
+            this.memory[this.rSP + Memory.Stack] = value & Memory.ByteMask;
+        } else {
+            throw new Error(STACK_OVERFLOW);
+        }
+    }
+
+    public stackPop(): Byte {
+        if (this.rSP < Memory.Stack) {
+            let value = this.peek(this.rSP + Memory.Stack);
+            this.rSP += 1;
+            return value;
+        } else {
+            throw new Error(STACK_EMPTY);
         }
     }
 }

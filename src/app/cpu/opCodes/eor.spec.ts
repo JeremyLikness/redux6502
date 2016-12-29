@@ -101,7 +101,7 @@ const apply = (cpu: Cpu, test: ITestXorAccumulator) => {
     cpu.rY = test.yValue;
 };
 
-describe('AND', () => {
+describe('XOR', () => {
 
     let xor: XorFamily = null;
     let cpu: Cpu = null;

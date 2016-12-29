@@ -36,6 +36,8 @@ export const AddressingModeCount = 12; // number of addressing modes available
 
 export const MEMORY_OVERFLOW = 'Memory overflow.';
 export const INVALID_OP = 'Invalid op code.';
+export const STACK_OVERFLOW = 'Stack overflow.';
+export const STACK_EMPTY = 'Cannot pop empty stack.';
 
 export const BRANCH_FAMILY = 'Branches';
 export const FLAG_FAMILY = 'Flags';
@@ -59,6 +61,7 @@ export const DEY = 'DEY';
 export const EOR = 'EOR';
 export const INX = 'INX';
 export const INY = 'INY';
+export const JSR = 'JSR';
 export const LDA = 'LDA';
 export const LDX = 'LDX';
 export const LDY = 'LDY';
@@ -69,6 +72,7 @@ export const SBC = 'SBC';
 export const SEC = 'SEC';
 export const SED = 'SED';
 export const STA = 'STA';
+export const RTS = 'RTS';
 export const TAX = 'TAX';
 export const TAY = 'TAY';
 export const TYA = 'TYA';

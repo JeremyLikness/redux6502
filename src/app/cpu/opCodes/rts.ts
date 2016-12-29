@@ -30,3 +30,21 @@ EXEC
  PHA
  RTS
 */
+
+import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
+import { OpCodeValue, AddressingModes, Byte, Address, setFlags, ICpu } from '../globals';
+import { RTS, Memory } from '../constants';
+
+@IsOpCode
+export class RtsFamily extends OpCodeFamily {
+    constructor() {
+        super(RTS);
+        super.register(new BaseOpCode(RTS, 0x60, AddressingModes.Single, 0x01, cpu => {
+            let loByte = cpu.stackPop() + 0x01,
+                hiByte = cpu.stackPop() << Memory.BitsInByte,
+                addr: Address = loByte + hiByte;
+            cpu.rPC = addr;
+        }));
+    }
+}
