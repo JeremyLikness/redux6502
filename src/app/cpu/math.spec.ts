@@ -1,4 +1,4 @@
-import { addWithCarry, subtractWithCarry, Byte, Flag } from './globals';
+import { addWithCarry, subtractWithCarry, compareWithFlag, Byte, Flag } from './globals';
 import { Flags } from './constants';
 
 import { TestBed } from '@angular/core/testing';
@@ -9,7 +9,7 @@ describe('math', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ addWithCarry, subtractWithCarry ]
+            declarations: [ addWithCarry, subtractWithCarry, compareWithFlag ]
         });
     });
 
@@ -327,4 +327,40 @@ describe('math', () => {
             });
         });
     });
+
+    describe('compare with flag', () => {
+
+    // equal to = CZ 
+    // greater than = C 
+    // less than = 
+
+        it ('sets carry and zero flag when values are equal', () => {
+            let result = compareWithFlag(0x0, 0x55, 0x55);
+            expect(result & Flags.CarryFlag).toBeTruthy();
+            expect(result & Flags.ZeroFlag).toBeTruthy();
+        });
+
+        it ('sets carry flag only when register is greater than value', () => {
+            let result = compareWithFlag(0x0, 0x55, 0x54);
+            expect(result & Flags.CarryFlag).toBeTruthy();
+            expect(result & Flags.ZeroFlag).toBeFalsy();
+        });
+
+        it ('does not set flags when register is less than value', () => {
+            let result = compareWithFlag(0x0, 0x55, 0x56);
+            expect(result & Flags.CarryFlag).toBeFalsy();
+            expect(result & Flags.ZeroFlag).toBeFalsy();
+        });
+
+        it ('sets the sign flag when the result of comparison is signed', () => {
+            let result = compareWithFlag(0x0, 0x81, 0x01);
+            expect(result & Flags.NegativeFlag).toBeTruthy();
+        });
+
+        it ('resets the sign flag when the result of comparison is not signed', () => {
+            let result = compareWithFlag(0x0, 0x7F, 0x01);
+            expect(result & Flags.NegativeFlag).toBeFalsy();
+        });
+    });
 });
+

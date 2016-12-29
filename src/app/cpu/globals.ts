@@ -90,6 +90,18 @@ export const setFlags = (flags: Flag, value: Byte) => {
     return newFlags;
 };
 
+export const compareWithFlag = (flag: Flag, registerValue: Byte, value: Byte) => {
+    let offset = Memory.ByteMask + registerValue - value + 1;
+    if (offset >= 0x100) {
+        flag |= Flags.CarryFlagSet;
+    } else {
+        flag &= Flags.CarryFlagReset;
+    }
+    let temp = offset & Memory.ByteMask;
+    flag = setFlags(flag, temp);
+    return flag;
+};
+
 export const poke = (cpu: ICpu, startAddress: Address, bytes: Byte[]) => {
     for (let offset = 0; offset < bytes.length; offset += 1) {
         let address: Address = (startAddress + offset) & Memory.Max;
