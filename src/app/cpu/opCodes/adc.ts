@@ -18,3 +18,38 @@ that the values involved are packed BCD (Binary Coded Decimal).
 
 There is no way to add without carry.
 */
+
+import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
+import { OpCodeValue, AddressingModes, Byte, setFlags, addWithCarry } from '../globals';
+import { ADC } from '../constants';
+
+export class AdcBase extends BaseOpCode {
+
+    constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
+        super(ADC, value, mode, size, cpu => {
+            let target = cpu.getValue(mode), pc = size - 1,
+                result = addWithCarry(cpu.rP, cpu.rA, target);
+            cpu.rA = result.result;
+            cpu.rP = result.flag;
+            cpu.rPC = cpu.rPC += pc;
+        });
+    }
+}
+
+@IsOpCode
+export class AdcFamily extends OpCodeFamily {
+    constructor() {
+        super(ADC);
+        super.register(
+            new AdcBase(0x69, AddressingModes.Immediate, 0x02),
+            new AdcBase(0x65, AddressingModes.ZeroPage, 0x02),
+            new AdcBase(0x75, AddressingModes.ZeroPageX, 0x02),
+            new AdcBase(0x6D, AddressingModes.Absolute, 0x03),
+            new AdcBase(0x7D, AddressingModes.AbsoluteX, 0x03),
+            new AdcBase(0x79, AddressingModes.AbsoluteY, 0x03),
+            new AdcBase(0x61, AddressingModes.IndexedIndirectX, 0x02),
+            new AdcBase(0x71, AddressingModes.IndirectIndexedY, 0x02)
+        );
+    }
+}

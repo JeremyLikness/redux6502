@@ -28,46 +28,16 @@ export class LdxBase extends BaseOpCode {
     }
 }
 
-class LdxImmediate extends LdxBase {
-    constructor() {
-        super(0xA2, AddressingModes.Immediate, 0x02);
-    }
-}
-
-class LdxZeroPage extends LdxBase {
-    constructor() {
-        super(0x44, AddressingModes.ZeroPage, 0x02);
-    }
-}
-
-class LdxZeroPageY extends LdxBase {
-    constructor() {
-        super(0xB6, AddressingModes.ZeroPageY, 0x02);
-    }
-}
-
-class LdxAbsolute extends LdxBase {
-    constructor() {
-        super(0xAE, AddressingModes.Absolute, 0x03);
-    }
-}
-
-class LdxAbsoluteY extends LdxBase {
-    constructor() {
-        super(0xBE, AddressingModes.AbsoluteY, 0x03);
-    }
-}
-
 @IsOpCode
 export class LdxFamily extends OpCodeFamily {
     constructor() {
         super(LDX);
         super.register(
-            new LdxImmediate(),
-            new LdxZeroPage(),
-            new LdxZeroPageY(),
-            new LdxAbsolute(),
-            new LdxAbsoluteY()
+            new LdxBase(0xA2, AddressingModes.Immediate, 0x02),
+            new LdxBase(0x44, AddressingModes.ZeroPage, 0x02),
+            new LdxBase(0xB6, AddressingModes.ZeroPageY, 0x02),
+            new LdxBase(0xAE, AddressingModes.Absolute, 0x03),
+            new LdxBase(0xBE, AddressingModes.AbsoluteY, 0x03)
         );
     }
 }

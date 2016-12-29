@@ -28,46 +28,16 @@ export class LdyBase extends BaseOpCode {
     }
 }
 
-class LdyImmediate extends LdyBase {
-    constructor() {
-        super(0xA0, AddressingModes.Immediate, 0x02);
-    }
-}
-
-class LdyZeroPage extends LdyBase {
-    constructor() {
-        super(0xA4, AddressingModes.ZeroPage, 0x02);
-    }
-}
-
-class LdyZeroPageX extends LdyBase {
-    constructor() {
-        super(0xB4, AddressingModes.ZeroPageX, 0x02);
-    }
-}
-
-class LdyAbsolute extends LdyBase {
-    constructor() {
-        super(0xAC, AddressingModes.Absolute, 0x03);
-    }
-}
-
-class LdyAbsoluteX extends LdyBase {
-    constructor() {
-        super(0xBC, AddressingModes.AbsoluteX, 0x03);
-    }
-}
-
 @IsOpCode
 export class LdyFamily extends OpCodeFamily {
     constructor() {
         super(LDY);
         super.register(
-            new LdyImmediate(),
-            new LdyZeroPage(),
-            new LdyZeroPageX(),
-            new LdyAbsolute(),
-            new LdyAbsoluteX()
+            new LdyBase(0xA0, AddressingModes.Immediate, 0x02),
+            new LdyBase(0xA4, AddressingModes.ZeroPage, 0x02),
+            new LdyBase(0xB4, AddressingModes.ZeroPageX, 0x02),
+            new LdyBase(0xAC, AddressingModes.Absolute, 0x03),
+            new LdyBase(0xBC, AddressingModes.AbsoluteX, 0x03)
         );
     }
 }
