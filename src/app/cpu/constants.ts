@@ -62,6 +62,7 @@ export const LDX = 'LDX';
 export const LDY = 'LDY';
 export const JMP = 'JMP';
 export const NOP = 'NOP';
+export const SBC = 'SBC';
 export const SEC = 'SEC';
 export const SED = 'SED';
 export const STA = 'STA';
