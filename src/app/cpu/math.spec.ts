@@ -1,4 +1,4 @@
-import { addWithCarry, subtractWithCarry, Flag } from './globals';
+import { addWithCarry, subtractWithCarry, Byte, Flag } from './globals';
 import { Flags } from './constants';
 
 import { TestBed } from '@angular/core/testing';
@@ -15,9 +15,9 @@ describe('math', () => {
 
     describe('add with carry', () => {
 
-        describe('decimal mode not set', () => {
+        describe('with decimal mode not set', () => {
 
-            describe('carry flag set' , () => {
+            describe('with carry flag set' , () => {
 
                 beforeEach(() => {
                     flag = Flags.CarryFlagSet;
@@ -37,7 +37,7 @@ describe('math', () => {
 
             });
 
-            describe('carry flag not set', () => {
+            describe('with carry flag not set', () => {
 
                 beforeEach(() => {
                     flag = 0x0;
@@ -78,9 +78,9 @@ describe('math', () => {
 
         });
 
-        describe('decimal mode set', () => {
+        describe('with decimal mode set', () => {
 
-            describe('carry flag set' , () => {
+            describe('with carry flag set' , () => {
                 beforeEach(() => {
                     flag = Flags.DecimalFlagSet | Flags.CarryFlagSet;
                 });
@@ -98,7 +98,7 @@ describe('math', () => {
                 });
             });
 
-            describe('carry flag not set', () => {
+            describe('with carry flag not set', () => {
                 beforeEach(() => {
                     flag = Flags.DecimalFlagSet;
                 });
@@ -114,6 +114,216 @@ describe('math', () => {
                     expect(result.flag & Flags.CarryFlag).toBeTruthy();
                     expect(result.result).toBe(0x05);
                 });
+            });
+        });
+    });
+
+    interface ISubtractTest {
+        carryFlag: boolean;
+        decimalFlag: boolean;
+        accumulator: Byte;
+        immediate: Byte;
+        expectedResult: Byte;
+        expectedCarry: boolean;
+        expectedOverflow: boolean;
+        expectedZero: boolean;
+        expectedNegative: boolean;
+    }
+
+    let sbcTests: ISubtractTest[] = [{
+            carryFlag: true,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x10,
+            expectedResult: 0x10,
+            expectedCarry: true,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: false
+        },
+        {
+            carryFlag: true,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x20,
+            expectedResult: 0x00,
+            expectedCarry: true,
+            expectedOverflow: false,
+            expectedZero: true,
+            expectedNegative: false
+        },
+        {
+            carryFlag: true,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x21,
+            expectedResult: 0xFF,
+            expectedCarry: false,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: true
+        },
+        {
+            carryFlag: true,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x81,
+            expectedResult: 0x9F,
+            expectedCarry: false,
+            expectedOverflow: true,
+            expectedZero: false,
+            expectedNegative: true
+        },
+        {
+            carryFlag: true,
+            decimalFlag: false,
+            accumulator: 0x90,
+            immediate: 0x40,
+            expectedResult: 0x50,
+            expectedCarry: true,
+            expectedOverflow: true,
+            expectedZero: false,
+            expectedNegative: false
+        },
+        {
+            carryFlag: true,
+            decimalFlag: false,
+            accumulator: 0x90,
+            immediate: 0x90,
+            expectedResult: 0x00,
+            expectedCarry: true,
+            expectedOverflow: false,
+            expectedZero: true,
+            expectedNegative: false
+        },
+        {
+            carryFlag: true,
+            decimalFlag: false,
+            accumulator: 0x90,
+            immediate: 0xa0,
+            expectedResult: 0xF0,
+            expectedCarry: false,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: true
+        },
+        {
+            carryFlag: false,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x10,
+            expectedResult: 0x0F,
+            expectedCarry: true,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: false
+        },
+        {
+            carryFlag: false,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x20,
+            expectedResult: 0xFF,
+            expectedCarry: false,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: true
+        },
+        {
+            carryFlag: false,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x21,
+            expectedResult: 0xFE,
+            expectedCarry: false,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: true
+        },
+        {
+            carryFlag: false,
+            decimalFlag: false,
+            accumulator: 0x20,
+            immediate: 0x81,
+            expectedResult: 0x9E,
+            expectedCarry: false,
+            expectedOverflow: true,
+            expectedZero: false,
+            expectedNegative: true
+        },
+        {
+            carryFlag: false,
+            decimalFlag: false,
+            accumulator: 0x90,
+            immediate: 0x40,
+            expectedResult: 0x4F,
+            expectedCarry: true,
+            expectedOverflow: true,
+            expectedZero: false,
+            expectedNegative: false
+        },
+        {
+            carryFlag: false,
+            decimalFlag: false,
+            accumulator: 0x90,
+            immediate: 0x90,
+            expectedResult: 0xFF,
+            expectedCarry: false,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: true
+        },
+        {
+            carryFlag: false,
+            decimalFlag: false,
+            accumulator: 0x90,
+            immediate: 0xa0,
+            expectedResult: 0xEF,
+            expectedCarry: false,
+            expectedOverflow: false,
+            expectedZero: false,
+            expectedNegative: true
+        }];
+
+    describe('subtract with carry', () => {
+        sbcTests.forEach(test => {
+            let description = `sbc with carry flag ${test.carryFlag ? 'set' : 'reset' } and decimal flag` +
+                ` ${test.decimalFlag ? 'set' : 'reset'} of ${test.accumulator}-${test.immediate}`;
+            let initialFlag: Flag = test.carryFlag ? Flags.CarryFlag : 0x0;
+            if (test.decimalFlag) {
+                initialFlag |= Flags.DecimalFlag;
+            }
+            let result = subtractWithCarry(initialFlag, test.accumulator, test.immediate);
+            it(description + ` should equal ${test.expectedResult}`, () => {
+                expect(result.result).toBe(test.expectedResult);
+            });
+            it(description + ` should ${test.expectedCarry ? 'set' : 'reset'} the carry flag`, () => {
+                if (test.expectedCarry) {
+                    expect(result.flag & Flags.CarryFlag).toBeTruthy();
+                } else {
+                    expect(result.flag & Flags.CarryFlag).toBeFalsy();
+                }
+            });
+            it(description + ` should ${test.expectedOverflow ? 'set' : 'reset'} the overflow flag`, () => {
+                if (test.expectedOverflow) {
+                    expect(result.flag & Flags.OverflowFlag).toBeTruthy();
+                } else {
+                    expect(result.flag & Flags.OverflowFlag).toBeFalsy();
+                }
+            });
+            it(description + ` should ${test.expectedNegative ? 'set' : 'reset'} the sign flag`, () => {
+                if (test.expectedNegative) {
+                    expect(result.flag & Flags.NegativeFlag).toBeTruthy();
+                } else {
+                    expect(result.flag & Flags.NegativeFlag).toBeFalsy();
+                }
+            });
+            it(description + ` should ${test.expectedZero ? 'set' : 'reset'} the zero flag`, () => {
+                if (test.expectedZero) {
+                    expect(result.flag & Flags.ZeroFlag).toBeTruthy();
+                } else {
+                    expect(result.flag & Flags.ZeroFlag).toBeFalsy();
+                }
             });
         });
     });
