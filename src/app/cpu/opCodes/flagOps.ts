@@ -55,8 +55,8 @@ import { FLAG_FAMILY, CLC, CLD, CLV, SEC, SED, Memory, Flags } from '../constant
 
 class FlagBase extends BaseOpCode {
 
-    constructor(value: OpCodeValue, flag: Flag, set = true) {
-        super(FLAG_FAMILY, value, AddressingModes.Single, 0x01, cpu => {
+    constructor(name: string, value: OpCodeValue, flag: Flag, set = true) {
+        super(name, value, AddressingModes.Single, 0x01, cpu => {
             cpu.rP = cpu.setFlag(cpu.rP, flag, set);
         });
     }
@@ -67,11 +67,11 @@ export class FlagFamily extends OpCodeFamily {
     constructor() {
         super(FLAG_FAMILY);
         super.register(
-            new FlagBase(0x18, Flags.CarryFlag, false),
-            new FlagBase(0x38, Flags.CarryFlag),
-            new FlagBase(0xB8, Flags.OverflowFlag, false),
-            new FlagBase(0xD8, Flags.DecimalFlag, false),
-            new FlagBase(0xF8, Flags.DecimalFlag)
+            new FlagBase(CLC, 0x18, Flags.CarryFlag, false),
+            new FlagBase(SEC, 0x38, Flags.CarryFlag),
+            new FlagBase(CLV, Flags.OverflowFlag, false),
+            new FlagBase(CLD, 0xD8, Flags.DecimalFlag, false),
+            new FlagBase(SED, 0xF8, Flags.DecimalFlag)
         );
     }
 }
