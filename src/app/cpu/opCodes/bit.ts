@@ -19,3 +19,54 @@ CLOSE3 LDX #$30   and end up with the X
 CLOSEX LDA #12    register still at $10
        STA ICCOM,X upon arrival here.
 */
+
+import { Flag, Byte, AddressingModes } from '../globals';
+import { Flags, BIT } from '../constants';
+import { IsOpCode } from '../opCodeBridge';
+import { OpCodeFamily, BaseOpCode } from '../opcode.base';
+
+export const testBit = (flag: Flag, accumulator: Byte, target: Byte) => {
+    if (accumulator & target) {
+        flag &= Flags.ZeroFlagReset;
+    } else {
+        flag |= Flags.ZeroFlagSet;
+    }
+    if (target & Flags.NegativeFlag) {
+        flag |= Flags.NegativeFlagSet;
+    } else {
+        flag &= Flags.NegativeFlagReset;
+    }
+    if (target & Flags.OverflowFlag) {
+        flag |= Flags.OverflowFlagSet;
+    } else {
+        flag &= Flags.OverflowFlagReset;
+    }
+    return flag;
+};
+
+@IsOpCode
+export class BitFamily extends OpCodeFamily {
+    constructor() {
+        super(BIT);
+        super.register(
+            new BaseOpCode(
+                BIT,
+                0x24,
+                AddressingModes.ZeroPage,
+                0x02,
+                cpu => cpu.rP = testBit(
+                    cpu.rP,
+                    cpu.rA,
+                    cpu.getValue(AddressingModes.ZeroPage))),
+            new BaseOpCode(
+                BIT,
+                0x2C,
+                AddressingModes.Absolute,
+                0x03,
+                cpu => cpu.rP = testBit(
+                    cpu.rP,
+                    cpu.rA,
+                    cpu.getValue(AddressingModes.Absolute)))
+        );
+    }
+}

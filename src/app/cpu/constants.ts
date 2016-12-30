@@ -51,6 +51,7 @@ export const ASL = 'ASL';
 export const BCC = 'BCC';
 export const BCS = 'BCS';
 export const BEQ = 'BEQ';
+export const BIT = 'BIT';
 export const BMI = 'BMI';
 export const BNE = 'BNE';
 export const BPL = 'BPL';
