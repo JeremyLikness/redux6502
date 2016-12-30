@@ -406,14 +406,14 @@ describe('math', () => {
             targetOne += 5;
             if (targetOne === 10) {
                 targetOne = 0;
-                targetTen += 2;
+                targetTen += 5;
                 if (targetTen === 10) {
                     targetTen = 0;
                     targetOne = 0;
                     one += 5;
                     if (one === 10) {
                         one = 0;
-                        ten += 2;
+                        ten += 5;
                     }
                 }
             }
