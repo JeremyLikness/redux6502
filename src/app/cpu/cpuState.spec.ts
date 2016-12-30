@@ -264,7 +264,7 @@ describe('operations', () => {
             expect(computeBranch(0xC000, 0x20)).toBe(0xC022); // 2 to skip the branch op
         });
         it('computes an address backwards when offset greater than 127', () => {
-            expect(computeBranch(0xC000, 0x82)).toBe(0xBF82);
+            expect(computeBranch(0xC000, 0x82)).toBe(0xBF84);
         });
     });
 

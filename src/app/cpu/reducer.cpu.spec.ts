@@ -33,6 +33,17 @@ describe('reducer', () => {
       expect(cpuReducer(undefined, { type: undefined })).toEqual(defaultCpu);
   });
 
+  it('should handle debug by setting debug to true', () => {
+      let expected: Cpu = cloneCpu(defaultCpu);
+      expected.debug = true;
+
+      freezeCpu(defaultCpu);
+
+      expect(cpuReducer(defaultCpu, {
+          type: Actions.Debug
+        })).toEqual(expected);
+  });
+
   it('should handle stop by setting runningState to false', () => {
 
       let expected: Cpu = cloneCpu(defaultCpu);

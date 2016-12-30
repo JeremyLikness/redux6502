@@ -72,6 +72,11 @@ export interface IOpCodes {
     codes: OpCodeValue[];
 }
 
+export const hexHelper = (val: Byte | Word, digits = 2) => {
+    let leading = Array(digits).fill('0').join('');
+    return (leading + val.toString(16)).substr(-1 * digits);
+};
+
 export const setFlags = (flags: Flag, value: Byte) => {
     let newFlags: Flag = flags;
 
@@ -92,13 +97,27 @@ export const setFlags = (flags: Flag, value: Byte) => {
 
 export const compareWithFlag = (flag: Flag, registerValue: Byte, value: Byte) => {
     let offset = Memory.ByteMask + registerValue - value + 1;
+
     if (offset >= 0x100) {
         flag |= Flags.CarryFlagSet;
     } else {
         flag &= Flags.CarryFlagReset;
     }
+
     let temp = offset & Memory.ByteMask;
-    flag = setFlags(flag, temp);
+
+    if (temp & Flags.NegativeFlag) {
+        flag |= Flags.NegativeFlagSet;
+    } else {
+        flag &= Flags.NegativeFlagReset;
+    }
+
+    if (temp === 0) {
+        flag |= Flags.ZeroFlagSet;
+    } else {
+        flag &= Flags.ZeroFlagReset;
+    }
+
     return flag;
 };
 
@@ -112,7 +131,7 @@ export const poke = (cpu: ICpu, startAddress: Address, bytes: Byte[]) => {
 export const computeBranch = (addressOfBranchOp: Address, offset: Byte) => {
     let result = 0;
     if (offset > Memory.BranchBack) {
-        result = (addressOfBranchOp - (Memory.BranchOffset - offset));
+        result = (addressOfBranchOp + 0x02 - (Memory.BranchOffset - offset));
     } else {
         result = addressOfBranchOp + offset + 0x02;
     }
@@ -169,44 +188,54 @@ export const addWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
 };
 
 export const subtractWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
-    let carry = flag & Flags.CarryFlag ? 1 : 0,
-        temp = Memory.ByteMask + accumulator - target + carry;
 
-    if (flag & Flags.DecimalFlag) {
-        if (((accumulator ^ target ^ temp) & 0x10) === 0x10) {
-            temp -= 0x06;
-        }
-        if ((temp & 0xF0) > 0x90) {
-            temp -= 0x60;
-        }
-    }
+    let carryFactor = flag & Flags.CarryFlag ? 1 : 0,
+        offset = 0,
+        temp = 0,
+        offsetAdjustSub = (offs: number) => {
+            if (offs < 0x100) {
+                flag &= Flags.CarryFlagReset;
+                if (flag & Flags.OverflowFlag && offs < Flags.NegativeFlagSet) {
+                    flag &= Flags.OverflowFlagReset;
+                }
+                return true;
+            } else {
+                flag |= Flags.CarryFlagSet;
+                if (flag & Flags.OverflowFlag && offset >= 0x180) {
+                    flag &= Flags.OverflowFlagReset;
+                }
+            }
+            return false;
+    };
 
-    if (((accumulator ^ target) & Flags.NegativeFlagSet) === Flags.NegativeFlag) {
+    if (!!((accumulator ^ target) & Flags.NegativeFlag)) {
         flag |= Flags.OverflowFlagSet;
     } else {
         flag &= Flags.OverflowFlagReset;
     }
 
-    if ((temp & 0x100) === 0x100) {
-        flag |= Flags.CarryFlagSet;
+    if (flag & Flags.DecimalFlag) {
+        temp = Memory.NibbleMask + (accumulator & Memory.NibbleMask) - (target & Memory.NibbleMask) + carryFactor;
+        if (temp < 0x10) {
+            offset = 0;
+            temp -= 0x06;
+        } else {
+            offset = 0x10;
+            temp -= 0x10;
+        }
+        offset += Memory.HighNibbleMask + (accumulator & Memory.HighNibbleMask) - (target & Memory.HighNibbleMask);
+        if (offsetAdjustSub(offset)) {
+            offset -= 0x60;
+        }
+        offset += temp;
     } else {
-        flag &= Flags.CarryFlagReset;
+        offset = Memory.ByteMask + accumulator - target + carryFactor;
+        offsetAdjustSub(offset);
     }
-
-    if ((temp & Memory.ByteMask) === 0) {
-        flag |= Flags.ZeroFlagSet;
-    } else {
-        flag &= Flags.ZeroFlagReset;
-    }
-
-    if (temp & Flags.NegativeFlag) {
-        flag |= Flags.NegativeFlagSet;
-    } else {
-        flag &= Flags.NegativeFlagReset;
-    }
-
+    let result = offset & Memory.ByteMask;
+    flag = setFlags(flag, result);
     return {
-        flag: flag,
-        result: temp & Memory.ByteMask
+        flag,
+        result
     } as IAddWithCarryResult;
 };

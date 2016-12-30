@@ -148,7 +148,7 @@ describe('comparison test', () => {
             store.dispatch(cpuPoke(memory, program));
             store.dispatch(cpuSetPC(0x0200));
             store.dispatch(cpuStart());
-            store.dispatch(cpuRun(99999));
+            store.dispatch(cpuRun(999999));
             let cpu = store.getState();
             console.log(cpu.controls.errorMessage);
             expect(cpu.rA).toBe(0x0);

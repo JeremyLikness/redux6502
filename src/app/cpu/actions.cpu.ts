@@ -8,7 +8,8 @@ export enum Actions {
     Halt,
     Reset,
     Step,
-    Run
+    Run,
+    Debug
 }
 
 export interface IAction {
@@ -48,6 +49,7 @@ const simpleAction = (action: Actions) => ({
     type: action
 } as IAction);
 
+export const cpuDebug = () => simpleAction(Actions.Debug);
 export const cpuStop = () => simpleAction(Actions.Stop);
 export const cpuHalt = () => simpleAction(Actions.Halt);
 export const cpuReset = () => simpleAction(Actions.Reset);

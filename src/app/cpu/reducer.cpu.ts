@@ -88,6 +88,11 @@ export const cpuReducer: (state: Cpu, action: IAction | IPokeAction | IRunAction
             stopCpu.controls.runningState = false;
             return stopCpu;
 
+        case Actions.Debug:
+            let debugCpu = cloneCpu(state);
+            debugCpu.debug = true;
+            return debugCpu;
+
         default:
             return initialCpuState();
     }

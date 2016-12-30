@@ -50,8 +50,8 @@ import { BRANCH_FAMILY, BCC, BCS, BEQ, BMI, BNE, BPL, BVC, BVS, Memory, Flags } 
 
 class BranchBase extends BaseOpCode {
 
-    constructor(value: OpCodeValue, predicate: (cpu: ICpu) => boolean) {
-        super(BRANCH_FAMILY, value, AddressingModes.Relative, 0x02, cpu => {
+    constructor(name: string, value: OpCodeValue, predicate: (cpu: ICpu) => boolean) {
+        super(name, value, AddressingModes.Relative, 0x02, cpu => {
             if (predicate(cpu)) {
               let opAddress = cpu.rPC - 1, offset = cpu.addrPop();
               cpu.rPC = computeBranch(opAddress, offset);
@@ -67,14 +67,14 @@ export class BranchFamily extends OpCodeFamily {
     constructor() {
         super(BRANCH_FAMILY);
         super.register(
-            new BranchBase(0x10, cpu => !cpu.checkFlag(Flags.NegativeFlag)),
-            new BranchBase(0x30, cpu => cpu.checkFlag(Flags.NegativeFlag)),
-            new BranchBase(0x50, cpu => !cpu.checkFlag(Flags.OverflowFlag)),
-            new BranchBase(0x70, cpu => cpu.checkFlag(Flags.OverflowFlag)),
-            new BranchBase(0x90, cpu => !cpu.checkFlag(Flags.CarryFlag)),
-            new BranchBase(0xB0, cpu => cpu.checkFlag(Flags.CarryFlag)),
-            new BranchBase(0xD0, cpu => !cpu.checkFlag(Flags.ZeroFlag)),
-            new BranchBase(0xF0, cpu => cpu.checkFlag(Flags.ZeroFlag)),
+            new BranchBase(BPL, 0x10, cpu => !cpu.checkFlag(Flags.NegativeFlag)),
+            new BranchBase(BMI, 0x30, cpu => cpu.checkFlag(Flags.NegativeFlag)),
+            new BranchBase(BVC, 0x50, cpu => !cpu.checkFlag(Flags.OverflowFlag)),
+            new BranchBase(BVS, 0x70, cpu => cpu.checkFlag(Flags.OverflowFlag)),
+            new BranchBase(BCC, 0x90, cpu => !cpu.checkFlag(Flags.CarryFlag)),
+            new BranchBase(BCS, 0xB0, cpu => cpu.checkFlag(Flags.CarryFlag)),
+            new BranchBase(BNE, 0xD0, cpu => !cpu.checkFlag(Flags.ZeroFlag)),
+            new BranchBase(BEQ, 0xF0, cpu => cpu.checkFlag(Flags.ZeroFlag)),
         );
     }
 }

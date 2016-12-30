@@ -131,7 +131,7 @@ describe('branches', () => {
     });
 
     it('handles a backwards branch', () => {
-        cpu.memory[0xC001] = 0xFE; // back 2
+        cpu.memory[0xC001] = 0xFC; // back 2 (2 + branch size)
         branchOps.execute(cpu, 0xD0);
         expect(cpu.rPC).toBe(0xBFFE);
     });

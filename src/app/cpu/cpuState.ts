@@ -9,7 +9,8 @@ import {
     RAM,
     IOpCodes,
     ICpu,
-    computeBranch
+    computeBranch,
+    hexHelper
 } from './globals';
 
 import { Memory, INVALID_OP, MEMORY_OVERFLOW, STACK_OVERFLOW, STACK_EMPTY } from './constants';

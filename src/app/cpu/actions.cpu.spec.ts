@@ -6,7 +6,8 @@ import { Actions,
     cpuSetPC,
     cpuStep,
     cpuStart,
-    cpuRun
+    cpuRun,
+    cpuDebug
 } from './actions.cpu';
 
 import { TestBed } from '@angular/core/testing';
@@ -49,7 +50,8 @@ describe('actions', () => {
         {action: cpuHalt, actionType: Actions.Halt},
         {action: cpuReset, actionType: Actions.Reset},
         {action: cpuStep, actionType: Actions.Step},
-        {action: cpuStart, actionType: Actions.Start}
+        {action: cpuStart, actionType: Actions.Start},
+        {action: cpuDebug, actionType: Actions.Debug}
     ];
 
     tuples.forEach(tuple => {
