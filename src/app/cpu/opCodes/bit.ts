@@ -54,19 +54,25 @@ export class BitFamily extends OpCodeFamily {
                 0x24,
                 AddressingModes.ZeroPage,
                 0x02,
-                cpu => cpu.rP = testBit(
-                    cpu.rP,
-                    cpu.rA,
-                    cpu.getValue(AddressingModes.ZeroPage))),
+                cpu => {
+                    cpu.rP = testBit(
+                        cpu.rP,
+                        cpu.rA,
+                        cpu.getValue(AddressingModes.ZeroPage));
+                    cpu.rPC += 1;
+            }),
             new BaseOpCode(
                 BIT,
                 0x2C,
                 AddressingModes.Absolute,
                 0x03,
-                cpu => cpu.rP = testBit(
-                    cpu.rP,
-                    cpu.rA,
-                    cpu.getValue(AddressingModes.Absolute)))
+                cpu => {
+                    cpu.rP = testBit(
+                        cpu.rP,
+                        cpu.rA,
+                        cpu.getValue(AddressingModes.Absolute));
+                    cpu.rPC += 2;
+            })
         );
     }
 }
