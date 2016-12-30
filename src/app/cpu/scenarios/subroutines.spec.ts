@@ -93,4 +93,32 @@ describe('sample programs', () => {
             perf(cpu);
         });
     });
+
+     describe('multiply by 10', () => {
+/*
+    C000: LDA #$10 // 16  
+    C002: ASL 
+    C003: STA $00 
+    C005: ASL 
+    C006: ASL
+    C007: CLC
+    C008: ADC $00
+    C009: RTS 
+*/
+        it('successfully multiplies by 10', () => {
+            store.dispatch(
+                cpuPoke(
+                    0xC000,
+                    [0xA9, 0x10, 0x0A, 0x85, 0x00, 0x0A, 0x0A, 0x18, 0x65, 0x00, 0x60]
+                )
+            );
+            store.dispatch(cpuSetPC(0xC000));
+            store.dispatch(cpuStart());
+            store.dispatch(cpuRun(255));
+            let cpu = store.getState();
+            expect(cpu.rPC).toBe(0xC00B);
+            expect(cpu.rA).toBe(0x10 * 10);
+            perf(cpu);
+        });
+    });
 });
