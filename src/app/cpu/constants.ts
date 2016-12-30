@@ -74,6 +74,7 @@ export const JSR = 'JSR';
 export const LDA = 'LDA';
 export const LDX = 'LDX';
 export const LDY = 'LDY';
+export const LSR = 'LSR';
 export const JMP = 'JMP';
 export const NOP = 'NOP';
 export const ORA = 'ORA';
