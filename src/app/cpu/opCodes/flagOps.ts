@@ -69,7 +69,7 @@ export class FlagFamily extends OpCodeFamily {
         super.register(
             new FlagBase(CLC, 0x18, Flags.CarryFlag, false),
             new FlagBase(SEC, 0x38, Flags.CarryFlag),
-            new FlagBase(CLV, Flags.OverflowFlag, false),
+            new FlagBase(CLV, 0xB8, Flags.OverflowFlag, false),
             new FlagBase(CLD, 0xD8, Flags.DecimalFlag, false),
             new FlagBase(SED, 0xF8, Flags.DecimalFlag)
         );

@@ -1,5 +1,13 @@
-import { addWithCarry, subtractWithCarry, compareWithFlag, Byte, Flag } from './globals';
-import { Flags } from './constants';
+import {
+    addWithCarry,
+    subtractWithCarry,
+    compareWithFlag,
+    Byte,
+    Flag,
+    hexHelper,
+    toHex,
+    toDecimal } from './globals';
+import { Flags, Memory } from './constants';
 
 import { TestBed } from '@angular/core/testing';
 
@@ -361,6 +369,55 @@ describe('math', () => {
             let result = compareWithFlag(0x0, 0x7F, 0x01);
             expect(result & Flags.NegativeFlag).toBeFalsy();
         });
+    });
+
+    describe('decimal matrix', () => {
+
+        // matrix of possible addition and subtraction 
+        let ten = 0, one = 0, targetTen = 0, targetOne = 0;
+        while (ten < 10) {
+            let left = ten * 10 + one,
+                right = targetTen * 10 + one,
+                expectedAdd = left + right,
+                expectedSubtract = left - right;
+            it(`adds ${left} (${hexHelper(toHex(left),2)}) and ${right} (${hexHelper(toHex(right),2)}) correctly`, () => {
+                let result = addWithCarry(Flags.DecimalFlagSet, toHex(left), toHex(right)), expected = expectedAdd;
+                if (expected >= 100) {
+                    expect(toDecimal(result.result)).toBe(expected - 100);
+                    expect(result.flag & Flags.CarryFlag).toBeTruthy();
+                } else {
+                    expect(toDecimal(result.result)).toBe(expected);
+                    expect(result.flag & Flags.CarryFlag).toBeFalsy();
+                }
+            });
+            it(`subtracts ${right} (${hexHelper(toHex(right),2)}) from ${left} (${hexHelper(toHex(left),2)}) correctly`, () => {
+                let result = subtractWithCarry(Flags.DecimalFlagSet | Flags.CarryFlagSet,
+                    toHex(left),
+                    toHex(right)),
+                    expected = expectedSubtract;
+                if (expected < 0) {
+                    expect(toDecimal(result.result)).toBe(100 + expected);
+                    expect(result.flag & Flags.CarryFlag).toBeFalsy();
+                } else {
+                    expect(toDecimal(result.result)).toBe(expected);
+                    expect(result.flag & Flags.CarryFlag).toBeTruthy();
+                }
+            });
+            targetOne += 5;
+            if (targetOne === 10) {
+                targetOne = 0;
+                targetTen += 2;
+                if (targetTen === 10) {
+                    targetTen = 0;
+                    targetOne = 0;
+                    one += 5;
+                    if (one === 10) {
+                        one = 0;
+                        ten += 2;
+                    }
+                }
+            }
+        }
     });
 });
 

@@ -118,19 +118,16 @@ N2: NOP
 
 const memory = 0x200;
 
-import { Cpu, initialCpuState } from './cpuState';
-import { poke } from './globals';
-import { cpuReducer } from './reducer.cpu';
-import { cpuPoke, cpuSetPC, cpuStart, cpuRun } from './actions.cpu';
+import { Cpu, initialCpuState } from '../cpuState';
+import { poke } from '../globals';
+import { STACK_EMPTY } from '../constants';
+import { cpuReducer } from '../reducer.cpu';
+import { cpuPoke, cpuSetPC, cpuStart, cpuRun } from '../actions.cpu';
+import { perf } from './common';
 
 import { createStore, Store } from 'redux';
 
 import { TestBed } from '@angular/core/testing';
-
-const perf = (cpu: Cpu) => {
-    console.log(`Ran ${cpu.stats.instructionCount} ops in ${cpu.stats.ellapsedMilliseconds}ms` +
-            ` at ${cpu.stats.instructionsPerSecond} ips`);
-};
 
 describe('comparison test', () => {
 
@@ -148,10 +145,10 @@ describe('comparison test', () => {
             store.dispatch(cpuPoke(memory, program));
             store.dispatch(cpuSetPC(0x0200));
             store.dispatch(cpuStart());
-            store.dispatch(cpuRun(999999));
+            store.dispatch(cpuRun(710000));
             let cpu = store.getState();
-            console.log(cpu.controls.errorMessage);
-            expect(cpu.rA).toBe(0x0);
+            expect(cpu.controls.errorMessage).toBe(STACK_EMPTY); // hit RTS
+            expect(cpu.rA).toBe(0x0); // success condition
             perf(cpu);
     });
 });

@@ -143,19 +143,30 @@ export interface IAddWithCarryResult {
     result: Byte;
 }
 
+export const toDecimal = (result: Byte) => ((result & Memory.HighNibbleMask) >> Memory.BitsInNibble) * 10 + (result & Memory.NibbleMask);
+
+export const toHex = (input: Byte) => ((input / 10) << Memory.BitsInNibble) + input % 10;
+
 export const addWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
 
-    let carry = flag & Flags.CarryFlag ? 1 : 0,
-        temp = accumulator + target + carry;
+    let carry = flag & Flags.CarryFlag ? 1 : 0;
 
     if (flag & Flags.DecimalFlag) {
-        if (((accumulator ^ target ^ temp) & 0x10) === 0x10) {
-            temp += 0x06;
+        let a = toDecimal(accumulator), t = toDecimal(target), r = a + t + carry;
+        if (r >= 100) {
+            flag |= Flags.CarryFlagSet;
+            r -= 100;
+        } else {
+            flag &= Flags.CarryFlagReset;
         }
-        if ((temp & 0xF0) > 0x90) {
-            temp += 0x60;
-        }
+        flag = setFlags(flag, r);
+        return {
+            flag,
+            result: toHex(r)
+        } as IAddWithCarryResult;
     }
+
+    let temp = accumulator + target + carry;
 
     if (((accumulator ^ temp) & (target ^ temp) & Flags.NegativeFlagSet) === Flags.NegativeFlag) {
         flag |= Flags.OverflowFlagSet;
@@ -169,17 +180,7 @@ export const addWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
         flag &= Flags.CarryFlagReset;
     }
 
-    if (temp === 0) {
-        flag |= Flags.ZeroFlagSet;
-    } else {
-        flag &= Flags.ZeroFlagReset;
-    }
-
-    if (temp & Flags.NegativeFlag) {
-        flag |= Flags.NegativeFlagSet;
-    } else {
-        flag &= Flags.NegativeFlagReset;
-    }
+    flag = setFlags(flag, temp);
 
     return {
         flag: flag,

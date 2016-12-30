@@ -7,6 +7,7 @@ export class Memory {
     public static NibbleMask: number = 0x0F; // force to nibble 
     public static HighNibbleMask: number = 0xF0; // force to nibble with higher bits
     public static Stack: number = 0x0100; // stack (255 bytes)
+    public static BitsInNibble: number = 4; // bits in a nibble
     public static BitsInByte: number = 8; // bits in a byte
     public static DefaultStart: number = 0x0200; // default pc start (after zero page and stack)
     public static BranchBack: number = 0x7F; // branch test for forward or backwards

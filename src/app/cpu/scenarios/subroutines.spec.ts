@@ -1,16 +1,13 @@
-import { Cpu, initialCpuState } from './cpuState';
-import { poke } from './globals';
-import { cpuReducer } from './reducer.cpu';
-import { cpuPoke, cpuSetPC, cpuStart, cpuRun } from './actions.cpu';
+import { Cpu, initialCpuState } from '../cpuState';
+import { poke } from '../globals';
+import { cpuReducer } from '../reducer.cpu';
+import { cpuPoke, cpuSetPC, cpuStart, cpuRun } from '../actions.cpu';
 
 import { createStore, Store } from 'redux';
 
 import { TestBed } from '@angular/core/testing';
 
-const perf = (cpu: Cpu) => {
-    console.log(`Ran ${cpu.stats.instructionCount} ops in ${cpu.stats.ellapsedMilliseconds}ms` +
-            ` at ${cpu.stats.instructionsPerSecond} ips`);
-};
+import { perf } from './common';
 
 describe('sample programs', () => {
 
