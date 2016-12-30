@@ -14,6 +14,7 @@ Absolute,X    ROL $4400,X   $3E  3   7
 import { AddressingModes, Byte, OpCodeValue, setFlags } from '../globals';
 import { ROL, Flags, Memory } from '../constants';
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
+import { IsOpCode } from '../opCodeBridge';
 
 class RolBase extends BaseOpCode {
     constructor(opCode: OpCodeValue, mode: AddressingModes, size: Byte) {
@@ -39,6 +40,7 @@ class RolBase extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class RolFamily extends OpCodeFamily {
     constructor() {
         super(ROL);

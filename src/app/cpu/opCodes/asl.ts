@@ -16,6 +16,7 @@ ASL shifts all bits left one position. 0 is shifted into bit 0 and the original 
 
 import { AddressingModes, Byte, OpCodeValue, setFlags } from '../globals';
 import { ASL, Flags, Memory } from '../constants';
+import { IsOpCode } from '../opCodeBridge';
 import { BaseOpCode, OpCodeFamily } from '../opcode.base';
 
 class AslBase extends BaseOpCode {
@@ -41,6 +42,7 @@ class AslBase extends BaseOpCode {
     }
 }
 
+@IsOpCode
 export class AslFamily extends OpCodeFamily {
     constructor() {
         super(ASL);
