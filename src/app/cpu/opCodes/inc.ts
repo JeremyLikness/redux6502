@@ -23,7 +23,7 @@ class IncBase extends BaseOpCode {
             let temp = (cpu.peek(addr) + 1) & Memory.ByteMask;
             cpu.rP = setFlags(cpu.rP, temp);
             cpu.memory[addr] = temp;
-            cpu.rPC = cpu.rPC += pc;
+            cpu.rPC += pc;
         });
     }
 }

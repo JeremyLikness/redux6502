@@ -31,7 +31,7 @@ class CmpBase extends BaseOpCode {
         super(CMP, value, mode, size, cpu => {
             let target = cpu.getValue(mode), pc = size - 1;
             cpu.rP = compareWithFlag(cpu.rP, cpu.rA, target);
-            cpu.rPC = cpu.rPC += pc;
+            cpu.rPC += pc;
         });
     }
 }

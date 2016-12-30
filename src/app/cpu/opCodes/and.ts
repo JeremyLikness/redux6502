@@ -26,7 +26,7 @@ class AndBase extends BaseOpCode {
             let target = cpu.getValue(mode), pc = size - 1;
             cpu.rA &= target;
             cpu.rP = setFlags(cpu.rP, cpu.rA);
-            cpu.rPC = cpu.rPC += pc;
+            cpu.rPC += pc;
         });
     }
 }

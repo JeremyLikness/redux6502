@@ -34,7 +34,7 @@ class SbcBase extends BaseOpCode {
                 result = subtractWithCarry(cpu.rP, cpu.rA, target);
             cpu.rA = result.result;
             cpu.rP = result.flag;
-            cpu.rPC = cpu.rPC += pc;
+            cpu.rPC += pc;
         });
     }
 }

@@ -109,12 +109,12 @@ export const poke = (cpu: ICpu, startAddress: Address, bytes: Byte[]) => {
     }
 };
 
-export const computeBranch = (address: Address, offset: Byte) => {
+export const computeBranch = (addressOfBranchOp: Address, offset: Byte) => {
     let result = 0;
     if (offset > Memory.BranchBack) {
-        result = (address - (Memory.BranchOffset - offset));
+        result = (addressOfBranchOp - (Memory.BranchOffset - offset));
     } else {
-        result = address + offset;
+        result = addressOfBranchOp + offset + 0x02;
     }
     return result;
 };

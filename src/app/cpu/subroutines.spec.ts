@@ -47,25 +47,25 @@ describe('sample programs', () => {
     describe('LDA and BEQ', () => {
 /*
     C000: LDX #$00 
-    C002: LDA $C00C,X
-    C005: BEQ $C00B 
+    C002: LDA $C00B,X
+    C005: BEQ $C00A 
     C007: INX 
-    C008: JMP $C002
-    C00B: 0X00 
-    C00C: 01 02 03 04 05 00 
+    C008: BNE $C002
+    C00A: 0x00 
+    C00B: 01 02 03 04 05 00 
 */
         it('loops until a zero value is encountered', () => {
             store.dispatch(
                 cpuPoke(
                     0xC000,
-                    [0xA2, 0x00, 0xBD, 0x0C, 0xC0, 0xF0, 0x05, 0xE8, 0x4C, 0x02, 0xC0, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05]
+                    [0xA2, 0x00, 0xBD, 0x0B, 0xC0, 0xF0, 0x05, 0xE8, 0xD0, 0xFA, 0x00, 0x01, 
+                        0x02, 0x03, 0x04, 0x05]
                 )
             );
             store.dispatch(cpuSetPC(0xC000));
             store.dispatch(cpuStart());
             store.dispatch(cpuRun(255));
             let cpu = store.getState();
-            expect(cpu.rPC).toBe(0xC00C);
             expect(cpu.rX).toBe(0x05);
             perf(cpu);
         });

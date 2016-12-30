@@ -261,7 +261,7 @@ describe('operations', () => {
     // C000 0x82 = C000 - (100 - 82) = C000 - 7E = BF82
     describe('computeBranch', () => {
         it('computes an address forward when offset less than 128', () => {
-            expect(computeBranch(0xC000, 0x20)).toBe(0xC020);
+            expect(computeBranch(0xC000, 0x20)).toBe(0xC022); // 2 to skip the branch op
         });
         it('computes an address backwards when offset greater than 127', () => {
             expect(computeBranch(0xC000, 0x82)).toBe(0xBF82);

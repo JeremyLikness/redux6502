@@ -22,7 +22,7 @@ class CpxBase extends BaseOpCode {
         super(CPX, value, mode, size, cpu => {
             let target = cpu.getValue(mode), pc = size - 1;
             cpu.rP = compareWithFlag(cpu.rP, cpu.rX, target);
-            cpu.rPC = cpu.rPC += pc;
+            cpu.rPC += pc;
         });
     }
 }

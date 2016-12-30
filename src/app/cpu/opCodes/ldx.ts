@@ -23,7 +23,7 @@ class LdxBase extends BaseOpCode {
             let target = cpu.getValue(mode), pc = size - 1;
             cpu.rX = target;
             cpu.rP = setFlags(cpu.rP, cpu.rX);
-            cpu.rPC = cpu.rPC += pc;
+            cpu.rPC += pc;
         });
     }
 }

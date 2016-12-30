@@ -53,7 +53,8 @@ class BranchBase extends BaseOpCode {
     constructor(value: OpCodeValue, predicate: (cpu: ICpu) => boolean) {
         super(BRANCH_FAMILY, value, AddressingModes.Relative, 0x02, cpu => {
             if (predicate(cpu)) {
-              cpu.rPC = computeBranch(cpu.rPC, cpu.addrPop());
+              let opAddress = cpu.rPC - 1, offset = cpu.addrPop();
+              cpu.rPC = computeBranch(opAddress, offset);
             } else {
               cpu.rPC += 1;
             }

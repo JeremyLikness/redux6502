@@ -22,7 +22,7 @@ class CpyBase extends BaseOpCode {
         super(CPY, value, mode, size, cpu => {
             let target = cpu.getValue(mode), pc = size - 1;
             cpu.rP = compareWithFlag(cpu.rP, cpu.rY, target);
-            cpu.rPC = cpu.rPC += pc;
+            cpu.rPC += pc;
         });
     }
 }
