@@ -45,6 +45,8 @@ export const FLAG_FAMILY = 'Flags';
 export const REGISTERS = 'Registers';
 export const STACK = 'Stack';
 
+export const INVALID = '???';
+
 export const ADC = 'ADC';
 export const AND = 'AND';
 export const ASL = 'ASL';

@@ -7,13 +7,22 @@ import {
     AddressingModes,
     Register,
     RAM,
+    IOpCode,
     IOpCodes,
     ICpu,
     computeBranch,
-    hexHelper
+    hexHelper,
+    OpCodeValue
 } from './globals';
 
-import { Memory, INVALID_OP, MEMORY_OVERFLOW, STACK_OVERFLOW, STACK_EMPTY } from './constants';
+import {
+    Memory,
+    INVALID_OP,
+    MEMORY_OVERFLOW,
+    STACK_OVERFLOW,
+    STACK_EMPTY } from './constants';
+
+import { InvalidOpCode } from './opcode.base';
 
 // static list of registered op codes, is then mapped into the IOpCodeMap in the ctor()
 import { OP_CODES } from './opCodeBridge';
@@ -60,6 +69,14 @@ export class Cpu implements ICpu {
         OP_CODES.forEach(family =>
             family.codes.forEach(code =>
         this._opCodeMap[code] = family));
+    }
+
+    public fetch(opCode: OpCodeValue): IOpCode {
+        let op = this._opCodeMap[opCode];
+        if (op) {
+            return op.fetch(this, opCode);
+        }
+        return new InvalidOpCode(opCode);
     }
 
     public execute(): void {

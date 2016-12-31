@@ -42,6 +42,8 @@ export interface ICpu {
     checkFlag: (flag: Flag) => boolean;
     peek: (address: Address) => Byte;
     setFlag: (originalFlag: Flag, flag: Flag, setAction?) => Flag;
+    execute: () => void;
+    fetch: (opCode: OpCodeValue) => IOpCode;
     addrPop: (offset?: Byte) => Byte;
     addrPopWord: () => Word;
     addrAbsoluteX: () => Address;
@@ -70,11 +72,13 @@ export interface IOpCodes {
     execute: (cpu: ICpu, opCode: OpCodeValue) => void;
     register: (...ops: IOpCode[]) => void;
     codes: OpCodeValue[];
+    fetch: (cpu: ICpu, opCode: OpCodeValue) => IOpCode;
 }
 
 export const hexHelper = (val: Byte | Word, digits = 2) => {
     let leading = Array(digits).fill('0').join('');
-    return (leading + val.toString(16)).substr(-1 * digits);
+    return (leading + val.toString(16).toLocaleUpperCase())
+        .substr(-1 * digits);
 };
 
 export const setFlags = (flags: Flag, value: Byte) => {

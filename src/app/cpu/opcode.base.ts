@@ -7,6 +7,8 @@ import {
     IOpCodes
 } from './globals';
 
+import { INVALID } from './constants';
+
 export class BaseOpCode implements IOpCode {
 
     private _execute: (cpu: ICpu) => void = cpu => {
@@ -15,7 +17,7 @@ export class BaseOpCode implements IOpCode {
 
     constructor(
         public name: string,
-        public value: Byte,
+        public value: OpCodeValue,
         public mode: AddressingModes,
         public size: Byte,
         logic: (cpu: ICpu) => void) {
@@ -24,6 +26,12 @@ export class BaseOpCode implements IOpCode {
 
     public execute(cpu: ICpu): void {
         this._execute(cpu);
+    }
+}
+
+export class InvalidOpCode extends BaseOpCode {
+    constructor(public value: OpCodeValue) {
+        super(INVALID, value, AddressingModes.Single, 0x01, cpu => {});
     }
 }
 
@@ -44,9 +52,17 @@ export class OpCodeFamily implements IOpCodes {
         });
     }
 
-    public execute(cpu: ICpu, opCode: OpCodeValue) {
+    public fetch(cpu: ICpu, opCode: OpCodeValue): IOpCode {
         let operation = this._codeMap[opCode];
         if (operation !== undefined) {
+            return operation;
+        }
+        return new InvalidOpCode(opCode);
+    }
+
+    public execute(cpu: ICpu, opCode: OpCodeValue) {
+        let operation = this.fetch(cpu, opCode);
+        if (operation.name !== INVALID) {
             operation.execute(cpu);
         } else {
             throw new Error(`Invalid op code ${opCode} for ${this.name} family.`);
