@@ -28,6 +28,9 @@ export interface ICompiledLine {
 export interface ICompilerResult {
     labels: ILabel[];
     compiledLines: ICompiledLine[];
+    lines: number;
+    bytes: number;
+    ellapsedTimeMilliseconds: number;
 }
 
 export const decompileOp = (cpu: ICpu, address: Address) => {
@@ -79,9 +82,23 @@ export const decompileOp = (cpu: ICpu, address: Address) => {
 
 export const decompileOps = (cpu: ICpu, startAddress: Address, lines = 10) => {
     let addr = startAddress, result: string[] = [], count = lines;
-    while (lines && addr <= Memory.Max) {
+    while (lines && addr <= Memory.Size) {
         result.push(decompileOp(cpu, addr));
         addr += cpu.fetch(cpu.memory[addr]).size;
+        lines -= 1;
+    }
+    return result;
+};
+
+export const dumpMemory = (cpu: ICpu, startAddress: Address, lines = 0x08) => {
+    let addr = startAddress, result: string[] = [], count = lines;
+    while (lines && addr < Memory.Size) {
+        let dumpLine = `$${hexHelper(addr, 4)}: `;
+        for (let offs = 0; offs < 0x10 && addr + offs < Memory.Size; offs += 1) {
+            dumpLine += `${hexHelper(cpu.memory[addr + offs],2)} `;
+        }
+        result.push(dumpLine.trim());
+        addr += 0x10;
         lines -= 1;
     }
     return result;

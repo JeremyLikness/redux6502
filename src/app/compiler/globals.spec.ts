@@ -1,4 +1,4 @@
-import { decompileOp, decompileOps } from './globals';
+import { decompileOp, decompileOps, dumpMemory } from './globals';
 
 import { OpCodeValue, Address, Byte } from '../cpu/globals';
 
@@ -111,6 +111,27 @@ describe('decompileOp', () => {
 
             let result = decompileOps(cpu, 0xC000, 7);
             expect(result).toEqual(expected);
+        });
+    });
+
+    describe('dump', () => {
+        it('dumps the requested lines with hex rows', () => {
+            expect(dumpMemory(cpu, 0xC000)).toEqual([
+                '$C000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$C010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$C020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$C030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$C040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$C050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$C060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$C070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+            ]);
+        });
+        it('stops after reaching end of memory', () => {
+            expect(dumpMemory(cpu, 0xFFE2)).toEqual([
+                '$FFE2: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00',
+                '$FFF2: 00 00 00 00 00 00 00 00 00 00 00 00 00 00'
+            ]);
         });
     });
 });
