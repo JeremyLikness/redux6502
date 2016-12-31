@@ -20,7 +20,7 @@ export interface ICompiledLine {
     address: Address;
     opCode: OpCodeValue;
     code: Byte[];
-    process: boolean;
+    processed: boolean;
     label: string;
     high: boolean;
 }
@@ -32,6 +32,15 @@ export interface ICompilerResult {
     bytes: number;
     ellapsedTimeMilliseconds: number;
 }
+
+export const newCompiledLine = () => ({
+    address: 0xC000,
+    opCode: 0x00,
+    code: [],
+    processed: false,
+    label: '',
+    high: false
+} as ICompiledLine);
 
 export const decompileOp = (cpu: ICpu, address: Address) => {
     let opCode = cpu.memory[address];

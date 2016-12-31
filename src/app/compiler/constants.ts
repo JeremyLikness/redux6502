@@ -31,3 +31,9 @@ export class CompilerPatterns {
     public static absoluteLabel: RegExp = /^([A-Z][A-Z_0-9]+)\s*/; // JMP LABEL
 }
 
+export const INVALID_OP_NAME = 'Invalid op code name:';
+export const INVALID_DCB = 'DCB requires a list of bytes to be inserted into the compilation stream.';
+export const INVALID_DCB_LIST = 'DCB with invalid value list:';
+export const INVALID_DCB_RANGE = 'DCB with value out of range:';
+
+export const DCB = 'DCB';
