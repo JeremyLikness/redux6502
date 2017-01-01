@@ -1,5 +1,7 @@
 
-import { ICompiledLine, ICompilerResult, ILabel } from './globals';
+import { ICompiledLine, ICompilerResult } from './globals';
+import { ILabel } from './labels';
+
 import {
     CompilerPatterns,
     INVALID_OP_NAME,
@@ -11,7 +13,7 @@ import {
 
 import { OP_CODES } from '../cpu/opCodeBridge';
 import { IOpCode, Address, Byte } from '../cpu/globals';
-import { Memory } from '../cpu/constants';
+import { Memory, BIT } from '../cpu/constants';
 import { Cpu, initialCpuState } from '../cpu/cpuState';
 
 interface AddressMap { [ addressMode: number]: IOpCode; };
@@ -42,9 +44,10 @@ export class Compiler {
     public parseOpCode(labels: ILabel[], opCodeExpression: string, compiledLine: ICompiledLine): ICompiledLine {
 
         let matches: RegExpExecArray = CompilerPatterns.opCode.exec(opCodeExpression),
-            opCodeName: string = matches[1];
-
-        let operations = this._map[opCodeName];
+            opCodeName: string = matches[1],
+            operations = this._map[opCodeName],
+            radix = 10,
+            processed = true;
 
         if (operations === undefined && opCodeName !== DCB) {
             throw new Error(`${INVALID_OP_NAME}${opCodeName}`);
@@ -54,6 +57,17 @@ export class Compiler {
 
         if (opCodeName === DCB) {
             return this.processDcb(parameter, compiledLine);
+        }
+
+        let hex = parameter.indexOf('$') >= 0;
+
+        if (hex) {
+            parameter = parameter.replace('$', '');
+            radix = 16;
+        }
+
+        if (opCodeName[0] === 'B' && opCodeName !== BIT) {
+            return this.processBranch(parameter, compiledLine, hex);
         }
 
         return compiledLine;
@@ -91,6 +105,10 @@ export class Compiler {
             }
             compiledLine.code.push(value);
         }
+        return compiledLine;
+    }
+
+    private processBranch(parameter: string, compiledLine: ICompiledLine, hex: boolean): ICompiledLine {
         return compiledLine;
     }
 

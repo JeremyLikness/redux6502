@@ -9,12 +9,7 @@ import {
 
 import { Memory } from '../cpu/constants';
 
-export interface ILabel {
-    address: Address;
-    labelName: string;
-    dependentLabelName: string;
-    offset: Byte;
-}
+import { ILabel } from './labels';
 
 export interface ICompiledLine {
     address: Address;
