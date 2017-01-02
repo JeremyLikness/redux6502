@@ -38,5 +38,6 @@ export const INVALID_DCB_RANGE = 'DCB with value out of range:';
 export const OUT_OF_RANGE = 'Absolute value out of range:';
 export const INVALID_ASSEMBLY = 'Invalid assembly:';
 export const INVALID_BRANCH = 'Invalid branch op:';
+export const REQUIRES_PARAMETER = 'Operation requires a parmeter:';
 
 export const DCB = 'DCB';

@@ -11,7 +11,8 @@ import {
     INVALID_DCB_RANGE,
     INVALID_ASSEMBLY,
     INVALID_BRANCH,
-    OUT_OF_RANGE
+    OUT_OF_RANGE,
+    REQUIRES_PARAMETER
 } from './constants';
 
 import { OP_CODES } from '../cpu/opCodeBridge';
@@ -73,7 +74,23 @@ export class Compiler {
             return this.processBranch(opCodeName, parameter, labels, radix, compiledLine, hex);
         }
 
+        if (!parameter.match(CompilerPatterns.notWhitespace)) {
+            return this.processSingle(opCodeName, compiledLine);
+        }
+
         return compiledLine;
+    }
+
+    private processSingle(opCodeName: string, compiledLine: ICompiledLine): ICompiledLine {
+        let result = Object.assign({}, compiledLine),
+            operation = this._map[opCodeName][AddressingModes.Single];
+        if (operation === undefined) {
+            throw new Error(`${REQUIRES_PARAMETER} ${opCodeName}`);
+        }
+        result.opCode = operation.value;
+        result.code.push(result.opCode);
+        result.processed = true;
+        return result;
     }
 
     private processDcb(parameter: string, compiledLine: ICompiledLine): ICompiledLine {
@@ -157,7 +174,6 @@ export class Compiler {
 
                 if (value <= compiledLine.address) {
                     offset = Memory.ByteMask - ((compiledLine.address + 1) - value);
-                    console.log(offset);
                     if (offset < 0x80 || offset > 0xFF) {
                         throw new Error(`${OUT_OF_RANGE} ${value}`);
                     }

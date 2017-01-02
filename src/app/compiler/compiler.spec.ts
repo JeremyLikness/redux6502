@@ -66,12 +66,14 @@ describe('Compiler', () => {
                     offset: 0
                 }];
                 compiledLine.address = 0xC002;
+                Object.freeze(compiledLine);
                 let result = compiler.parseOpCode(labels, 'BMI FOO', compiledLine);
                 expect(result.code).toEqual([0x30, 0xFC]);
             });
 
             it('handles an absolute address', () => {
                 compiledLine.address = 0xC002;
+                Object.freeze(compiledLine);
                 let result = compiler.parseOpCode([], 'BMI $C000', compiledLine);
                 expect(result.code).toEqual([0x30, 0xFC]);
             });
@@ -87,6 +89,20 @@ describe('Compiler', () => {
             it('throws if branch is too far ahead', () => {
                 expect(() => compiler.parseOpCode([], 'BMI $C082', compiledLine)).toThrow();
             });
+        });
+
+        describe('single mode', () => {
+
+            it ('throws if operation does not support single mode', () => {
+                expect(() => compiler.parseOpCode([], 'LDA', compiledLine)).toThrow();
+            });
+
+            it ('sets the op code successfully', () => {
+                Object.freeze(compiledLine);
+                let result = compiler.parseOpCode([], 'ASL', compiledLine);
+                expect(result.code).toEqual([0x0A]);
+            });
+
         });
 
     });
