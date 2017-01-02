@@ -35,5 +35,8 @@ export const INVALID_OP_NAME = 'Invalid op code name:';
 export const INVALID_DCB = 'DCB requires a list of bytes to be inserted into the compilation stream.';
 export const INVALID_DCB_LIST = 'DCB with invalid value list:';
 export const INVALID_DCB_RANGE = 'DCB with value out of range:';
+export const OUT_OF_RANGE = 'Absolute value out of range:';
+export const INVALID_ASSEMBLY = 'Invalid assembly:';
+export const INVALID_BRANCH = 'Invalid branch op:';
 
 export const DCB = 'DCB';

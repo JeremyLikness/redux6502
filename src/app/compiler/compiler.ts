@@ -1,6 +1,6 @@
 
 import { ICompiledLine, ICompilerResult } from './globals';
-import { ILabel } from './labels';
+import { ILabel, parseAbsoluteLabel } from './labels';
 
 import {
     CompilerPatterns,
@@ -8,11 +8,14 @@ import {
     DCB,
     INVALID_DCB,
     INVALID_DCB_LIST,
-    INVALID_DCB_RANGE
+    INVALID_DCB_RANGE,
+    INVALID_ASSEMBLY,
+    INVALID_BRANCH,
+    OUT_OF_RANGE
 } from './constants';
 
 import { OP_CODES } from '../cpu/opCodeBridge';
-import { IOpCode, Address, Byte } from '../cpu/globals';
+import { IOpCode, AddressingModes, Address, Byte } from '../cpu/globals';
 import { Memory, BIT } from '../cpu/constants';
 import { Cpu, initialCpuState } from '../cpu/cpuState';
 
@@ -67,7 +70,7 @@ export class Compiler {
         }
 
         if (opCodeName[0] === 'B' && opCodeName !== BIT) {
-            return this.processBranch(parameter, compiledLine, hex);
+            return this.processBranch(opCodeName, parameter, labels, radix, compiledLine, hex);
         }
 
         return compiledLine;
@@ -78,8 +81,10 @@ export class Compiler {
             throw new Error(INVALID_DCB);
         }
 
-        compiledLine.processed = true;
-        compiledLine.opCode = 0x0;
+        let compiledLineResult = Object.assign({}, compiledLine);
+
+        compiledLineResult.processed = true;
+        compiledLineResult.opCode = 0x0;
 
         let values = parameter.split(',');
 
@@ -103,13 +108,72 @@ export class Compiler {
             if (value < 0 || value > Memory.ByteMask) {
                 throw new Error(`${INVALID_DCB_RANGE}${parameter}`);
             }
-            compiledLine.code.push(value);
+            compiledLineResult.code.push(value);
         }
-        return compiledLine;
+        return compiledLineResult;
     }
 
-    private processBranch(parameter: string, compiledLine: ICompiledLine, hex: boolean): ICompiledLine {
-        return compiledLine;
+    private processBranch(
+        opCodeName: string,
+        parameter: string,
+        labels: ILabel[],
+        radix: number,
+        compiledLine: ICompiledLine,
+        hex: boolean): ICompiledLine {
+
+            let compiledLineResult = Object.assign({}, compiledLine),
+
+            test = hex ? CompilerPatterns.absoluteHex : CompilerPatterns.absolute;
+
+            compiledLineResult.processed = true;
+
+            let result = parseAbsoluteLabel(
+                parameter,
+                compiledLineResult,
+                labels,
+                test,
+                CompilerPatterns.absoluteLabel),
+            matchArray: RegExpMatchArray;
+
+            // absolute 
+            if (matchArray = result.parameter.match(test)) {
+
+                let rawValue = matchArray[1],
+                value = parseInt(rawValue, radix);
+                if (value < 0 || value > Memory.Max) {
+                    throw new Error(`${OUT_OF_RANGE} ${value}`);
+                }
+
+                result.parameter = result.parameter.replace(rawValue, '').trim();
+
+                if (result.parameter.match(CompilerPatterns.notWhitespace)) {
+                    throw new Error(`${INVALID_ASSEMBLY} ${parameter}`);
+                }
+
+                result.compiledLine.opCode = this._map[opCodeName][AddressingModes.Relative].value;
+                result.compiledLine.code.push(result.compiledLine.opCode);
+
+                let offset: number;
+
+                if (value <= compiledLine.address) {
+                    offset = Memory.ByteMask - ((compiledLine.address + 1) - value);
+                    console.log(offset);
+                    if (offset < 0x80 || offset > 0xFF) {
+                        throw new Error(`${OUT_OF_RANGE} ${value}`);
+                    }
+                } else {
+                    offset = (value - compiledLine.address) - 2;
+                    if (offset < 0 || offset > 0x7F) {
+                        throw new Error(`${OUT_OF_RANGE} ${value}`);
+                    }
+                }
+
+                result.compiledLine.code.push(offset & Memory.ByteMask);
+            } else {
+                throw new Error(`${INVALID_BRANCH} ${parameter}`);
+            }
+
+            return result.compiledLine;
     }
 
 }

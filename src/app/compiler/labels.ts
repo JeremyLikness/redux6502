@@ -8,14 +8,19 @@ export interface ILabel {
     offset: Byte;
 }
 
+export interface ILabelParseResult {
+    parameter: string;
+    compiledLine: ICompiledLine;
+}
+
 export const findLabel: (label: string, labels: ILabel[]) => ILabel = (label: string, labels: ILabel[]) => {
     let labelResult: ILabel = null;
-    labels.forEach(labelItem => {
-        if (labelItem.labelName === label && labelItem.dependentLabelName === undefined) {
-            labelResult = labelItem;
+    for (let idx = 0; idx < labels.length; idx += 1) {
+        if (labels[idx].labelName === label && labels[idx].dependentLabelName === undefined) {
+            return labels[idx];
         }
-    });
-    return labelResult;
+    }
+    return null;
 };
 
 export const parseAbsoluteLabel = (
@@ -24,6 +29,10 @@ export const parseAbsoluteLabel = (
     labels: ILabel[],
     targetExpr: RegExp,
     labelExpr: RegExp) => {
+        let result = {
+            parameter,
+            compiledLine: Object.assign({}, compiledLine)
+        };
         let matchArray: RegExpMatchArray = null;
         if (!parameter.match(targetExpr)) {
             if (matchArray = parameter.match(labelExpr)) {
@@ -31,13 +40,13 @@ export const parseAbsoluteLabel = (
                     labelInstance: ILabel = findLabel(label, labels);
                 if (labelInstance !== null) {
                     let value: Address = labelInstance.address;
-                    parameter = parameter.replace(matchArray[1], value.toString(10));
+                    result.parameter = parameter.replace(matchArray[1], value.toString(10));
                 } else {
-                    compiledLine.label = label;
-                    compiledLine.processed = false;
-                    parameter = parameter.replace(matchArray[1], '65535');
+                    result.compiledLine.label = label;
+                    result.compiledLine.processed = false;
+                    result.parameter = parameter.replace(matchArray[1], '65535');
                 }
             }
         }
-        return parameter;
+        return result;
 };

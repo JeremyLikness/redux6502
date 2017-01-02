@@ -1,6 +1,7 @@
 import { Compiler } from './compiler';
 import { ICompiledLine, newCompiledLine } from './globals';
 import { INVALID_DCB } from './constants';
+import { ILabel } from './labels';
 
 import { TestBed } from '@angular/core/testing';
 
@@ -44,13 +45,47 @@ describe('Compiler', () => {
             });
 
             it('loads decimal bytes', () => {
+                Object.freeze(compiledLine);
                 let result = compiler.parseOpCode([], 'DCB 255, 10', compiledLine);
                 expect(result.code).toEqual([255, 10]);
             });
 
             it('loads hexadecimal bytes', () => {
+                Object.freeze(compiledLine);
                 let result = compiler.parseOpCode([], 'DCB $10, $FA', compiledLine);
                 expect(result.code).toEqual([0x10, 0xFA]);
+            });
+        });
+
+        describe('branches', () => {
+
+            it('handles an absolute label', () => {
+                let labels: ILabel[] = [{
+                    address: 0xC000,
+                    labelName: 'FOO',
+                    offset: 0
+                }];
+                compiledLine.address = 0xC002;
+                let result = compiler.parseOpCode(labels, 'BMI FOO', compiledLine);
+                expect(result.code).toEqual([0x30, 0xFC]);
+            });
+
+            it('handles an absolute address', () => {
+                compiledLine.address = 0xC002;
+                let result = compiler.parseOpCode([], 'BMI $C000', compiledLine);
+                expect(result.code).toEqual([0x30, 0xFC]);
+            });
+
+            it('throws if no address', () => {
+                expect(() => compiler.parseOpCode([], 'BMI', compiledLine)).toThrow();
+            });
+
+            it('throws if branch is too far back', () => {
+                expect(() => compiler.parseOpCode([], 'BMI $BF80', compiledLine)).toThrow();
+            });
+
+            it('throws if branch is too far ahead', () => {
+                expect(() => compiler.parseOpCode([], 'BMI $C082', compiledLine)).toThrow();
             });
         });
 

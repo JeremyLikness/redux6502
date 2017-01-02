@@ -45,6 +45,7 @@ describe ('labels', () => {
     });
 
     describe('parseAbsoluteLabel', () => {
+
         it('properly ignores an absolute hex address', () => {
             let result = parseAbsoluteLabel(
                 '$C000',
@@ -52,8 +53,9 @@ describe ('labels', () => {
                 labels,
                 CompilerPatterns.absoluteHex,
                 CompilerPatterns.absoluteLabel);
-            expect(result).toBe('$C000');
+            expect(result.parameter).toBe('$C000');
         });
+
         it('properly ignores a decimal absolute address', () => {
             let result = parseAbsoluteLabel(
                 '49152',
@@ -61,21 +63,24 @@ describe ('labels', () => {
                 labels,
                 CompilerPatterns.absolute,
                 CompilerPatterns.absoluteLabel);
-            expect(result).toBe('49152');
+            expect(result.parameter).toBe('49152');
         });
+
         it('sets the line to not processed and address to 65535 when label is not found', () => {
             let newLine = newCompiledLine();
             newLine.processed = true;
+            Object.freeze(newLine);
             let result = parseAbsoluteLabel(
                 'TEST',
                 newLine,
                 labels,
                 CompilerPatterns.absolute,
                 CompilerPatterns.absoluteLabel);
-            expect(result).toBe('65535');
-            expect(newLine.label).toBe('TEST');
-            expect(newLine.processed).toBe(false);
+            expect(result.parameter).toBe('65535');
+            expect(result.compiledLine.label).toBe('TEST');
+            expect(result.compiledLine.processed).toBe(false);
         });
+
         it('returns the parameter as an absolute address when the label is found', () => {
             let result = parseAbsoluteLabel(
                 'BAR',
@@ -83,7 +88,7 @@ describe ('labels', () => {
                 labels,
                 CompilerPatterns.absolute,
                 CompilerPatterns.absoluteLabel);
-            expect(result).toBe('53248');
+            expect(result.parameter).toBe('53248');
         });
     });
 
