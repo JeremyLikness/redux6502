@@ -39,5 +39,7 @@ export const OUT_OF_RANGE = 'Absolute value out of range:';
 export const INVALID_ASSEMBLY = 'Invalid assembly:';
 export const INVALID_BRANCH = 'Invalid branch op:';
 export const REQUIRES_PARAMETER = 'Operation requires a parmeter:';
+export const INDXINDRX_OUT_OF_RANGE = 'Indexed Indirect X value of out range:';
+export const NO_INDXINDRX_SUPPORT = 'doesn\'t support indexed indirect X mode:';
 
 export const DCB = 'DCB';

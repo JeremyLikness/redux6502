@@ -105,5 +105,27 @@ describe('Compiler', () => {
 
         });
 
+        describe('indexed indirect X mode', () => {
+
+            it('throws if the operation attempts to access a non-zero page', () => {
+                expect(() => compiler.parseOpCode([], 'LDA (256, X)', compiledLine)).toThrow();
+            });
+
+            it('throws if there are extraneous codes on the line that are not comments', () => {
+                expect(() => compiler.parseOpCode([], 'LDA ($10,X) YZ', compiledLine)).toThrow();
+            });
+
+            it ('throws if the op code does not support the addressing mode', () => {
+                expect(() => compiler.parseOpCode([], 'LDX ($10, X)', compiledLine)).toThrow();
+            });
+
+            it ('compiles the indexed indirect x code properly', () => {
+                Object.freeze(compiledLine);
+                let result = compiler.parseOpCode([], 'LDA ($10,X)', compiledLine);
+                expect(result.code).toEqual([0xA1, 0x10]);
+            });
+
+        });
+
     });
 });

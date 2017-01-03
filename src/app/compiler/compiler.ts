@@ -12,7 +12,9 @@ import {
     INVALID_ASSEMBLY,
     INVALID_BRANCH,
     OUT_OF_RANGE,
-    REQUIRES_PARAMETER
+    REQUIRES_PARAMETER,
+    INDXINDRX_OUT_OF_RANGE,
+    NO_INDXINDRX_SUPPORT
 } from './constants';
 
 import { OP_CODES } from '../cpu/opCodeBridge';
@@ -78,7 +80,54 @@ export class Compiler {
             return this.processSingle(opCodeName, compiledLine);
         }
 
+        let matchArray: RegExpMatchArray;
+
+        let idxIndrXTest = hex ? CompilerPatterns.indirectXHex : CompilerPatterns.indirectX;
+
+        if (matchArray = parameter.match(idxIndrXTest)) {
+            return this.processIndexedIndirectX(matchArray, opCodeName, radix, parameter, compiledLine);
+        }
+
         return compiledLine;
+    }
+
+    private processIndexedIndirectX(
+        matchArray: RegExpMatchArray,
+        opCodeName: string,
+        radix: number,
+        parameter: string,
+        compiledLine: ICompiledLine): ICompiledLine {
+            let result = Object.assign({}, compiledLine),
+                rawValue = matchArray[1],
+                xIndex = matchArray[2],
+                value = parseInt(rawValue, radix);
+
+            if (value < 0 || value > Memory.ByteMask) {
+                throw new Error(`${INDXINDRX_OUT_OF_RANGE} ${value}`);
+            }
+
+            let parms = parameter.replace('(', '')
+                .replace(')', '')
+                .replace(xIndex, '')
+                .replace(rawValue, '')
+                .trim();
+
+            if (parms.match(CompilerPatterns.notWhitespace)) {
+                throw new Error(`${INVALID_ASSEMBLY} ${parameter}`);
+            }
+
+            let operation = this._map[opCodeName][AddressingModes.IndexedIndirectX];
+
+            if (operation === undefined) {
+                throw new Error(`${opCodeName} ${NO_INDXINDRX_SUPPORT} ${parameter}`);
+            }
+
+            result.opCode = operation.value;
+            result.code.push(result.opCode);
+            result.code.push(value);
+            result.processed = true;
+
+            return result;
     }
 
     private processSingle(opCodeName: string, compiledLine: ICompiledLine): ICompiledLine {
