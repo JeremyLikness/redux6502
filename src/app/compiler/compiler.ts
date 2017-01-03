@@ -199,6 +199,7 @@ export class Compiler {
                 labels,
                 test,
                 CompilerPatterns.absoluteLabel),
+
             matchArray: RegExpMatchArray;
 
             // absolute 
