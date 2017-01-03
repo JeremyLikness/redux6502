@@ -1,4 +1,8 @@
-import { decompileOp, decompileOps, dumpMemory } from './globals';
+import {
+    decompileOp,
+    decompileOps,
+    dumpMemory,
+    ICompilerResult } from './globals';
 
 import { OpCodeValue, Address, Byte } from '../cpu/globals';
 

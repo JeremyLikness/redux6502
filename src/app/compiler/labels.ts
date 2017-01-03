@@ -1,5 +1,9 @@
-import { Address, Byte } from '../cpu/globals';
-import { ICompiledLine } from './globals';
+import { Address, Byte, AddressingModes } from '../cpu/globals';
+import { Memory } from '../cpu/constants';
+
+import { LABEL_NOT_DEFINED, OUT_OF_RANGE, NOT_IMPLEMENTED } from './constants';
+
+import { ICompiledLine, ICompilerResult } from './globals';
 
 export interface ILabel {
     address: Address;
@@ -49,4 +53,67 @@ export const parseAbsoluteLabel = (
             }
         }
         return result;
+};
+
+export const updateLabels = (compilerResult: ICompilerResult) => {
+    let result = Object.assign({}, compilerResult, {
+        labels: [...compilerResult.labels],
+        compiledLines: [...compilerResult.compiledLines]
+    });
+
+    for (let idx = 0; idx < result.labels.length; idx += 1) {
+        let label = Object.assign({}, result.labels[idx]);
+        result.labels[idx] = label;
+    }
+
+    for (let idx = 0; idx < result.compiledLines.length; idx += 1) {
+
+        let compiledLine = Object.assign({}, result.compiledLines[idx]);
+        result.compiledLines[idx] = compiledLine;
+
+        if (compiledLine.processed) {
+            continue;
+        }
+
+        let instance = findLabel(compiledLine.label, result.labels);
+
+        if (instance === null) {
+            throw new Error(`${LABEL_NOT_DEFINED} ${compiledLine.label}`);
+        }
+
+        // relative or immediate
+        if (compiledLine.code.length === 2) {
+            // BMI MYLABEL
+            if (compiledLine.mode === AddressingModes.Relative) {
+                let offset: number;
+                if (instance.address <= compiledLine.address) {
+                    offset = Memory.ByteMask - ((compiledLine.address + 1) - instance.address);
+                } else {
+                    offset = (instance.address - compiledLine.address) - 2;
+                }
+                if (offset < 0x00 || offset > 0xFF) {
+                    throw new Error(`${OUT_OF_RANGE} ${offset}`);
+                }
+                compiledLine.code[1] = offset;
+            } else {
+                // LDA <MYLABEL <-- get lower byte of MYLABEL address 
+                let value = compiledLine.high ? (instance.address >> Memory.BitsInByte) : instance.address;
+                compiledLine.code[1] = value & Memory.ByteMask;
+            }
+            compiledLine.processed = true;
+            continue;
+        }
+
+        // absolute mode
+        if (compiledLine.code.length === 3) {
+            compiledLine.code[1] = instance.address & Memory.ByteMask; // lo byte
+            compiledLine.code[2] = (instance.address >> Memory.BitsInByte) & Memory.ByteMask; // hi byte
+            compiledLine.processed = true;
+            continue;
+        }
+
+        throw new Error(NOT_IMPLEMENTED);
+    }
+
+    return result;
 };

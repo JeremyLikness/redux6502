@@ -123,6 +123,7 @@ export class Compiler {
             }
 
             result.opCode = operation.value;
+            result.mode = AddressingModes.IndexedIndirectX;
             result.code.push(result.opCode);
             result.code.push(value);
             result.processed = true;
@@ -137,6 +138,7 @@ export class Compiler {
             throw new Error(`${REQUIRES_PARAMETER} ${opCodeName}`);
         }
         result.opCode = operation.value;
+        result.mode = AddressingModes.Single;
         result.code.push(result.opCode);
         result.processed = true;
         return result;
@@ -218,6 +220,7 @@ export class Compiler {
                 }
 
                 result.compiledLine.opCode = this._map[opCodeName][AddressingModes.Relative].value;
+                result.compiledLine.mode = AddressingModes.Relative;
                 result.compiledLine.code.push(result.compiledLine.opCode);
 
                 let offset: number;

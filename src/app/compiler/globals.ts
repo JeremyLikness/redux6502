@@ -9,11 +9,17 @@ import {
 
 import { Memory } from '../cpu/constants';
 
-import { ILabel } from './labels';
+import { ILabel, findLabel } from './labels';
+
+import {
+    LABEL_NOT_DEFINED,
+    OUT_OF_RANGE,
+    NOT_IMPLEMENTED } from './constants';
 
 export interface ICompiledLine {
     address: Address;
     opCode: OpCodeValue;
+    mode: AddressingModes;
     code: Byte[];
     processed: boolean;
     label: string;
@@ -22,6 +28,7 @@ export interface ICompiledLine {
 
 export interface ICompilerResult {
     labels: ILabel[];
+    memoryTags: number;
     compiledLines: ICompiledLine[];
     lines: number;
     bytes: number;
@@ -32,6 +39,7 @@ export const newCompiledLine = () => ({
     address: 0xC000,
     opCode: 0x00,
     code: [],
+    mode: null,
     processed: false,
     label: '',
     high: false
