@@ -1,4 +1,5 @@
 import { Address, Byte } from './globals';
+import { Action } from 'redux';
 
 export enum Actions {
     SetPC,
@@ -12,20 +13,17 @@ export enum Actions {
     Debug
 }
 
-export interface IAction {
-    type: Actions;
-}
 
-export interface ISetPCAction extends IAction {
+export interface ISetPCAction extends Action {
     address: Address;
 }
 
-export interface IPokeAction extends IAction {
+export interface IPokeAction extends Action {
     address: Address;
     value: Byte[];
 }
 
-export interface IRunAction extends IAction {
+export interface IRunAction extends Action {
     iterations: number;
 }
 
@@ -47,7 +45,7 @@ export const cpuRun = (iterations: number) => ({
 
 const simpleAction = (action: Actions) => ({
     type: action
-} as IAction);
+} as Action);
 
 export const cpuDebug = () => simpleAction(Actions.Debug);
 export const cpuStop = () => simpleAction(Actions.Stop);

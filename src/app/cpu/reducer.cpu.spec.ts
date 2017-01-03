@@ -1,4 +1,4 @@
-import { Actions } from './actions.cpu';
+import { Actions, IRunAction, IPokeAction, ISetPCAction } from './actions.cpu';
 
 import { Memory, INVALID_OP } from './constants';
 
@@ -143,7 +143,7 @@ describe('reducer', () => {
   describe('run', () => {
 
       it('should do nothing if not in a running state', () => {
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <IRunAction>{
               type: Actions.Run,
               iterations: 5
           })).toEqual(defaultCpu);
@@ -156,7 +156,7 @@ describe('reducer', () => {
           expected.controls.errorMessage = INVALID_OP + ' (0)';
           defaultCpu.controls.runningState = true;
           freezeCpu(defaultCpu);
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <IRunAction>{
               type: Actions.Run,
               iterations: 5
           })).toEqual(expected);
@@ -172,7 +172,7 @@ describe('reducer', () => {
 
           freezeCpu(defaultCpu);
 
-          let result = cpuReducer(defaultCpu, {
+          let result = cpuReducer(defaultCpu, <IRunAction>{
               type: Actions.Run,
               iterations: 70
           });
@@ -224,7 +224,7 @@ describe('reducer', () => {
 
           freezeCpu(defaultCpu);
 
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <IPokeAction>{
               type: Actions.Poke,
               address: 1,
               value: [2]
@@ -238,7 +238,7 @@ describe('reducer', () => {
 
           freezeCpu(defaultCpu);
 
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <IPokeAction>{
               type: Actions.Poke,
               address: 1,
               value: [2, 3]
@@ -251,7 +251,7 @@ describe('reducer', () => {
 
           freezeCpu(defaultCpu);
 
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <IPokeAction>{
               type: Actions.Poke,
               address: Memory.Size + 1,
               value: [2]
@@ -264,7 +264,7 @@ describe('reducer', () => {
 
           freezeCpu(defaultCpu);
 
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <IPokeAction>{
               type: Actions.Poke,
               address: 1,
               value: [Memory.ByteMask + 3]
@@ -279,7 +279,7 @@ describe('reducer', () => {
 
           freezeCpu(defaultCpu);
 
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <ISetPCAction>{
               type: Actions.SetPC,
               address: 0xC000
           })).toEqual(expected);
@@ -291,7 +291,7 @@ describe('reducer', () => {
 
           freezeCpu(defaultCpu);
 
-          expect(cpuReducer(defaultCpu, {
+          expect(cpuReducer(defaultCpu, <ISetPCAction>{
               type: Actions.SetPC,
               address: 0x10001
           })).toEqual(expected);

@@ -2,7 +2,9 @@ import { Memory } from './constants';
 
 import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
-import { Actions, IAction, IPokeAction, IRunAction, ISetPCAction } from './actions.cpu';
+import { Actions, IPokeAction, IRunAction, ISetPCAction } from './actions.cpu';
+
+import { Action } from 'redux';
 
 import { poke } from './globals';
 
@@ -26,8 +28,8 @@ const timelapse = (cpu: Cpu) => {
     }
 };
 
-export const cpuReducer: (state: Cpu, action: IAction | IPokeAction | IRunAction | ISetPCAction) => Cpu =
-    (state: Cpu, action: IAction | IPokeAction | IRunAction | ISetPCAction) => {
+export const cpuReducer: (state: Cpu, action: Action) => Cpu =
+    (state: Cpu, action: Action) => {
     switch (action.type) {
 
         case Actions.SetPC:
