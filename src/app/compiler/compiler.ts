@@ -35,7 +35,7 @@ interface AddressMap { [ addressMode: number]: IOpCode; };
 interface OpCodeMap { [opCodeName: string]: AddressMap; };
 
 export const moveAddress = (input: string) => {
-    let address: Address = null;
+    let address: Address = null, method = 'Move Address:';
 
     if (input.match(CompilerPatterns.memorySet)) {
 
@@ -49,7 +49,7 @@ export const moveAddress = (input: string) => {
         }
 
         if (address < 0 || address > Memory.Max) {
-            throw new Error(`${OUT_OF_RANGE} ${address}`);
+            throw new Error(`${method} ${OUT_OF_RANGE} ${address}`);
         }
     }
 
@@ -77,6 +77,17 @@ export class Compiler {
         });
     }
 
+    // compiles source and returns it in a structure that can be parsed
+    // otherwise it throws an exception 
+    public compile(source: string): ICompilerResult {
+        let start = new Date();
+        let sourceLines = source.split('\n');
+        let result = this.compileAndParseLabels(sourceLines);
+        let end = new Date();
+        result.ellapsedTimeMilliseconds = end.getTime() - start.getTime();
+        return result;
+    }
+
     public compileAndParseLabels(sourceLines: string[]): ICompilerResult {
         let result: ICompilerResult = {
             labels: [],
@@ -86,7 +97,7 @@ export class Compiler {
             bytes: 0,
             ellapsedTimeMilliseconds: 0
         };
-        let address = Memory.DefaultStart;
+        let address = Memory.DefaultStart, method = 'Compile and Parse Labels:';
         for (let idx = 0; idx < sourceLines.length; idx += 1) {
 
             try {
@@ -133,14 +144,14 @@ export class Compiler {
                     let checkAddress = parseInt(label, hex ? 16 : 10);
 
                     if (checkAddress < 0 || checkAddress > Memory.Max) {
-                        throw new Error (`${OUT_OF_RANGE} ${label}`);
+                        throw new Error (`${method} ${OUT_OF_RANGE} ${label}`);
                     }
 
                     address = checkAddress;
                 } else if (input.match(CompilerPatterns.regularLabel)) {
                     let labelName = CompilerPatterns.regularLabel.exec(input)[1].trim();
                     if (findLabel(labelName, result.labels)) {
-                        throw new Error (`${DUPLICATE_LABEL} ${labelName}`);
+                        throw new Error (`${method} ${DUPLICATE_LABEL} ${labelName}`);
                     }
                     result.labels.push(<ILabel>{
                         address,
@@ -156,7 +167,6 @@ export class Compiler {
                 }
 
                 let compiledLine = this.compileLine(result, address, input);
-                console.log(compiledLine);
                 result.compiledLines.push(compiledLine);
                 address += compiledLine.code.length;
                 result.bytes += compiledLine.code.length;
@@ -178,13 +188,13 @@ export class Compiler {
             processed: false,
             label: '',
             high: false
-        };
+        }, method = 'Compile Single Line:';
 
         if (input.match(CompilerPatterns.opCode)) {
             return this.parseOpCode(compilerResult.labels, input, result);
         }
 
-        throw new Error(`${INVALID_ASSEMBLY} ${input}`);
+        throw new Error(`${method} ${INVALID_ASSEMBLY} ${input}`);
     }
 
     public parseOpCode(labels: ILabel[], opCodeExpression: string, compiledLine: ICompiledLine): ICompiledLine {
@@ -193,10 +203,11 @@ export class Compiler {
             opCodeName: string = matches[1],
             operations = this._map[opCodeName],
             radix = 10,
-            processed = true;
+            processed = true,
+            method = 'Parse Individual Op Code:';
 
         if (operations === undefined && opCodeName !== DCB) {
-            throw new Error(`${INVALID_OP_NAME}${opCodeName}`);
+            throw new Error(`${method} ${INVALID_OP_NAME}${opCodeName}`);
         }
 
         let parameter = opCodeExpression.replace(opCodeName, '').trim();
@@ -228,7 +239,7 @@ export class Compiler {
             return this.processIndexedIndirectX(matchArray, opCodeName, radix, parameter, compiledLine);
         }
 
-        throw new Error(`${INVALID_ASSEMBLY} ${opCodeExpression}`);
+        throw new Error(`${method} ${INVALID_ASSEMBLY} ${opCodeExpression}`);
     }
 
     private processIndexedIndirectX(
@@ -240,10 +251,11 @@ export class Compiler {
             let result = Object.assign({}, compiledLine),
                 rawValue = matchArray[1],
                 xIndex = matchArray[2],
-                value = parseInt(rawValue, radix);
+                value = parseInt(rawValue, radix),
+                method = 'Process Indexed, Indirect X:'
 
             if (value < 0 || value > Memory.ByteMask) {
-                throw new Error(`${INDXINDRX_OUT_OF_RANGE} ${value}`);
+                throw new Error(`${method} ${INDXINDRX_OUT_OF_RANGE} ${value}`);
             }
 
             let parms = parameter.replace('(', '')
@@ -253,13 +265,13 @@ export class Compiler {
                 .trim();
 
             if (parms.match(CompilerPatterns.notWhitespace)) {
-                throw new Error(`${INVALID_ASSEMBLY} ${parameter}`);
+                throw new Error(`${method} ${INVALID_ASSEMBLY} ${parameter}`);
             }
 
             let operation = this._map[opCodeName][AddressingModes.IndexedIndirectX];
 
             if (operation === undefined) {
-                throw new Error(`${opCodeName} ${NO_INDXINDRX_SUPPORT} ${parameter}`);
+                throw new Error(`${method} ${opCodeName} ${NO_INDXINDRX_SUPPORT} ${parameter}`);
             }
 
             result.opCode = operation.value;
@@ -273,9 +285,10 @@ export class Compiler {
 
     private processSingle(opCodeName: string, compiledLine: ICompiledLine): ICompiledLine {
         let result = Object.assign({}, compiledLine),
-            operation = this._map[opCodeName][AddressingModes.Single];
+            operation = this._map[opCodeName][AddressingModes.Single],
+            method = 'Process Single Op Code:';
         if (operation === undefined) {
-            throw new Error(`${REQUIRES_PARAMETER} ${opCodeName}`);
+            throw new Error(`${method} ${REQUIRES_PARAMETER} ${opCodeName}`);
         }
         result.opCode = operation.value;
         result.mode = AddressingModes.Single;
@@ -285,8 +298,10 @@ export class Compiler {
     }
 
     private processDcb(parameter: string, compiledLine: ICompiledLine): ICompiledLine {
+        let method = 'Process Bytes (DCB):';
+
         if (parameter === '') {
-            throw new Error(INVALID_DCB);
+            throw new Error(`${method} ${INVALID_DCB}`);
         }
 
         let compiledLineResult = Object.assign({}, compiledLine);
@@ -297,12 +312,12 @@ export class Compiler {
         let values = parameter.split(',');
 
         if (values.length === 0) {
-            throw new Error(INVALID_DCB);
+            throw new Error(`${method} ${INVALID_DCB}`);
         }
         for (let idx = 0; idx < values.length; idx++) {
 
             if (values[idx] === undefined || values[idx] === null || values[idx].length === 0) {
-                throw new Error(`${INVALID_DCB_LIST}${parameter}`);
+                throw new Error(`${method} ${INVALID_DCB_LIST}${parameter}`);
             }
             let value: Byte = 0x0;
             let entry = values[idx];
@@ -314,7 +329,7 @@ export class Compiler {
                 value = parseInt(entry, 10);
             }
             if (value < 0 || value > Memory.ByteMask) {
-                throw new Error(`${INVALID_DCB_RANGE}${parameter}`);
+                throw new Error(`${method} ${INVALID_DCB_RANGE}${parameter}`);
             }
             compiledLineResult.code.push(value);
         }
@@ -330,8 +345,8 @@ export class Compiler {
         hex: boolean): ICompiledLine {
 
             let compiledLineResult = Object.assign({}, compiledLine),
-
-            test = hex ? CompilerPatterns.absoluteHex : CompilerPatterns.absolute;
+            test = hex ? CompilerPatterns.absoluteHex : CompilerPatterns.absolute,
+            method = 'Process Branch Op Code:';
 
             compiledLineResult.processed = true;
 
@@ -350,36 +365,36 @@ export class Compiler {
                 let rawValue = matchArray[1],
                 value = parseInt(rawValue, radix);
                 if (value < 0 || value > Memory.Max) {
-                    throw new Error(`${OUT_OF_RANGE} ${value}`);
+                    throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
                 }
 
                 result.parameter = result.parameter.replace(rawValue, '').trim();
 
                 if (result.parameter.match(CompilerPatterns.notWhitespace)) {
-                    throw new Error(`${INVALID_ASSEMBLY} ${parameter}`);
+                    throw new Error(`${method} ${INVALID_ASSEMBLY} ${parameter}`);
                 }
 
                 result.compiledLine.opCode = this._map[opCodeName][AddressingModes.Relative].value;
                 result.compiledLine.mode = AddressingModes.Relative;
                 result.compiledLine.code.push(result.compiledLine.opCode);
 
-                let offset: number;
+                let offset: number, validate = result.compiledLine.processed;
 
                 if (value <= compiledLine.address) {
                     offset = Memory.ByteMask - ((compiledLine.address + 1) - value);
-                    if (offset < 0x80 || offset > 0xFF) {
-                        throw new Error(`${OUT_OF_RANGE} ${value}`);
+                    if (validate && (offset < 0x80 || offset > 0xFF)) {
+                        throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
                     }
                 } else {
                     offset = (value - compiledLine.address) - 2;
-                    if (offset < 0 || offset > 0x7F) {
-                        throw new Error(`${OUT_OF_RANGE} ${value}`);
+                    if (validate && (offset < 0 || offset > 0x7F)) {
+                        throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
                     }
                 }
 
                 result.compiledLine.code.push(offset & Memory.ByteMask);
             } else {
-                throw new Error(`${INVALID_BRANCH} ${parameter}`);
+                throw new Error(`${method} ${INVALID_BRANCH} ${parameter}`);
             }
 
             return result.compiledLine;

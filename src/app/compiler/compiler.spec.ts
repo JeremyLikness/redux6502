@@ -1,6 +1,5 @@
 import { Compiler, moveAddress } from './compiler';
 import { ICompiledLine, newCompiledLine } from './globals';
-import { INVALID_DCB } from './constants';
 import { Memory } from '../cpu/constants';
 import { ILabel } from './labels';
 
@@ -38,6 +37,25 @@ describe('Compiler', () => {
 
         it ('parses decimal addresses', () => {
             expect(moveAddress('* =49152 ')).toBe(0xC000);
+        });
+
+    });
+
+    describe('compile', () => {
+
+        it('computes the stats', () => {
+            let result = compiler.compile('* = $C000\n' +
+            'LABEL: asl\n' +
+            'LABEL2 = LaBEL + 6\n' +
+            '$C001: ASL\n' +
+            'BMI LABEL\n' +
+            'BPL LABEL2');
+
+            expect(result.bytes).toBe(6);
+            expect(result.compiledLines.length).toBe(4);
+            expect(result.labels.length).toBe(2);
+            expect(result.memoryTags).toBe(1);
+            expect(result.ellapsedTimeMilliseconds).toBeGreaterThanOrEqual(0);
         });
 
     });
@@ -129,7 +147,7 @@ describe('Compiler', () => {
 
             it('throws on no list', () => {
                 expect(() => compiler.parseOpCode([], 'DCB', compiledLine))
-                    .toThrowError(INVALID_DCB);
+                    .toThrow();
             });
 
             it('throws on invalid value', () => {

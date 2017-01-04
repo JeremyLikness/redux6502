@@ -38,17 +38,18 @@ export const findLabel: (label: string, labels: ILabel[]) => ILabel = (label: st
 
 // handles labels based on math, i.e. MYLABEL = THATLABEL + 5
 export const parseLabelMath = (input: string, labels: ILabel[]) => {
-    let matches = CompilerPatterns.labelMath.exec(input);
+    let matches = CompilerPatterns.labelMath.exec(input),
+        method = 'Parse Label Math:';
     if (matches === null || matches.length !== 5) {
-        throw new Error(`${INVALID_LABEL_MATH} ${input}`);
+        throw new Error(`${method} ${INVALID_LABEL_MATH} ${input}`);
     }
     let labelName = matches[1].trim();
     let otherLabel = matches[2].trim();
     if (findLabel(labelName, labels)) {
-        throw new Error(`${DUPLICATE_LABEL} ${labelName}`);
+        throw new Error(`${method} ${DUPLICATE_LABEL} ${labelName}`);
     }
     if (labelName === otherLabel) {
-        throw new Error(`${CANNOT_REDEFINE} ${labelName}`);
+        throw new Error(`${method} ${CANNOT_REDEFINE} ${labelName}`);
     }
     let offset = parseInt(matches[4], 10);
     if (matches[3] === '-') {
@@ -64,7 +65,7 @@ export const parseLabelMath = (input: string, labels: ILabel[]) => {
 
 // takes all labels that depend on other labels and resolves them
 export const resolveLabels = (labels: ILabel[]) => {
-    let result: ILabel[] = [];
+    let result: ILabel[] = [], method = 'Resolve Dependent Labels:';
     labels.forEach(label => {
         result.push(Object.assign({}, label));
     });
@@ -75,12 +76,12 @@ export const resolveLabels = (labels: ILabel[]) => {
         }
         let target = findLabel(instance.dependentLabelName, labels);
         if (target === null) {
-            throw new Error(`${BAD_LABEL} ${instance.labelName}` +
+            throw new Error(`${method} ${BAD_LABEL} ${instance.labelName}` +
                 ` depends on ${instance.dependentLabelName}`);
         }
         instance.address = (target.address + instance.offset);
         if (instance.address > Memory.Max) {
-            throw new Error(`${OUT_OF_RANGE} ${instance.address}`);
+            throw new Error(`${method} ${OUT_OF_RANGE} ${instance.address}`);
         }
         delete instance.dependentLabelName;
     }
@@ -121,7 +122,7 @@ export const updateLabels = (compilerResult: ICompilerResult) => {
     let result = Object.assign({}, compilerResult, {
         labels: [...compilerResult.labels],
         compiledLines: [...compilerResult.compiledLines]
-    });
+    }), method = 'Process Compiled Labels:';
 
     for (let idx = 0; idx < result.labels.length; idx += 1) {
         let label = Object.assign({}, result.labels[idx]);
@@ -140,7 +141,7 @@ export const updateLabels = (compilerResult: ICompilerResult) => {
         let instance = findLabel(compiledLine.label, result.labels);
 
         if (instance === null) {
-            throw new Error(`${LABEL_NOT_DEFINED} ${compiledLine.label}`);
+            throw new Error(`${method} ${LABEL_NOT_DEFINED} ${compiledLine.label}`);
         }
 
         // relative or immediate
@@ -154,7 +155,7 @@ export const updateLabels = (compilerResult: ICompilerResult) => {
                     offset = (instance.address - compiledLine.address) - 2;
                 }
                 if (offset < 0x00 || offset > 0xFF) {
-                    throw new Error(`${OUT_OF_RANGE} ${offset}`);
+                    throw new Error(`${method} ${OUT_OF_RANGE} ${offset}`);
                 }
                 compiledLine.code[1] = offset;
             } else {
