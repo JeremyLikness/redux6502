@@ -1,7 +1,12 @@
 import { Address, Byte, AddressingModes } from '../cpu/globals';
 import { Memory } from '../cpu/constants';
 
-import { LABEL_NOT_DEFINED, OUT_OF_RANGE, NOT_IMPLEMENTED } from './constants';
+import {
+    LABEL_NOT_DEFINED,
+    OUT_OF_RANGE,
+    NOT_IMPLEMENTED,
+    BAD_LABEL
+} from './constants';
 
 import { ICompiledLine, ICompilerResult } from './globals';
 
@@ -27,6 +32,32 @@ export const findLabel: (label: string, labels: ILabel[]) => ILabel = (label: st
     return null;
 };
 
+// takes all labels that depend on other labels and resolves them
+export const resolveLabels = (labels: ILabel[]) => {
+    let result: ILabel[] = [];
+    labels.forEach(label => {
+        result.push(Object.assign({}, label));
+    });
+    for (let idx = 0; idx < labels.length; idx += 1) {
+        let instance = result[idx];
+        if (instance.dependentLabelName === undefined) {
+            continue;
+        }
+        let target = findLabel(instance.dependentLabelName, labels);
+        if (target === null) {
+            throw new Error(`${BAD_LABEL} ${instance.labelName}` +
+                ` depends on ${instance.dependentLabelName}`);
+        }
+        instance.address = (target.address + instance.offset);
+        if (instance.address > Memory.Max) {
+            throw new Error(`${OUT_OF_RANGE} ${instance.address}`);
+        }
+        delete instance.dependentLabelName;
+    }
+    return result;
+};
+
+// takes a label like LDA MEMORY and transforms to value LDA 49152
 export const parseAbsoluteLabel = (
     parameter: string,
     compiledLine: ICompiledLine,
@@ -55,6 +86,7 @@ export const parseAbsoluteLabel = (
         return result;
 };
 
+// finds all compiled lines with a label, then replaces with the label value
 export const updateLabels = (compilerResult: ICompilerResult) => {
     let result = Object.assign({}, compilerResult, {
         labels: [...compilerResult.labels],

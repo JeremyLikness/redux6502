@@ -1,4 +1,10 @@
-import { ILabel, findLabel, parseAbsoluteLabel, updateLabels } from './labels';
+import {
+    ILabel,
+    findLabel,
+    parseAbsoluteLabel,
+    resolveLabels,
+    updateLabels
+} from './labels';
 
 import { ICompiledLine, ICompilerResult, newCompiledLine } from './globals';
 
@@ -14,6 +20,11 @@ const freezeResult = (result: ICompilerResult) => {
     Object.freeze(result.compiledLines);
     result.labels.forEach(label => Object.freeze(label));
     Object.freeze(result.labels);
+};
+
+const freezeLabels = (labels: ILabel[]) => {
+    labels.forEach(label => Object.freeze(label));
+    Object.freeze(labels);
 };
 
 describe ('labels', () => {
@@ -262,6 +273,75 @@ describe ('labels', () => {
             });
             compiled.compiledLines.push(line);
             expect(() => updateLabels(compiled)).toThrow();
+        });
+
+    });
+
+    describe('resolveLabels' , () => {
+
+        let labelResolve: ILabel[];
+
+        beforeEach(() => {
+            labelResolve = [];
+        });
+
+        it('ignores labels with no dependencies', () => {
+            let label = <ILabel>{
+                labelName: 'foo',
+                address: 0xC000,
+                offset: 0
+            };
+            labelResolve.push(label);
+            freezeLabels(labelResolve);
+            let result = resolveLabels(labelResolve);
+            expect(result).toEqual(labelResolve);
+        });
+
+        it('throws when dependent label is not found', () => {
+            let label = <ILabel>{
+                labelName: 'foo',
+                dependentLabelName: 'bar',
+                address: 0xC000,
+                offset: 0
+            };
+            labelResolve.push(label);
+            expect(() => resolveLabels(labelResolve)).toThrow();
+        });
+
+        it('throws when address is out of range', () => {
+            let label = <ILabel>{
+                labelName: 'foo',
+                address: 0xFFFF,
+                offset: 0
+            }, dependentLabel = <ILabel>{
+                labelName: 'bar',
+                dependentLabelName: 'foo',
+                address: null,
+                offset: 10
+            };
+            labelResolve.push(label);
+            labelResolve.push(dependentLabel);
+            expect(() => resolveLabels(labelResolve)).toThrow();
+        });
+
+        it('updates the label when the dependent label is found', () => {
+            let label = <ILabel>{
+                labelName: 'foo',
+                address: 0xF000,
+                offset: 0
+            }, dependentLabel = <ILabel>{
+                labelName: 'bar',
+                dependentLabelName: 'foo',
+                address: null,
+                offset: 10
+            };
+            labelResolve.push(label);
+            labelResolve.push(dependentLabel);
+            freezeLabels(labelResolve);
+            let result = resolveLabels(labelResolve);
+            expect(result[0]).toEqual(labelResolve[0]);
+            expect(result[1].dependentLabelName).toBeUndefined();
+            expect(result[1].address).toBe(0xF00A);
         });
 
     });

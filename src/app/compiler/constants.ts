@@ -43,5 +43,6 @@ export const INDXINDRX_OUT_OF_RANGE = 'Indexed Indirect X value of out range:';
 export const NO_INDXINDRX_SUPPORT = 'doesn\'t support indexed indirect X mode:';
 export const LABEL_NOT_DEFINED = 'Label not defined:';
 export const NOT_IMPLEMENTED = 'Not implemented.';
+export const BAD_LABEL = 'Bad label: could not find dependent:';
 
 export const DCB = 'DCB';
