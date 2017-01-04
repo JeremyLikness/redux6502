@@ -1,6 +1,13 @@
 
 import { ICompiledLine, ICompilerResult } from './globals';
-import { ILabel, parseAbsoluteLabel } from './labels';
+import {
+    ILabel,
+    parseAbsoluteLabel,
+    parseLabelMath,
+    findLabel,
+    resolveLabels,
+    updateLabels
+} from './labels';
 
 import {
     CompilerPatterns,
@@ -14,7 +21,8 @@ import {
     OUT_OF_RANGE,
     REQUIRES_PARAMETER,
     INDXINDRX_OUT_OF_RANGE,
-    NO_INDXINDRX_SUPPORT
+    NO_INDXINDRX_SUPPORT,
+    DUPLICATE_LABEL
 } from './constants';
 
 import { OP_CODES } from '../cpu/opCodeBridge';
@@ -25,6 +33,28 @@ import { Cpu, initialCpuState } from '../cpu/cpuState';
 interface AddressMap { [ addressMode: number]: IOpCode; };
 
 interface OpCodeMap { [opCodeName: string]: AddressMap; };
+
+export const moveAddress = (input: string) => {
+    let address: Address = null;
+
+    if (input.match(CompilerPatterns.memorySet)) {
+
+        let parameter = input.replace(CompilerPatterns.setAddress, '').trim();
+
+        if (parameter[0] === '$') {
+            parameter = parameter.replace('$', '');
+            address = parseInt(parameter, 16);
+        } else {
+            address = parseInt(parameter, 10);
+        }
+
+        if (address < 0 || address > Memory.Max) {
+            throw new Error(`${OUT_OF_RANGE} ${address}`);
+        }
+    }
+
+    return address;
+};
 
 export class Compiler {
 
@@ -45,6 +75,116 @@ export class Compiler {
                 this._map[operation.name][operation.mode] = operation;
             });
         });
+    }
+
+    public compileAndParseLabels(sourceLines: string[]): ICompilerResult {
+        let result: ICompilerResult = {
+            labels: [],
+            memoryTags: 0,
+            compiledLines: [],
+            lines: 0,
+            bytes: 0,
+            ellapsedTimeMilliseconds: 0
+        };
+        let address = Memory.DefaultStart;
+        for (let idx = 0; idx < sourceLines.length; idx += 1) {
+
+            try {
+                let input = sourceLines[idx].toUpperCase();
+
+                // get rid of comments
+                if (input.indexOf(';') >= 0) {
+                    input = input.split(';')[0];
+                }
+
+                input = input.trim();
+
+                // skip empty lines
+                if (!input.match(CompilerPatterns.notWhitespace)) {
+                    continue;
+                }
+
+                result.lines += 1;
+
+                // check if the address is being moved
+                let testAddress = moveAddress(input);
+
+                if (testAddress) {
+                    address = testAddress;
+                    continue;
+                }
+
+                // label math 
+                if (input.match(CompilerPatterns.labelMath)) {
+                    result.labels.push(parseLabelMath(input, result.labels));
+                    continue;
+                }
+
+                // memory tag, i.e. $C000: LDA #$00 <-- go to 49152
+                let hex = !!input.match(CompilerPatterns.memoryLabelHex);
+                if (hex || input.match(CompilerPatterns.memoryLabelDec)) {
+                    result.memoryTags += 1;
+                    let label = hex ? CompilerPatterns.memoryLabelHex.exec(input)[1] :
+                        CompilerPatterns.memoryLabelDec.exec(input)[1];
+
+                    // strip out the label
+                    input = input.replace(`${label}:`, '');
+                    label = label.replace('$', '');
+                    let checkAddress = parseInt(label, hex ? 16 : 10);
+
+                    if (checkAddress < 0 || checkAddress > Memory.Max) {
+                        throw new Error (`${OUT_OF_RANGE} ${label}`);
+                    }
+
+                    address = checkAddress;
+                } else if (input.match(CompilerPatterns.regularLabel)) {
+                    let labelName = CompilerPatterns.regularLabel.exec(input)[1].trim();
+                    if (findLabel(labelName, result.labels)) {
+                        throw new Error (`${DUPLICATE_LABEL} ${labelName}`);
+                    }
+                    result.labels.push(<ILabel>{
+                        address,
+                        labelName,
+                        offset: 0
+                    });
+                    input = input.replace(`${labelName}:`, '');
+                }
+
+                // blank after label stripped?
+                if (!input.match(CompilerPatterns.notWhitespace)) {
+                    continue;
+                }
+
+                let compiledLine = this.compileLine(result, address, input);
+                console.log(compiledLine);
+                result.compiledLines.push(compiledLine);
+                address += compiledLine.code.length;
+                result.bytes += compiledLine.code.length;
+            } catch (e) {
+                throw new Error(`${e} at line: ${idx + 1}`);
+            }
+        }
+
+        result.labels = resolveLabels(result.labels);
+
+        return updateLabels(result);
+    }
+
+    private compileLine(compilerResult: ICompilerResult, address: Address, input: string): ICompiledLine {
+        let result = <ICompiledLine>{
+            address,
+            code: [],
+            opCode: null,
+            processed: false,
+            label: '',
+            high: false
+        };
+
+        if (input.match(CompilerPatterns.opCode)) {
+            return this.parseOpCode(compilerResult.labels, input, result);
+        }
+
+        throw new Error(`${INVALID_ASSEMBLY} ${input}`);
     }
 
     public parseOpCode(labels: ILabel[], opCodeExpression: string, compiledLine: ICompiledLine): ICompiledLine {
@@ -88,7 +228,7 @@ export class Compiler {
             return this.processIndexedIndirectX(matchArray, opCodeName, radix, parameter, compiledLine);
         }
 
-        return compiledLine;
+        throw new Error(`${INVALID_ASSEMBLY} ${opCodeExpression}`);
     }
 
     private processIndexedIndirectX(

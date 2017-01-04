@@ -5,7 +5,11 @@ import {
     LABEL_NOT_DEFINED,
     OUT_OF_RANGE,
     NOT_IMPLEMENTED,
-    BAD_LABEL
+    BAD_LABEL,
+    INVALID_LABEL_MATH,
+    DUPLICATE_LABEL,
+    CANNOT_REDEFINE,
+    CompilerPatterns
 } from './constants';
 
 import { ICompiledLine, ICompilerResult } from './globals';
@@ -30,6 +34,32 @@ export const findLabel: (label: string, labels: ILabel[]) => ILabel = (label: st
         }
     }
     return null;
+};
+
+// handles labels based on math, i.e. MYLABEL = THATLABEL + 5
+export const parseLabelMath = (input: string, labels: ILabel[]) => {
+    let matches = CompilerPatterns.labelMath.exec(input);
+    if (matches === null || matches.length !== 5) {
+        throw new Error(`${INVALID_LABEL_MATH} ${input}`);
+    }
+    let labelName = matches[1].trim();
+    let otherLabel = matches[2].trim();
+    if (findLabel(labelName, labels)) {
+        throw new Error(`${DUPLICATE_LABEL} ${labelName}`);
+    }
+    if (labelName === otherLabel) {
+        throw new Error(`${CANNOT_REDEFINE} ${labelName}`);
+    }
+    let offset = parseInt(matches[4], 10);
+    if (matches[3] === '-') {
+        offset *= -1;
+    }
+    return <ILabel>{
+        address: null,
+        labelName,
+        dependentLabelName: otherLabel,
+        offset
+    };
 };
 
 // takes all labels that depend on other labels and resolves them

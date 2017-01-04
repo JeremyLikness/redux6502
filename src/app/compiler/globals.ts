@@ -17,22 +17,22 @@ import {
     NOT_IMPLEMENTED } from './constants';
 
 export interface ICompiledLine {
-    address: Address;
+    address: Address; // address for line
     opCode: OpCodeValue;
     mode: AddressingModes;
-    code: Byte[];
-    processed: boolean;
-    label: string;
-    high: boolean;
+    code: Byte[]; // code to overlay at address
+    processed: boolean; // when false, needs label updates
+    label: string; // label associated with line
+    high: boolean; // for immediate, true when high address byte needed
 }
 
 export interface ICompilerResult {
-    labels: ILabel[];
-    memoryTags: number;
-    compiledLines: ICompiledLine[];
-    lines: number;
-    bytes: number;
-    ellapsedTimeMilliseconds: number;
+    labels: ILabel[]; // distinct labels  
+    memoryTags: number; // count of tags (includes label math: LDA MEMORY + 5)
+    compiledLines: ICompiledLine[]; // actual compiled code
+    lines: number; // total lines parsed
+    bytes: number; // total bytes output (sum of code.length in lines)
+    ellapsedTimeMilliseconds: number; // total time to compile
 }
 
 export const newCompiledLine = () => ({

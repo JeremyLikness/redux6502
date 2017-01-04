@@ -8,7 +8,7 @@ export class CompilerPatterns {
     public static memoryLabelHex: RegExp = /^(\$[0-9A-F]+):.*/; // $C000:
     public static memoryLabelDec: RegExp = /^([0-9]+):.*/; // 49152:
     public static regularLabel: RegExp = /^([A-Z][A-Z_0-9]+):.*/; // LABEL:
-    public static memorySet: RegExp = /^\*\s*\=\s*[\$]?[0-9A-F]*$/; // *=$C000 or *=49152
+    public static memorySet: RegExp = /^\*\s*\=\s*\$?[0-9A-F]*\s*$/; // *=$C000 or *=49152
     public static setAddress: RegExp = /^[\s]*\*[\s]*=[\s]*/; // for parsing out the value
     public static immediate: RegExp = /^\#([0-9]{1,3})\s*/; // #$0A
     public static immediateHex: RegExp = /^\#([0-9A-F]{1,2})\s*/; // #111
@@ -31,18 +31,21 @@ export class CompilerPatterns {
     public static absoluteLabel: RegExp = /^([A-Z][A-Z_0-9]+)\s*/; // JMP LABEL
 }
 
-export const INVALID_OP_NAME = 'Invalid op code name:';
+export const BAD_LABEL = 'Bad label: could not find dependent:';
+export const CANNOT_REDEFINE = 'Cannot redefine label:';
+export const DUPLICATE_LABEL = 'Duplicate label:';
+export const INDXINDRX_OUT_OF_RANGE = 'Indexed Indirect X value of out range:';
+export const INVALID_ASSEMBLY = 'Invalid assembly:';
+export const INVALID_BRANCH = 'Invalid branch op:';
 export const INVALID_DCB = 'DCB requires a list of bytes to be inserted into the compilation stream.';
 export const INVALID_DCB_LIST = 'DCB with invalid value list:';
 export const INVALID_DCB_RANGE = 'DCB with value out of range:';
-export const OUT_OF_RANGE = 'Value out of range:';
-export const INVALID_ASSEMBLY = 'Invalid assembly:';
-export const INVALID_BRANCH = 'Invalid branch op:';
-export const REQUIRES_PARAMETER = 'Operation requires a parameter:';
-export const INDXINDRX_OUT_OF_RANGE = 'Indexed Indirect X value of out range:';
-export const NO_INDXINDRX_SUPPORT = 'doesn\'t support indexed indirect X mode:';
+export const INVALID_LABEL_MATH = 'Invalid label math:';
+export const INVALID_OP_NAME = 'Invalid op code name:';
 export const LABEL_NOT_DEFINED = 'Label not defined:';
+export const NO_INDXINDRX_SUPPORT = 'doesn\'t support indexed indirect X mode:';
 export const NOT_IMPLEMENTED = 'Not implemented.';
-export const BAD_LABEL = 'Bad label: could not find dependent:';
+export const OUT_OF_RANGE = 'Value out of range:';
+export const REQUIRES_PARAMETER = 'Operation requires a parameter:';
 
 export const DCB = 'DCB';

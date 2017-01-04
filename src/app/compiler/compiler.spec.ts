@@ -1,6 +1,7 @@
-import { Compiler } from './compiler';
+import { Compiler, moveAddress } from './compiler';
 import { ICompiledLine, newCompiledLine } from './globals';
 import { INVALID_DCB } from './constants';
+import { Memory } from '../cpu/constants';
 import { ILabel } from './labels';
 
 import { TestBed } from '@angular/core/testing';
@@ -19,6 +20,98 @@ describe('Compiler', () => {
 
     it('instantiates successfully', () => {
         expect(compiler).not.toBeNull();
+    });
+
+    describe('moveAddress', () => {
+
+        it ('returns null for no move', () => {
+            expect(moveAddress('LDA #$00')).toBeNull();
+        });
+
+        it ('throws an exception when move is out of range', () => {
+            expect(() => moveAddress('* = $FFFFF')).toThrow();
+        });
+
+        it ('parses hexadecimal addresses', () => {
+            expect(moveAddress('*= $C000')).toBe(0xC000);
+        });
+
+        it ('parses decimal addresses', () => {
+            expect(moveAddress('* =49152 ')).toBe(0xC000);
+        });
+
+    });
+
+    describe('compileAndParseLabels', () => {
+
+        it('ignores comments', () => {
+            let result = compiler.compileAndParseLabels([' ;comment']);
+            expect(result.lines).toBe(0);
+            expect(result.bytes).toBe(0);
+        });
+
+        it ('ignores empty lines', () => {
+            let result = compiler.compileAndParseLabels([' ',
+                'ASL',
+                ' ']);
+            expect(result.lines).toBe(1);
+            expect(result.bytes).toBe(1);
+        });
+
+        it ('supports moving the address', () => {
+            let result = compiler.compileAndParseLabels(['* = $C000', 'ASL']);
+            expect(result.lines).toBe(2);
+            expect(result.bytes).toBe(1);
+            expect(result.compiledLines[0].address).toBe(0xC000);
+        });
+
+        it('supports labels', () => {
+            let result = compiler.compileAndParseLabels([
+                'LABEL: ASL'
+            ]);
+            expect(result.bytes).toBe(1);
+            expect(result.labels.length).toBe(1);
+            expect(result.labels[0].labelName).toBe('LABEL');
+            expect(result.labels[0].address).toBe(Memory.DefaultStart);
+        });
+
+        it ('supports label math', () => {
+            let result = compiler.compileAndParseLabels([
+                'FIRST: ASL',
+                'SECOND = FIRST + 5'
+            ]);
+            expect(result.bytes).toBe(1);
+            expect(result.labels.length).toBe(2);
+            expect(result.labels[1].address).toBe(result.labels[0].address + 5);
+        });
+
+        it ('supports hex memory tags', () => {
+            let result = compiler.compileAndParseLabels([
+                '$C000: ASL'
+            ]);
+            expect(result.bytes).toBe(1);
+            expect(result.compiledLines[0].address).toBe(0xC000);
+        });
+
+        it ('supports decimal memory tags', () => {
+            let result = compiler.compileAndParseLabels([
+                '49152: ASL'
+            ]);
+            expect(result.bytes).toBe(1);
+            expect(result.compiledLines[0].address).toBe(0xC000);
+        });
+
+        it ('throws when memory tag is out of range', () => {
+            expect(() => compiler.compileAndParseLabels([
+                '65536: ASL'
+            ])).toThrow();
+        });
+
+        it ('throws on invalid assembly', () => {
+            expect(() => compiler.compileAndParseLabels([
+                '65536: XYZ $FOO'
+            ])).toThrow();
+        });
     });
 
     describe('parseOpCode', () => {

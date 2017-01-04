@@ -3,7 +3,8 @@ import {
     findLabel,
     parseAbsoluteLabel,
     resolveLabels,
-    updateLabels
+    updateLabels,
+    parseLabelMath
 } from './labels';
 
 import { ICompiledLine, ICompilerResult, newCompiledLine } from './globals';
@@ -63,6 +64,48 @@ describe ('labels', () => {
             expect(findLabel('BAR', labels)).toEqual(labels[1]);
         });
 
+    });
+
+    describe ('parseLabelMath', () => {
+        let mathLabels: ILabel[];
+
+        beforeEach(() => {
+            mathLabels = [{
+                labelName: 'FOO',
+                address: 0xC000,
+                offset: 0
+            }, {
+                labelName: 'BAR',
+                address: 0xD000,
+                offset: 0
+            }];
+        });
+
+        it ('throws on invalid label math', () => {
+            expect(() => parseLabelMath('NEW = FOO + 2 + 4', mathLabels)).toThrow();
+        });
+
+        it ('throws on duplicate label name', () => {
+            expect(() => parseLabelMath('FOO = BAR + 1', mathLabels)).toThrow();
+        });
+
+        it ('throws on self-referencing label math', () => {
+            expect(() => parseLabelMath('FOO = FOO + 1', mathLabels)).toThrow();
+        });
+
+        it ('sets the offset forward when label math is positive', () => {
+            let result = parseLabelMath('NEW = FOO + 1', mathLabels);
+            expect(result.labelName).toBe('NEW');
+            expect(result.dependentLabelName).toBe('FOO');
+            expect(result.offset).toBe(1);
+        });
+
+        it ('sets the offset backwards when label math is negative', () => {
+            let result = parseLabelMath('NEW = BAR - 1', mathLabels);
+            expect(result.labelName).toBe('NEW');
+            expect(result.dependentLabelName).toBe('BAR');
+            expect(result.offset).toBe(-1);
+        });
     });
 
     describe('parseAbsoluteLabel', () => {
