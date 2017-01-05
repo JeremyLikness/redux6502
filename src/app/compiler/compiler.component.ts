@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ICompilerResult } from './globals';
+import { Cpu } from '../cpu/cpuState';
+import { CPU_STORE, Memory } from '../cpu/constants';
+import { Byte, hexHelper } from '../cpu/globals';
+import { cpuPoke, cpuSetPC } from '../cpu/actions.cpu';
 import { Compiler } from './compiler';
+
+import { Store } from 'redux';
 
 import { AslFamily } from '../cpu/opCodes/asl';
 
@@ -18,7 +24,7 @@ export class CompilerComponent implements OnInit {
   public source: string = '';
   public compiled: ICompilerResult = null;
 
-  constructor(public compiler: Compiler) { }
+  constructor(public compiler: Compiler, @Inject(CPU_STORE)public store: Store<Cpu>) { }
 
   public compile(): void {
     if (this.source.length) {
@@ -36,6 +42,50 @@ export class CompilerComponent implements OnInit {
       }
     }
   }
+
+  public load(): void {
+    if (this.compiled === null) {
+      this.error = true;
+      this.success = false;
+      this.message = 'Nothing to load. Try compiling first!';
+      return;
+    }
+
+    let address = null, buffer: Byte[] = [], bytes = 0, loAddr = Memory.Size, hiAddr = 0x0;
+    for (let idx = 0; idx < this.compiled.compiledLines.length; idx += 1) {
+      let line = this.compiled.compiledLines[idx];
+      if (line.address !== address) {
+        if (address === null) {
+          this.store.dispatch(cpuSetPC(line.address));
+          loAddr = line.address;
+        }
+        if (buffer.length) {
+          this.store.dispatch(cpuPoke(address, buffer));
+          bytes += buffer.length;
+          buffer = [];
+        }
+        address = line.address;
+      } else {
+        address = line.address;
+      }
+      if (address < loAddr) {
+        loAddr = address;
+      }
+      buffer = buffer.concat(buffer, line.code);
+      address += line.code.length;
+      if (address > hiAddr) {
+        hiAddr = address;
+      }
+    }
+    if (address !== null && buffer.length) {
+      this.store.dispatch(cpuPoke(address, buffer));
+      bytes += buffer.length;
+    }
+    this.success = true;
+    this.error = false;
+    this.message = `Successfully loaded ${bytes} bytes to memory from $${hexHelper(loAddr,4)} to $${hexHelper(hiAddr, 4)}`;
+  }
+
 
   ngOnInit() {
     this.message = 'Ready to compile.';

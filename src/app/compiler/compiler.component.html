@@ -2,7 +2,7 @@
   <div class="message" [class.error]="error" [class.success]="success">{{message}}</div>
   <div class="controlRow">
     <button [disabled]="source.length < 1" (click)="compile()">Compile</button>
-    <button [disabled]="compiled === null">Load</button> 
+    <button [disabled]="compiled === null" (click)="load()">Load</button> 
   </div>
   <textarea [(ngModel)]="source" rows="40">
   </textarea>

@@ -9,14 +9,20 @@ import { Compiler } from './compiler/compiler';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { CPU_STORE } from './cpu/constants';
+import { cpuReducer } from './cpu/reducer.cpu';
+
+import { createStore } from 'redux';
+
 describe('AppComponent', () => {
   beforeEach(() => {
+    let store = createStore(cpuReducer);
     TestBed.configureTestingModule({
       declarations: [
         AppComponent, CompilerComponent
       ],
       imports: [ CommonModule, FormsModule ],
-      providers: [ Compiler ]
+      providers: [ Compiler, { provide: CPU_STORE, useValue: store } ]
     });
     TestBed.compileComponents();
   });
