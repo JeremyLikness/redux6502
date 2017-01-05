@@ -2,13 +2,21 @@
 
 import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { CompilerComponent } from './compiler/compiler.component';
+
+import { Compiler } from './compiler/compiler';
+
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        AppComponent, CompilerComponent
       ],
+      imports: [ CommonModule, FormsModule ],
+      providers: [ Compiler ]
     });
     TestBed.compileComponents();
   });

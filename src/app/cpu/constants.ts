@@ -35,6 +35,8 @@ export class Flags {
 
 export const AddressingModeCount = 12; // number of addressing modes available
 
+export const CPU_STORE = 'CpuStore';
+
 export const MEMORY_OVERFLOW = 'Memory overflow.';
 export const INVALID_OP = 'Invalid op code.';
 export const STACK_OVERFLOW = 'Stack overflow.';
