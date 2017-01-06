@@ -3,6 +3,8 @@ import { NgModule, FactoryProvider, forwardRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+import { FlexLayoutModule } from '@angular/flex-layout';
+
 import { AppComponent } from './app.component';
 import { CompilerComponent } from './compiler/compiler.component';
 
@@ -59,7 +61,8 @@ const storeProvider: FactoryProvider = {
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    FlexLayoutModule.forRoot()
   ],
   providers: [
     storeProvider,

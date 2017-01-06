@@ -1,9 +1,8 @@
-<div>
-  <div class="message" [class.error]="error" [class.success]="success">{{message}}</div>
-  <div class="controlRow">
-    <button [disabled]="source.length < 1" (click)="compile()">Compile</button>
-    <button [disabled]="compiled === null" (click)="load()">Load</button> 
-  </div>
-  <textarea [(ngModel)]="source" rows="40">
-  </textarea>
+<div fxLayout="column" class="compiler">
+    <div class="flex-item message" fxFlex [class.error]="error" [class.success]="success">{{message}}</div>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button [disabled]="source.length < 1" (click)="compile()">Compile</button>
+      <button [disabled]="compiled === null" (click)="load()">Load</button> 
+    </div>
+    <textarea [(ngModel)]="source" rows="40"></textarea>
 </div>

@@ -3,12 +3,6 @@
     font-size: 0.8em;
 }
 
-div {
-    width: 400px;
-    float: left;
-    margin: 5px;
-}
-
 .message {
     padding: 2px;
     height: 40px;
@@ -30,5 +24,9 @@ button {
 textarea {
     width: 100%;
     padding: 2px;
+}
+
+.compiler {
+    min-width: 400px;
 }
 
