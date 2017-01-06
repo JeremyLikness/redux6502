@@ -1,0 +1,51 @@
+<div fxLayout="column">
+  <div fxLayout="row" fxAlignment="center center" class="title">
+    <span class="flex-item" fxFlex="50px">PC</span> 
+    <span class="flex-item" fxFlex="50px"Flex>SP</span> 
+    <span class="flex-item" fxFlex="50px">A</span> 
+    <span class="flex-item" fxFlex="50px">X</span> 
+    <span class="flex-item" fxFlex="50px">Y</span> 
+    <span class="flex-item" fxFlex="10px">N</span>
+    <span class="flex-item" fxFlex="10px">V</span>
+    <span class="flex-item" fxFlex="10px">-</span>
+    <span class="flex-item" fxFlex="10px">B</span>
+    <span class="flex-item" fxFlex="10px">D</span>
+    <span class="flex-item" fxFlex="10px">I</span>
+    <span class="flex-item" fxFlex="10px">Z</span>
+    <span class="flex-item" fxFlex="10px">C</span>
+    <span class="flex-item" fxFlex="10px">&nbsp;</span> 
+    <span class="flex-item" fxFlex="50px">Time</span> 
+    <span class="flex-item" fxFlex="60px">IPS</span>
+  </div>
+  <div fxLayout="row" fxAlignment="center center" class="data">
+    <span class="flex-item" fxFlex="50px">{{cpu.rPC|hex}}</span>
+    <span class="flex-item" fxFlex="50px">{{cpu.rSP|hex}}</span>
+    <span class="flex-item" fxFlex="50px">{{cpu.rA|hex:2}}</span>
+    <span class="flex-item" fxFlex="50px">{{cpu.rX|hex:2}}</span>
+    <span class="flex-item" fxFlex="50px">{{cpu.rY|hex:2}}</span>
+    <span class="flex-item" [class.on]="registerSet(7)" [class.off]="!registerSet(7)" fxFlex="10px">
+        {{registerSet(7) ? 1 : 0}}
+    </span>
+    <span class="flex-item" [class.on]="registerSet(6)" [class.off]="!registerSet(6)" fxFlex="10px">
+        {{registerSet(6) ? 1 : 0}}
+    </span>
+    <span class="flex-item off" fxFlex="10px">-</span>
+    <span class="flex-item" [class.on]="registerSet(4)" [class.off]="!registerSet(4)" fxFlex="10px">
+        {{registerSet(4) ? 1 : 0}}
+    </span>
+    <span class="flex-item" [class.on]="registerSet(3)" [class.off]="!registerSet(3)" fxFlex="10px">
+        {{registerSet(3) ? 1 : 0}}
+    </span>
+    <span class="flex-item" [class.on]="registerSet(2)" [class.off]="!registerSet(2)" fxFlex="10px">
+        {{registerSet(2) ? 1 : 0}}
+    </span>
+    <span class="flex-item" [class.on]="registerSet(1)" [class.off]="!registerSet(1)" fxFlex="10px">
+        {{registerSet(1) ? 1 : 0}}
+    </span>
+    <span class="flex-item" [class.on]="registerSet(0)" [class.off]="!registerSet(0)" fxFlex="10px">
+        {{registerSet(0) ? 1 : 0}}
+    </span>
+    <span class="flex-item" fxFlex="10px">&nbsp;</span>
+    <span class="flex-item" fxFlex="50px">{{cpu.stats.ellapsedMilliseconds|number}}</span>
+    <span class="flex-item" fxFlex="60px">{{cpu.stats.instructionsPerSecond|number}}</span>
+  </div>

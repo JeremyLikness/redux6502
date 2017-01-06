@@ -43,6 +43,8 @@ import { StaFamily } from './cpu/opCodes/sta';
 import { StackFamily } from './cpu/opCodes/stack';
 import { StxFamily } from './cpu/opCodes/stx';
 import { StyFamily } from './cpu/opCodes/sty';
+import { RegistersComponent } from './cpu/registers/registers.component';
+import { HexPipe } from './hex.pipe';
 
 export function storeFactory() {
   return createStore(cpuReducer);
@@ -57,6 +59,8 @@ const storeProvider: FactoryProvider = {
   declarations: [
     AppComponent,
     CompilerComponent,
+    RegistersComponent,
+    HexPipe,
   ],
   imports: [
     BrowserModule,

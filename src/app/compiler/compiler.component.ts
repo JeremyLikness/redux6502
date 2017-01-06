@@ -8,8 +8,6 @@ import { Compiler } from './compiler';
 
 import { Store } from 'redux';
 
-import { AslFamily } from '../cpu/opCodes/asl';
-
 @Component({
   selector: 'app-compiler',
   templateUrl: './compiler.component.html',
@@ -32,7 +30,7 @@ export class CompilerComponent implements OnInit {
         this.compiled = this.compiler.compile(this.source);
         this.error = false;
         this.success = true;
-        this.message = `Compiled ${this.compiled.lines} to (${this.compiled.compiledLines.length}) compiled lines. ` +
+        this.message = `Parsed ${this.compiled.lines} lines to ${this.compiled.compiledLines.length} compiled lines. ` +
           `Parsed ${this.compiled.labels.length} labels and ${this.compiled.memoryTags} memory tags in ` +
           `${this.compiled.ellapsedTimeMilliseconds}ms`;
       } catch (e) {

@@ -1,0 +1,22 @@
+:host {
+    font-size: 0.8em;
+    min-width: 450px;
+}
+
+.on {
+    background: lightgreen;
+}
+
+.off {
+    background: darkgray;
+}
+
+.title {
+    font-weight: bold;
+    margin: 3px;
+}
+
+.data {
+    background: lightgray;
+    margin: 3px;
+}
