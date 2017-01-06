@@ -1,6 +1,6 @@
 language: node_js 
 node_js:
-    - "4.4"
+    - "6.9"
 install: 
     - npm install -g angular-cli@1.0.0-beta.24
     - npm install 
