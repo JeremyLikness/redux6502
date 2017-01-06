@@ -56,20 +56,18 @@ export class CompilerComponent implements OnInit {
         if (address === null) {
           this.store.dispatch(cpuSetPC(line.address));
           loAddr = line.address;
-        }
-        if (buffer.length) {
+        } else {
           this.store.dispatch(cpuPoke(address, buffer));
           bytes += buffer.length;
           buffer = [];
         }
         address = line.address;
-      } else {
-        address = line.address;
       }
       if (address < loAddr) {
         loAddr = address;
       }
-      buffer = buffer.concat(buffer, line.code);
+      let temp = buffer.concat(line.code);
+      buffer = temp;
       address += line.code.length;
       if (address > hiAddr) {
         hiAddr = address;
