@@ -22,7 +22,11 @@ import {
     REQUIRES_PARAMETER,
     INDXINDRX_OUT_OF_RANGE,
     NO_INDXINDRX_SUPPORT,
-    DUPLICATE_LABEL
+    INDINDXY_OUT_OF_RANGE,
+    NO_INDXINDRY_SUPPORT,
+    DUPLICATE_LABEL,
+    IMMEDIATE_OUT_OF_RANGE,
+    NO_IMMEDIATE_SUPPORT
 } from './constants';
 
 import { OP_CODES } from '../cpu/opCodeBridge';
@@ -236,31 +240,108 @@ export class Compiler {
         let idxIndrXTest = hex ? CompilerPatterns.indirectXHex : CompilerPatterns.indirectX;
 
         if (matchArray = parameter.match(idxIndrXTest)) {
-            return this.processIndexedIndirectX(matchArray, opCodeName, radix, parameter, compiledLine);
+            return this.processIndexedIndirect(
+                matchArray,
+                opCodeName,
+                radix,
+                parameter,
+                compiledLine,
+                INDXINDRX_OUT_OF_RANGE,
+                NO_INDXINDRX_SUPPORT,
+                AddressingModes.IndexedIndirectX);
+        }
+
+        let indIdxYTest = hex ? CompilerPatterns.indirectYHex : CompilerPatterns.indirectY;
+
+        if (matchArray = parameter.match(indIdxYTest)) {
+            return this.processIndexedIndirect(
+                matchArray,
+                opCodeName,
+                radix,
+                parameter,
+                compiledLine,
+                INDINDXY_OUT_OF_RANGE,
+                NO_INDXINDRY_SUPPORT,
+                AddressingModes.IndirectIndexedY);
+        }
+
+        let immediateWithoutLabelTest = hex ? CompilerPatterns.immediateHex : CompilerPatterns.immediate;
+
+        let compiledLineResult = Object.assign({}, compiledLine);
+
+        // if it matches, parse the label into an immediate value or #0 for later replacement
+        if (!parameter.match(immediateWithoutLabelTest)) {
+            if (matchArray = parameter.match(CompilerPatterns.immediateLabel)) {
+                compiledLineResult.high = matchArray[1] === '>';
+                let label = matchArray[2];
+                let instance = findLabel(label, labels);
+                if (instance !== null) {
+                    let value = compiledLineResult.high ? (instance.address >> Memory.BitsInByte) : instance.address;
+                    parameter = parameter.replace(matchArray[0], '#' + (value & Memory.ByteMask).toString(10));
+                } else {
+                    compiledLineResult.label = label;
+                    processed = false;
+                    parameter = parameter.replace(matchArray[0], '#0');
+                }
+            }
+        }
+
+        // any label above for immediate will get picked up here
+        if (matchArray = parameter.match(immediateWithoutLabelTest)) {
+            let rawValue = matchArray[1];
+            let value = parseInt(rawValue, radix);
+            if (value < 0 || value > Memory.ByteMask) {
+                throw new Error(`${IMMEDIATE_OUT_OF_RANGE} ${value}`);
+            }
+            parameter = parameter.replace('#', '');
+            parameter = parameter.replace(rawValue, '').trim();
+            if (parameter.match(CompilerPatterns.notWhitespace)) {
+                throw new Error(`${INVALID_ASSEMBLY} ${opCodeExpression}`);
+            }
+
+            let operationMap = this._map[opCodeName];
+
+            if (operationMap === undefined) {
+                throw new Error(`${INVALID_ASSEMBLY} ${opCodeExpression}`);
+            }
+
+            let operation = operationMap[AddressingModes.Immediate];
+
+            if (operation === undefined) {
+                throw new Error(`${NO_IMMEDIATE_SUPPORT} ${opCodeName}`);
+            }
+
+            compiledLineResult.code.push(operation.value);
+            compiledLineResult.code.push(value);
+            compiledLineResult.processed = processed;
+            return compiledLineResult;
         }
 
         throw new Error(`${method} ${INVALID_ASSEMBLY} ${opCodeExpression}`);
     }
 
-    private processIndexedIndirectX(
+    private processIndexedIndirect(
         matchArray: RegExpMatchArray,
         opCodeName: string,
         radix: number,
         parameter: string,
-        compiledLine: ICompiledLine): ICompiledLine {
+        compiledLine: ICompiledLine,
+        outOfRange: string,
+        noSupport: string,
+        mode: AddressingModes): ICompiledLine {
             let result = Object.assign({}, compiledLine),
                 rawValue = matchArray[1],
-                xIndex = matchArray[2],
+                index = matchArray[2],
                 value = parseInt(rawValue, radix),
-                method = 'Process Indexed, Indirect X:'
+                method = 'Process Indexed Indirect:';
 
             if (value < 0 || value > Memory.ByteMask) {
-                throw new Error(`${method} ${INDXINDRX_OUT_OF_RANGE} ${value}`);
+                throw new Error(`${method} ${outOfRange} ${value}`);
             }
 
             let parms = parameter.replace('(', '')
                 .replace(')', '')
-                .replace(xIndex, '')
+                .replace(index, '')
                 .replace(rawValue, '')
                 .trim();
 
@@ -268,14 +349,14 @@ export class Compiler {
                 throw new Error(`${method} ${INVALID_ASSEMBLY} ${parameter}`);
             }
 
-            let operation = this._map[opCodeName][AddressingModes.IndexedIndirectX];
+            let operation = this._map[opCodeName][mode];
 
             if (operation === undefined) {
-                throw new Error(`${method} ${opCodeName} ${NO_INDXINDRX_SUPPORT} ${parameter}`);
+                throw new Error(`${method} ${opCodeName} ${noSupport} ${parameter}`);
             }
 
             result.opCode = operation.value;
-            result.mode = AddressingModes.IndexedIndirectX;
+            result.mode = mode;
             result.code.push(result.opCode);
             result.code.push(value);
             result.processed = true;

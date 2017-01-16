@@ -238,5 +238,100 @@ describe('Compiler', () => {
 
         });
 
+        describe('indirect indexed Y mode', () => {
+
+            it('throws if the operation attempts to access a non-zero page', () => {
+                expect(() => compiler.parseOpCode([], 'LDA (256), Y', compiledLine)).toThrow();
+            });
+
+            it('throws if there are extraneous codes on the line that are not comments', () => {
+                expect(() => compiler.parseOpCode([], 'LDA ($10),Y YZ', compiledLine)).toThrow();
+            });
+
+            it ('throws if the op code does not support the addressing mode', () => {
+                expect(() => compiler.parseOpCode([], 'LDY ($10), Y', compiledLine)).toThrow();
+            });
+
+            it ('compiles the indirected indexed Y code properly', () => {
+                Object.freeze(compiledLine);
+                let result = compiler.parseOpCode([], 'LDA ($10),Y', compiledLine);
+                expect(result.code).toEqual([0xB1, 0x10]);
+            });
+
+        });
+
+        describe('immediate mode', () => {
+
+            describe('with labels', () => {
+
+                it('gets the low value of a label address', () => {
+                    Object.freeze(compiledLine);
+                    let labels: ILabel[] = [{
+                        address: 0xCC11,
+                        labelName: 'MYLABEL',
+                        offset: 0
+                    }];
+                    let result = compiler.parseOpCode(labels, 'LDA #<MYLABEL', compiledLine);
+                    expect(result.code).toEqual([0xA9, 0x11]);
+                    expect(result.processed).toBe(true);
+                });
+
+                it('gets the high value of a label address', () => {
+                    Object.freeze(compiledLine);
+                    let labels: ILabel[] = [{
+                        address: 0xCC11,
+                        labelName: 'MYLABEL',
+                        offset: 0
+                    }];
+                    let result = compiler.parseOpCode(labels, 'LDA #>MYLABEL', compiledLine);
+                    expect(result.code).toEqual([0xA9, 0xCC]);
+                    expect(result.processed).toBe(true);
+                });
+
+                it('sets processed to false and puts 0 value when label not found', () => {
+                    Object.freeze(compiledLine);
+                    let result = compiler.parseOpCode([], 'LDA #>MYLABEL', compiledLine);
+                    expect(result.code).toEqual([0xA9, 0x00]);
+                    expect(result.processed).toBe(false);
+                });
+
+            });
+
+            describe('without labels', () => {
+
+                it('throws for immediate out of range', () => {
+                    expect(() => {
+                        compiler.parseOpCode([], 'LDA #256', compiledLine);
+                    }).toThrow();
+                });
+
+                it('throws with extraneous assembly', () => {
+                    expect(() => {
+                        compiler.parseOpCode([], 'LDA #255 XY', compiledLine);
+                    }).toThrow();
+                });
+
+                it('throws with invalid op code', () => {
+                    expect(() => {
+                        compiler.parseOpCode([], 'LDZ #255', compiledLine);
+                    }).toThrow();
+                });
+
+                it('throws with invalid support', () => {
+                    expect(() => {
+                        compiler.parseOpCode([], 'TAX #255', compiledLine);
+                    }).toThrow();
+                });
+
+                it('compiles valid code', () => {
+                    Object.freeze(compiledLine);
+                    let result = compiler.parseOpCode([], 'LDA #$C0', compiledLine);
+                    expect(result.code).toEqual([0xA9, 0xC0]);
+                });
+
+            });
+
+        });
+
     });
 });
