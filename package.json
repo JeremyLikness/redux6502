@@ -37,6 +37,7 @@
     "angular-cli": "^1.0.0-beta.24",
     "codelyzer": "~2.0.0-beta.1",
     "css-loader": "^0.26.1",
+    "font-awesome": "^4.7.0",
     "jasmine-core": "2.5.2",
     "jasmine-spec-reporter": "2.5.0",
     "karma": "1.2.0",
@@ -54,6 +55,7 @@
     "ts-node": "1.2.1",
     "tslint": "^4.0.2",
     "typescript": "~2.0.3",
+    "url-loader": "^0.5.7",
     "webdriver-manager": "10.2.5"
   }
 }

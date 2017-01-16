@@ -1,0 +1,22 @@
+:host {
+    font-family: Consolas, Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
+}
+
+.message {
+    padding: 2px;
+    height: 40px;
+    background: lightgray;
+}
+
+.error {
+    background: lightcoral;
+}
+
+.success {
+    background: lightgreen;
+}
+
+button {
+    margin: 3px;
+}

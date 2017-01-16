@@ -4,6 +4,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { CompilerComponent } from './compiler/compiler.component';
 import { RegistersComponent } from './cpu/registers/registers.component';
+import { CpuControlComponent } from './cpu-control/cpu-control.component';
 
 import { HexPipe } from './hex.pipe';
 
@@ -22,7 +23,11 @@ describe('AppComponent', () => {
     let store = createStore(cpuReducer);
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent, CompilerComponent, RegistersComponent, HexPipe
+        AppComponent,
+        CompilerComponent,
+        RegistersComponent,
+        CpuControlComponent,
+        HexPipe
       ],
       imports: [ CommonModule, FormsModule ],
       providers: [ Compiler, { provide: CPU_STORE, useValue: store } ]

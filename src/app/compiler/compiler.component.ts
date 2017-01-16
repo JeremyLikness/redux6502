@@ -49,15 +49,22 @@ export class CompilerComponent implements OnInit {
       return;
     }
 
-    let address = null, buffer: Byte[] = [], bytes = 0, loAddr = Memory.Size, hiAddr = 0x0;
+    let address = null,
+      lastAddress = null,
+      buffer: Byte[] = [],
+      bytes = 0,
+      loAddr = Memory.Size,
+      hiAddr = 0x0;
     for (let idx = 0; idx < this.compiled.compiledLines.length; idx += 1) {
       let line = this.compiled.compiledLines[idx];
       if (line.address !== address) {
         if (address === null) {
           this.store.dispatch(cpuSetPC(line.address));
+          lastAddress = line.address;
           loAddr = line.address;
         } else {
-          this.store.dispatch(cpuPoke(address, buffer));
+          this.store.dispatch(cpuPoke(lastAddress, buffer));
+          lastAddress = line.address;
           bytes += buffer.length;
           buffer = [];
         }
@@ -74,7 +81,7 @@ export class CompilerComponent implements OnInit {
       }
     }
     if (address !== null && buffer.length) {
-      this.store.dispatch(cpuPoke(address, buffer));
+      this.store.dispatch(cpuPoke(lastAddress, buffer));
       bytes += buffer.length;
     }
     this.success = true;

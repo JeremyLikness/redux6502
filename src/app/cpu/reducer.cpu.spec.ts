@@ -1,6 +1,6 @@
 import { Actions, IRunAction, IPokeAction, ISetPCAction } from './actions.cpu';
 
-import { Memory, INVALID_OP } from './constants';
+import { Memory, INVALID_OP, HALT } from './constants';
 
 import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
@@ -75,6 +75,7 @@ describe('reducer', () => {
       let expected: Cpu = initialCpuState();
       expected.controls.runningState = false;
       expected.controls.errorState = true;
+      expected.controls.errorMessage = HALT;
 
       defaultCpu.controls.runningState = true;
 

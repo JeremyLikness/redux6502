@@ -45,6 +45,7 @@ import { StxFamily } from './cpu/opCodes/stx';
 import { StyFamily } from './cpu/opCodes/sty';
 import { RegistersComponent } from './cpu/registers/registers.component';
 import { HexPipe } from './hex.pipe';
+import { CpuControlComponent } from './cpu-control/cpu-control.component';
 
 export function storeFactory() {
   return createStore(cpuReducer);
@@ -61,6 +62,7 @@ const storeProvider: FactoryProvider = {
     CompilerComponent,
     RegistersComponent,
     HexPipe,
+    CpuControlComponent,
   ],
   imports: [
     BrowserModule,

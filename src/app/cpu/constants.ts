@@ -41,6 +41,7 @@ export const MEMORY_OVERFLOW = 'Memory overflow.';
 export const INVALID_OP = 'Invalid op code.';
 export const STACK_OVERFLOW = 'Stack overflow.';
 export const STACK_EMPTY = 'Cannot pop empty stack.';
+export const HALT = 'Halted by user request.';
 
 export const BRANCH_FAMILY = 'Branches';
 export const FLAG_FAMILY = 'Flags';

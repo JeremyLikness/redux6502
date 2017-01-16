@@ -1,0 +1,23 @@
+<div fxLayout="column">
+    <div class="flex-item message" fxFlex 
+      [class.error]="errorState" 
+      [class.success]="!errorState">{{message}}</div>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button class="fa fa-play" 
+        [disabled]="errorState || running" 
+        title="Run"
+        (click)="run()"></button>
+      <button class="fa fa-step-forward" 
+        [disabled]="errorState || running" 
+        title="Step"
+        (click)="step()"></button>
+      <button class="fa fa-pause" 
+        [disabled]="errorState || !running" 
+        title="Pause"
+        (click)="stop()"></button>
+      <button class="fa fa-times-rectangle-o" 
+        [disabled]="errorState || !running" 
+        title="Halt"
+        (click)="halt()"></button>
+    </div>
+</div>

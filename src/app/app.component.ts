@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import 'font-awesome/css/font-awesome.css';
 
 @Component({
   selector: 'app-root',

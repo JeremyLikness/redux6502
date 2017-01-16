@@ -1,4 +1,4 @@
-import { Memory } from './constants';
+import { Memory, HALT } from './constants';
 
 import { Cpu, initialCpuState, cloneCpu } from './cpuState';
 
@@ -49,6 +49,7 @@ export const cpuReducer: (state: Cpu, action: Action) => Cpu =
                 type: Actions.Stop
             });
             haltCpu.controls.errorState = true;
+            haltCpu.controls.errorMessage = HALT;
             return haltCpu;
 
         case Actions.Reset:
