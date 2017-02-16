@@ -21,7 +21,7 @@
         "styles.css",
         "../node_modules/font-awesome/css/font-awesome.css"
       ],
-      "scripts": [],
+      "scripts": ["../postcss.config.js"],
       "environments": {
         "source": "environments/environment.ts",
         "dev": "environments/environment.ts",
