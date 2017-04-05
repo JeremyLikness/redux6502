@@ -2,7 +2,7 @@ language: node_js
 node_js:
     - "6.9"
 install: 
-    - npm install -g angular-cli@1.0.0-beta.24
+    - npm install -g @angular/cli@1.0.0
     - npm install 
 script: 
     - ng test --watch=false --single-run=true --browsers=PhantomJS

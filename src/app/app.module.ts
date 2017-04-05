@@ -68,7 +68,7 @@ const storeProvider: FactoryProvider = {
     BrowserModule,
     FormsModule,
     HttpModule,
-    FlexLayoutModule.forRoot()
+    FlexLayoutModule
   ],
   providers: [
     storeProvider,
