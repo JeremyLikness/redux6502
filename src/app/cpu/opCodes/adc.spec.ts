@@ -19,10 +19,10 @@ interface ITestAddAccumulator {
     test: string;
 }
 
-// these tests just ensure ADC accesses the correct byte 
+// these tests just ensure ADC accesses the correct byte
 // for in-depth tests for the add operation and flags, look at math.spec
 
-let tests: ITestAddAccumulator[] = [{
+const tests: ITestAddAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0x69,
@@ -111,7 +111,7 @@ describe('adc', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ AdcFamily ]
+            declarations: [AdcFamily]
         });
 
         adc = new AdcFamily();

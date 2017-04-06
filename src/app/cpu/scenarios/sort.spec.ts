@@ -1,12 +1,12 @@
 const program = [
     0xA0, 0x00, 0x84, 0x32, 0xB1, 0x30, 0xAA, 0xC8
-, 0xCA, 0xB1, 0x30, 0xC8, 0xD1, 0x30, 0x90, 0x10
-, 0xF0, 0x0E, 0x48, 0xB1, 0x30, 0x88, 0x91, 0x30
-, 0x68, 0xC8, 0x91, 0x30, 0xA9, 0xFF, 0x85, 0x32
-, 0xCA, 0xD0, 0xE6, 0x24, 0x32, 0x30, 0xD9, 0x60];
+    , 0xCA, 0xB1, 0x30, 0xC8, 0xD1, 0x30, 0x90, 0x10
+    , 0xF0, 0x0E, 0x48, 0xB1, 0x30, 0x88, 0x91, 0x30
+    , 0x68, 0xC8, 0x91, 0x30, 0xA9, 0xFF, 0x85, 0x32
+    , 0xCA, 0xD0, 0xE6, 0x24, 0x32, 0x30, 0xD9, 0x60];
 
 /*
-Source: http://6502.org/source/sorting/bubble8.htm 
+Source: http://6502.org/source/sorting/bubble8.htm
 
 ;THIS SUBROUTINE ARRANGES THE 8-BIT ELEMENTS OF A LIST IN ASCENDING
 ;ORDER.  THE STARTING ADDRESS OF THE LIST IS IN LOCATIONS $30 AND
@@ -60,7 +60,7 @@ describe('sorting test', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-           declarations: [ initialCpuState ]
+            declarations: [initialCpuState]
         });
 
         store = createStore(cpuReducer);
@@ -68,32 +68,32 @@ describe('sorting test', () => {
 
     it('sorts the full list in ascending order', () => {
 
-            let list: Byte[] = [];
-            let length = 50;
+        const list: Byte[] = [];
+        const length = 50;
 
-            // generate a random list 
-            for (let idx = 0; idx < length; idx += 1) {
-                list.push(Math.floor(Math.random() * 256));
-            }
+        // generate a random list
+        for (let idx = 0; idx < length; idx += 1) {
+            list.push(Math.floor(Math.random() * 256));
+        }
 
-            // load the program 
-            store.dispatch(cpuPoke(memory, program));
+        // load the program
+        store.dispatch(cpuPoke(memory, program));
 
-            // load the list (first element is the size)
-            store.dispatch(cpuPoke(0x300, [length, ...list]));
+        // load the list (first element is the size)
+        store.dispatch(cpuPoke(0x300, [length, ...list]));
 
-            // store the location of the list
-            store.dispatch(cpuPoke(0x30, [0x00, 0x03]));
+        // store the location of the list
+        store.dispatch(cpuPoke(0x30, [0x00, 0x03]));
 
-            store.dispatch(cpuSetPC(0x0200));
-            store.dispatch(cpuStart());
-            store.dispatch(cpuRun(99999));
-            let cpu = store.getState();
-            expect(cpu.controls.errorMessage).toBe(STACK_EMPTY); // hit RTS
-            for (let idx = 0; idx < length - 1; idx += 1) {
-                expect(cpu.memory[0x300 + 1 + idx])
-                    .toBeLessThanOrEqual(cpu.memory[0x300 + 2 + idx]);
-            }
-            perf(cpu);
+        store.dispatch(cpuSetPC(0x0200));
+        store.dispatch(cpuStart());
+        store.dispatch(cpuRun(99999));
+        const cpu = store.getState();
+        expect(cpu.controls.errorMessage).toBe(STACK_EMPTY); // hit RTS
+        for (let idx = 0; idx < length - 1; idx += 1) {
+            expect(cpu.memory[0x300 + 1 + idx])
+                .toBeLessThanOrEqual(cpu.memory[0x300 + 2 + idx]);
+        }
+        perf(cpu);
     });
 });

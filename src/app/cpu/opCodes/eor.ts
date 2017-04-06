@@ -23,7 +23,7 @@ class XorBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(EOR, value, mode, size, cpu => {
-            let target = cpu.getValue(mode), pc = size - 1;
+            const target = cpu.getValue(mode), pc = size - 1;
             cpu.rA ^= target;
             cpu.rP = setFlags(cpu.rP, cpu.rA);
             cpu.rPC += pc;

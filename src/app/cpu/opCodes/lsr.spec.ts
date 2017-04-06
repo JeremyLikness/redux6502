@@ -10,8 +10,8 @@ describe('LSR', () => {
 
     let lsr: LsrFamily = null;
     let cpu: Cpu = null;
-    let noCarry = parseInt('00000010', 2);
-    let carry = parseInt('00000001', 2);
+    const noCarry = parseInt('00000010', 2);
+    const carry = parseInt('00000001', 2);
 
     const checkResult = (src: Byte, result: Byte) => {
         expect(result).toBe((src & 0xFE) >> 1);
@@ -31,7 +31,7 @@ describe('LSR', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ LsrFamily ]
+            declarations: [LsrFamily]
         });
 
         lsr = new LsrFamily();

@@ -19,7 +19,7 @@ interface ITestXorAccumulator {
     test: string;
 }
 
-let tests: ITestXorAccumulator[] = [{
+const tests: ITestXorAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0x49,
@@ -108,7 +108,7 @@ describe('XOR', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ XorFamily ]
+            declarations: [XorFamily]
         });
 
         xor = new XorFamily();

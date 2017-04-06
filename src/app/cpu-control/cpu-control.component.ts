@@ -26,7 +26,7 @@ export class CpuControlComponent implements OnInit {
   public errorState = false;
   public message = '';
 
-  constructor(@Inject(CPU_STORE)public store: Store<Cpu>) {
+  constructor( @Inject(CPU_STORE) public store: Store<Cpu>) {
     this.updateStates();
   }
 
@@ -36,7 +36,7 @@ export class CpuControlComponent implements OnInit {
 
   public run() {
     if (!this.running && !this.errorState) {
-      let cpu = this.store.getState();
+      const cpu = this.store.getState();
       console.log(cpu);
       this.store.dispatch(cpuStart());
       this.runBatch();
@@ -71,7 +71,7 @@ export class CpuControlComponent implements OnInit {
   }
 
   public updateStates(): void {
-    let cpu = this.store.getState();
+    const cpu = this.store.getState();
     this.running = cpu.controls.runningState;
     this.debug = cpu.debug;
     this.errorState = cpu.controls.errorState;

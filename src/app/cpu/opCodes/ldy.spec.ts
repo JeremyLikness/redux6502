@@ -19,7 +19,7 @@ interface ITestLoadY {
     test: string;
 }
 
-let tests: ITestLoadY[] = [{
+const tests: ITestLoadY[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0xA0,
@@ -79,7 +79,7 @@ describe('ldy', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ LdyFamily ]
+            declarations: [LdyFamily]
         });
 
         ldy = new LdyFamily();
@@ -89,7 +89,7 @@ describe('ldy', () => {
 
     describe('flags', () => {
 
-        let baseTest = tests[0];
+        const baseTest = tests[0];
 
         it('should set the negative flag when high bit value set', () => {
             apply(cpu, baseTest);

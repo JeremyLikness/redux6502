@@ -18,6 +18,6 @@ import { NOP } from '../constants';
 export class NopFamily extends OpCodeFamily {
     constructor() {
         super(NOP);
-        super.register(new BaseOpCode(NOP, 0xEA, AddressingModes.Single, 0x01, cpu => {}));
+        super.register(new BaseOpCode(NOP, 0xEA, AddressingModes.Single, 0x01, cpu => { }));
     }
 }

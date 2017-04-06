@@ -2,7 +2,8 @@ import {
     decompileOp,
     decompileOps,
     dumpMemory,
-    ICompilerResult } from './globals';
+    ICompilerResult
+} from './globals';
 
 import { OpCodeValue, Address, Byte } from '../cpu/globals';
 
@@ -16,7 +17,7 @@ interface IDecompileOpTest {
     test: string;
 }
 
-let decompileOpTests: IDecompileOpTest[] = [{
+const decompileOpTests: IDecompileOpTest[] = [{
     bytes: [0x0],
     expected: '$C000: ???',
     test: 'decompiles invalid op codes'
@@ -76,30 +77,30 @@ describe('decompileOp', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ decompileOp ]
+            declarations: [decompileOp]
         });
 
         cpu = initialCpuState();
     });
 
     decompileOpTests.forEach(test => {
-        it (test.test, () => {
-            let mem = 0xC000 + test.bytes.length,
-                memory = [...test.bytes];
+        it(test.test, () => {
+            let mem = 0xC000 + test.bytes.length;
+            const memory = [...test.bytes];
             while (mem > 0) {
                 mem -= 1;
                 cpu.memory[mem] = memory.pop();
             }
-            let result = decompileOp(cpu, 0xC000);
+            const result = decompileOp(cpu, 0xC000);
             expect(result).toBe(test.expected);
         });
     });
 
     describe('decompileOps', () => {
         it('decompiles the requested lines and returns', () => {
-            let code = [0xA2, 0x00, 0xBD, 0x0B, 0xC0, 0xF0, 0x03, 0xE8, 0xD0, 0xF8, 0x00, 0x01,
-                        0x02, 0x03, 0x04, 0x05];
-            let expected = [
+            const code = [0xA2, 0x00, 0xBD, 0x0B, 0xC0, 0xF0, 0x03, 0xE8, 0xD0, 0xF8, 0x00, 0x01,
+                0x02, 0x03, 0x04, 0x05];
+            const expected = [
                 '$C000: LDX #$00',
                 '$C002: LDA $C00B, X',
                 '$C005: BEQ $C00A',
@@ -113,7 +114,7 @@ describe('decompileOp', () => {
                 cpu.memory[0xC000 + offset] = code[offset];
             }
 
-            let result = decompileOps(cpu, 0xC000, 7);
+            const result = decompileOps(cpu, 0xC000, 7);
             expect(result).toEqual(expected);
         });
     });

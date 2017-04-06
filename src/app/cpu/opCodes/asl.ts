@@ -22,9 +22,9 @@ import { BaseOpCode, OpCodeFamily } from '../opcode.base';
 class AslBase extends BaseOpCode {
     constructor(opCode: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(ASL, opCode, mode, size, cpu => {
-            let target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
-                pc = size - 1,
-                result = target << 1;
+            const target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
+                pc = size - 1;
+            let result = target << 1;
             if (result >= 0x100) {
                 cpu.rP |= Flags.CarryFlagSet;
             } else {

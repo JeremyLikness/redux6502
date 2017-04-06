@@ -18,12 +18,12 @@ describe('RegistersComponent', () => {
   let fixture: ComponentFixture<RegistersComponent>;
 
   beforeEach(async(() => {
-    let store = createStore(cpuReducer);
+    const store = createStore(cpuReducer);
     TestBed.configureTestingModule({
-      declarations: [ RegistersComponent, HexPipe ],
+      declarations: [RegistersComponent, HexPipe],
       providers: [<ValueProvider>{ provide: CPU_STORE, useValue: store }]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -41,7 +41,7 @@ describe('RegistersComponent', () => {
   });
 
   it('should respond to store changes', () => {
-    let expected = initialCpuState();
+    const expected = initialCpuState();
     component.store.dispatch(cpuSetPC(0xC000));
     fixture.detectChanges();
     expect(component.cpu.rPC).toEqual(0xC000);
@@ -56,5 +56,5 @@ describe('RegistersComponent', () => {
       component.cpu.rP = Flags.NegativeFlagReset;
       expect(component.registerSet(7)).toBe(false);
     });
-  })
+  });
 });

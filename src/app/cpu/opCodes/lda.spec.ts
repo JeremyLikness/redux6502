@@ -20,7 +20,7 @@ interface ITestLoadAccumulator {
     test: string;
 }
 
-let tests: ITestLoadAccumulator[] = [{
+const tests: ITestLoadAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0xA9,
@@ -116,7 +116,7 @@ describe('lda', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ LdaFamily ]
+            declarations: [LdaFamily]
         });
 
         lda = new LdaFamily();
@@ -126,7 +126,7 @@ describe('lda', () => {
 
     describe('flags', () => {
 
-        let baseTest = tests[0];
+        const baseTest = tests[0];
 
         it('should set the negative flag when high bit value set', () => {
             apply(cpu, baseTest);

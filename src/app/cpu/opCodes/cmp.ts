@@ -15,8 +15,8 @@ Indirect,Y    CMP ($44),Y   $D1  2   5+
 
 + add 1 cycle if page boundary crossed
 
-Compare sets flags as if a subtraction had been carried out. If the value in the accumulator is equal or greater than 
-the compared value, the Carry will be set. The equal (Z) and sign (S) flags will be set based on equality or lack thereof 
+Compare sets flags as if a subtraction had been carried out. If the value in the accumulator is equal or greater than
+the compared value, the Carry will be set. The equal (Z) and sign (S) flags will be set based on equality or lack thereof
 and the sign (i.e. A>=$80) of the accumulator.
 */
 
@@ -29,7 +29,7 @@ class CmpBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(CMP, value, mode, size, cpu => {
-            let target = cpu.getValue(mode), pc = size - 1;
+            const target = cpu.getValue(mode), pc = size - 1;
             cpu.rP = compareWithFlag(cpu.rP, cpu.rA, target);
             cpu.rPC += pc;
         });

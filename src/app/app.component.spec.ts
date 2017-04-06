@@ -18,9 +18,11 @@ import { cpuReducer } from './cpu/reducer.cpu';
 
 import { createStore } from 'redux';
 
+const TITLE = '6502 Emulator (NG4, TS, Redux)';
+
 describe('AppComponent', () => {
   beforeEach(() => {
-    let store = createStore(cpuReducer);
+    const store = createStore(cpuReducer);
     TestBed.configureTestingModule({
       declarations: [
         AppComponent,
@@ -29,28 +31,28 @@ describe('AppComponent', () => {
         CpuControlComponent,
         HexPipe
       ],
-      imports: [ CommonModule, FormsModule ],
-      providers: [ Compiler, { provide: CPU_STORE, useValue: store } ]
+      imports: [CommonModule, FormsModule],
+      providers: [Compiler, { provide: CPU_STORE, useValue: store }]
     });
     TestBed.compileComponents();
   });
 
   it('should create the app', async(() => {
-    let fixture = TestBed.createComponent(AppComponent);
-    let app = fixture.debugElement.componentInstance;
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
 
-  it(`should have as title '6502 Emulator (NG2, TS, Redux)'`, async(() => {
-    let fixture = TestBed.createComponent(AppComponent);
-    let app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('6502 Emulator (NG2, TS, Redux)');
+  it(`should have as title ${TITLE}`, async(() => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.debugElement.componentInstance;
+    expect(app.title).toEqual(TITLE);
   }));
 
   it('should render title in a h1 tag', async(() => {
-    let fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    let compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('6502 Emulator (NG2, TS, Redux)');
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('h1').textContent).toContain(TITLE);
   }));
 });

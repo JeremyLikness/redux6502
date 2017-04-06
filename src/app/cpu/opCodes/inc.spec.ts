@@ -13,7 +13,7 @@ describe('INC', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ IncFamily ]
+            declarations: [IncFamily]
         });
 
         inc = new IncFamily();
@@ -21,21 +21,21 @@ describe('INC', () => {
 
     });
 
-    it ('should set sign flag when result is signed', () => {
+    it('should set sign flag when result is signed', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0x7F;
         inc.execute(cpu, 0xE6);
         expect(cpu.rP & Flags.NegativeFlag).toBeTruthy();
     });
 
-    it ('should set zero flag when result is zero', () => {
+    it('should set zero flag when result is zero', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0xFF;
         inc.execute(cpu, 0xE6);
         expect(cpu.rP & Flags.ZeroFlag).toBeTruthy();
     });
 
-    it ('should reset sign flag when result is unsigned', () => {
+    it('should reset sign flag when result is unsigned', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0x7E;
         cpu.rP = Flags.NegativeFlag;
@@ -43,7 +43,7 @@ describe('INC', () => {
         expect(cpu.rP & Flags.NegativeFlag).toBeFalsy();
     });
 
-    it ('should reset zero flag when result is not zero', () => {
+    it('should reset zero flag when result is not zero', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0x7E;
         cpu.rP = Flags.ZeroFlag;

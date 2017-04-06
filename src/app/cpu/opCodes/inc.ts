@@ -19,8 +19,8 @@ class IncBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(INC, value, mode, size, cpu => {
-            let addr = cpu.addrForMode(mode), pc = size - 1;
-            let temp = (cpu.peek(addr) + 1) & Memory.ByteMask;
+            const addr = cpu.addrForMode(mode), pc = size - 1;
+            const temp = (cpu.peek(addr) + 1) & Memory.ByteMask;
             cpu.rP = setFlags(cpu.rP, temp);
             cpu.memory[addr] = temp;
             cpu.rPC += pc;

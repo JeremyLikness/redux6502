@@ -13,7 +13,7 @@ describe('registers', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ RegisterFamily ]
+            declarations: [RegisterFamily]
         });
 
         register = new RegisterFamily();
@@ -23,7 +23,7 @@ describe('registers', () => {
 
     describe('TAX', () => {
 
-        let TAXCode = 0xAA;
+        const TAXCode = 0xAA;
 
         it('should transfer the accumulator to the x register', () => {
             cpu.rA = 0x7F;
@@ -46,7 +46,7 @@ describe('registers', () => {
 
     describe('TXA', () => {
 
-        let TXACode = 0x8A;
+        const TXACode = 0x8A;
 
         it('should transfer the x register to the accumulator', () => {
             cpu.rX = 0x7F;
@@ -69,7 +69,7 @@ describe('registers', () => {
 
     describe('DEX', () => {
 
-        let DEXCode = 0xCA;
+        const DEXCode = 0xCA;
 
         it('should decrement the X register', () => {
             cpu.rX = 0x7F;
@@ -98,7 +98,7 @@ describe('registers', () => {
 
     describe('INX', () => {
 
-        let INXCode = 0xE8;
+        const INXCode = 0xE8;
 
         it('should increment the X register', () => {
             cpu.rX = 0x00;
@@ -127,7 +127,7 @@ describe('registers', () => {
 
     describe('TAY', () => {
 
-        let TAYCode = 0xA8;
+        const TAYCode = 0xA8;
 
         it('should transfer the accumulator to the y register', () => {
             cpu.rA = 0x7F;
@@ -150,7 +150,7 @@ describe('registers', () => {
 
     describe('TYA', () => {
 
-        let TYACode = 0x98;
+        const TYACode = 0x98;
 
         it('should transfer the y register to the accumulator', () => {
             cpu.rY = 0x7F;
@@ -173,7 +173,7 @@ describe('registers', () => {
 
     describe('DEY', () => {
 
-        let DEYCode = 0x88;
+        const DEYCode = 0x88;
 
         it('should decrement the Y register', () => {
             cpu.rY = 0x7F;
@@ -202,7 +202,7 @@ describe('registers', () => {
 
     describe('INY', () => {
 
-        let INYCode = 0xC8;
+        const INYCode = 0xC8;
 
         it('should increment the y register', () => {
             cpu.rY = 0x00;

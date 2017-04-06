@@ -19,7 +19,7 @@ interface ITestLoadX {
     test: string;
 }
 
-let tests: ITestLoadX[] = [{
+const tests: ITestLoadX[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0xA2,
@@ -79,7 +79,7 @@ describe('ldx', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ LdxFamily ]
+            declarations: [LdxFamily]
         });
 
         ldx = new LdxFamily();
@@ -89,7 +89,7 @@ describe('ldx', () => {
 
     describe('flags', () => {
 
-        let baseTest = tests[0];
+        const baseTest = tests[0];
 
         it('should set the negative flag when high bit value set', () => {
             apply(cpu, baseTest);

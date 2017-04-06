@@ -10,8 +10,8 @@ describe('ROL', () => {
 
     let rol: RolFamily = null;
     let cpu: Cpu = null;
-    let noCarry = parseInt('01000000', 2);
-    let carry = parseInt('10000000', 2);
+    const noCarry = parseInt('01000000', 2);
+    const carry = parseInt('10000000', 2);
 
     const checkResult = (src: Byte, result: Byte, rotate: boolean) => {
         expect(result).toBe((src * 2 + (rotate ? 1 : 0)) & Memory.ByteMask);
@@ -35,7 +35,7 @@ describe('ROL', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ RolFamily ]
+            declarations: [RolFamily]
         });
 
         rol = new RolFamily();

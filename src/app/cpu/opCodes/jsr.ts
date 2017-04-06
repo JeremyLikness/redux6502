@@ -6,7 +6,7 @@ Affects Flags: none
 MODE           SYNTAX       HEX LEN TIM
 Absolute      JSR $5597     $20  3   6
 
-JSR pushes the address-1 of the next operation on to the stack before transferring program control to the 
+JSR pushes the address-1 of the next operation on to the stack before transferring program control to the
 following address. Subroutines are normally terminated by a RTS op code.
 */
 
@@ -20,7 +20,7 @@ export class JsrFamily extends OpCodeFamily {
     constructor() {
         super(JSR);
         super.register(new BaseOpCode(JSR, 0x20, AddressingModes.Absolute, 0x03, cpu => {
-            let newAddr = cpu.addrPopWord(),
+            const newAddr = cpu.addrPopWord(),
                 hiByte = ((cpu.rPC + 1) >> Memory.BitsInByte) & Memory.ByteMask,
                 loByte = (cpu.rPC + 1) & Memory.ByteMask;
             cpu.stackPush(hiByte);

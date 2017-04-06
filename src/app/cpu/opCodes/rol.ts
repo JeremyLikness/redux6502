@@ -19,10 +19,10 @@ import { IsOpCode } from '../opCodeBridge';
 class RolBase extends BaseOpCode {
     constructor(opCode: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(ROL, opCode, mode, size, cpu => {
-            let target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
+            const target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
                 pc = size - 1,
-                carry = (cpu.rP & Flags.CarryFlag) ? 1 : 0,
-                result = (target << 1) + carry;
+                carry = (cpu.rP & Flags.CarryFlag) ? 1 : 0;
+            let result = (target << 1) + carry;
             if (result >= 0x100) {
                 cpu.rP |= Flags.CarryFlagSet;
             } else {

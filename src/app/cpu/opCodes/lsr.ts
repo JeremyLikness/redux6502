@@ -19,10 +19,10 @@ import { BaseOpCode, OpCodeFamily } from '../opcode.base';
 class LsrBase extends BaseOpCode {
     constructor(opCode: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(LSR, opCode, mode, size, cpu => {
-            let target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
+            const target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
                 pc = size - 1,
-                carry = !!(target & 0x01),
-                result = (target & 0xFE) >> 1;
+                carry = !!(target & 0x01);
+            let result = (target & 0xFE) >> 1;
             if (carry) {
                 cpu.rP |= Flags.CarryFlagSet;
             } else {

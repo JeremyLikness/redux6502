@@ -19,7 +19,7 @@ interface ITestAndAccumulator {
     test: string;
 }
 
-let tests: ITestAndAccumulator[] = [{
+const tests: ITestAndAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0x29,
@@ -108,7 +108,7 @@ describe('AND', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ AndFamily ]
+            declarations: [AndFamily]
         });
 
         and = new AndFamily();

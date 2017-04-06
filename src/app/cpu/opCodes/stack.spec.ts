@@ -13,7 +13,7 @@ describe('registers', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ StackFamily ]
+            declarations: [StackFamily]
         });
 
         stack = new StackFamily();

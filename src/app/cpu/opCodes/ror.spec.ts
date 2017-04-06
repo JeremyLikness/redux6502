@@ -10,8 +10,8 @@ describe('ROR', () => {
 
     let ror: RorFamily = null;
     let cpu: Cpu = null;
-    let noCarry = parseInt('00000010', 2);
-    let carry = parseInt('00000001', 2);
+    const noCarry = parseInt('00000010', 2);
+    const carry = parseInt('00000001', 2);
 
     const checkResult = (src: Byte, result: Byte, rotate: boolean) => {
         expect(result).toBe((src / 2 + (rotate ? 0x80 : 0)) & Memory.ByteMask);
@@ -43,7 +43,7 @@ describe('ROR', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ RorFamily ]
+            declarations: [RorFamily]
         });
 
         ror = new RorFamily();

@@ -11,7 +11,7 @@ describe('jmp', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ JmpFamily ]
+            declarations: [JmpFamily]
         });
 
         jmp = new JmpFamily();
@@ -34,4 +34,3 @@ describe('jmp', () => {
         expect(cpu.rPC).toBe(0xEEFF);
     });
 });
-

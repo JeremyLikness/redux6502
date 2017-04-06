@@ -1,22 +1,22 @@
-export type Byte = number; // 8 bits 
+export type Byte = number; // 8 bits
 export type Word = number; // 16 bits low/high
-export type Address = Word; // memory address 
+export type Address = Word; // memory address
 export type ZeroPage = Byte; // zero page memory address
-export type Register = number; // CPU Register 
+export type Register = number; // CPU Register
 export type RAM = number[]; // memory
 export type OpCodeValue = number; // op code byte
-export type Flag = number; // holds a flag 
+export type Flag = number; // holds a flag
 
 import { Memory, Flags } from './constants';
 
 export enum AddressingModes {
     Immediate, // LDA #$00
     ZeroPage, // LDA $00
-    ZeroPageX, // LDA $00,X 
+    ZeroPageX, // LDA $00,X
     ZeroPageY, // LDX $00,Y
     Absolute, // LDA $C000
     AbsoluteX, // LDA $C000,X
-    AbsoluteY, // LDA $C000,Y 
+    AbsoluteY, // LDA $C000,Y
     Indirect, // JMP ($C000)
     IndexedIndirectX, // LDA ($00,X)
     IndirectIndexedY, // LDA ($00), Y
@@ -76,7 +76,7 @@ export interface IOpCodes {
 }
 
 export const hexHelper = (val: Byte | Word, digits = 2) => {
-    let leading = Array(digits).fill('0').join('');
+    const leading = Array(digits).fill('0').join('');
     return (leading + val.toString(16).toLocaleUpperCase())
         .substr(-1 * digits);
 };
@@ -100,7 +100,7 @@ export const setFlags = (flags: Flag, value: Byte) => {
 };
 
 export const compareWithFlag = (flag: Flag, registerValue: Byte, value: Byte) => {
-    let offset = Memory.ByteMask + registerValue - value + 1;
+    const offset = Memory.ByteMask + registerValue - value + 1;
 
     if (offset >= 0x100) {
         flag |= Flags.CarryFlagSet;
@@ -108,7 +108,7 @@ export const compareWithFlag = (flag: Flag, registerValue: Byte, value: Byte) =>
         flag &= Flags.CarryFlagReset;
     }
 
-    let temp = offset & Memory.ByteMask;
+    const temp = offset & Memory.ByteMask;
 
     if (temp & Flags.NegativeFlag) {
         flag |= Flags.NegativeFlagSet;
@@ -127,7 +127,7 @@ export const compareWithFlag = (flag: Flag, registerValue: Byte, value: Byte) =>
 
 export const poke = (cpu: ICpu, startAddress: Address, bytes: Byte[]) => {
     for (let offset = 0; offset < bytes.length; offset += 1) {
-        let address: Address = (startAddress + offset) & Memory.Max;
+        const address: Address = (startAddress + offset) & Memory.Max;
         cpu.memory[address] = bytes[offset] & Memory.ByteMask;
     }
 };
@@ -153,10 +153,11 @@ export const toHex = (input: Byte) => ((input / 10) << Memory.BitsInNibble) + in
 
 export const addWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
 
-    let carry = flag & Flags.CarryFlag ? 1 : 0;
+    const carry = flag & Flags.CarryFlag ? 1 : 0;
 
     if (flag & Flags.DecimalFlag) {
-        let a = toDecimal(accumulator), t = toDecimal(target), r = a + t + carry;
+        const a = toDecimal(accumulator), t = toDecimal(target);
+        let r = a + t + carry;
         if (r >= 100) {
             flag |= Flags.CarryFlagSet;
             r -= 100;
@@ -170,7 +171,7 @@ export const addWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
         } as IAddWithCarryResult;
     }
 
-    let temp = accumulator + target + carry;
+    const temp = accumulator + target + carry;
 
     if (((accumulator ^ temp) & (target ^ temp) & Flags.NegativeFlagSet) === Flags.NegativeFlag) {
         flag |= Flags.OverflowFlagSet;
@@ -194,9 +195,9 @@ export const addWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
 
 export const subtractWithCarry = (flag: Flag, accumulator: Byte, target: Byte) => {
 
-    let carryFactor = flag & Flags.CarryFlag ? 1 : 0,
-        offset = 0,
-        temp = 0,
+    let offset = 0,
+        temp = 0;
+    const carryFactor = flag & Flags.CarryFlag ? 1 : 0,
         offsetAdjustSub = (offs: number) => {
             if (offs < 0x100) {
                 flag &= Flags.CarryFlagReset;
@@ -211,7 +212,7 @@ export const subtractWithCarry = (flag: Flag, accumulator: Byte, target: Byte) =
                 }
             }
             return false;
-    };
+        };
 
     if (!!((accumulator ^ target) & Flags.NegativeFlag)) {
         flag |= Flags.OverflowFlagSet;
@@ -237,7 +238,7 @@ export const subtractWithCarry = (flag: Flag, accumulator: Byte, target: Byte) =
         offset = Memory.ByteMask + accumulator - target + carryFactor;
         offsetAdjustSub(offset);
     }
-    let result = offset & Memory.ByteMask;
+    const result = offset & Memory.ByteMask;
     flag = setFlags(flag, result);
     return {
         flag,

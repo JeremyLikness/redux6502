@@ -19,12 +19,11 @@ import { IsOpCode } from '../opCodeBridge';
 class RorBase extends BaseOpCode {
     constructor(opCode: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(ROR, opCode, mode, size, cpu => {
-            let target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
+            const target = mode === AddressingModes.Single ? cpu.rA : cpu.getValue(mode),
                 pc = size - 1,
                 carry = (cpu.rP & Flags.CarryFlag) ? 0x80 : 0,
-                result: Byte,
                 rotate = target & 0x01;
-            result = ((target & 0xFE) >> 1) + carry;
+            let result: Byte = ((target & 0xFE) >> 1) + carry;
             if (rotate) {
                 cpu.rP |= Flags.CarryFlagSet;
             } else {

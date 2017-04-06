@@ -1,8 +1,8 @@
 /*
 Stack Instructions
 
-These instructions are implied mode, have a length of one byte and require machine cycles as indicated. 
-The "Pull" operations are known as "POP" on most other microprocessors. With the 6502, the stack is always on page 
+These instructions are implied mode, have a length of one byte and require machine cycles as indicated.
+The "Pull" operations are known as "POP" on most other microprocessors. With the 6502, the stack is always on page
 one ($100-$1FF) and works top down.
 
 MNEMONIC                        HEX TIM

@@ -12,7 +12,7 @@ describe('Base Op Code Tests', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ BaseOpCode ]
+            declarations: [BaseOpCode]
         });
         cpu = initialCpuState();
     });
@@ -20,7 +20,7 @@ describe('Base Op Code Tests', () => {
     describe('BaseOpCode', () => {
 
         it('executes the action assigned', () => {
-            let baseOpCode = new BaseOpCode('TST', 0x01, AddressingModes.Absolute, 0x03, oCpu => oCpu.memory[1] = 2);
+            const baseOpCode = new BaseOpCode('TST', 0x01, AddressingModes.Absolute, 0x03, oCpu => oCpu.memory[1] = 2);
             baseOpCode.execute(cpu);
             expect(cpu.memory[1]).toBe(2);
         });
@@ -39,15 +39,15 @@ describe('Base Op Code Tests', () => {
         });
 
         it('executes the corresponding op code', () => {
-            let goodOpCode = new BaseOpCode('TST', 0x01, AddressingModes.Absolute, 0x03, oCpu => oCpu.memory[2] = 3);
+            const goodOpCode = new BaseOpCode('TST', 0x01, AddressingModes.Absolute, 0x03, oCpu => oCpu.memory[2] = 3);
             family.register(goodOpCode);
             family.execute(cpu, goodOpCode.value);
             expect(cpu.memory[2]).toBe(3);
         });
 
         it('registers multiple op codes', () => {
-            let goodOpCode = new BaseOpCode('TST', 0x01, AddressingModes.Absolute, 0x03, oCpu => oCpu.memory[2] = 3);
-            let anotherGoodOpCode = new BaseOpCode('TST', 0x02, AddressingModes.Immediate, 0x03, oCpu => oCpu.memory[3] = 4);
+            const goodOpCode = new BaseOpCode('TST', 0x01, AddressingModes.Absolute, 0x03, oCpu => oCpu.memory[2] = 3);
+            const anotherGoodOpCode = new BaseOpCode('TST', 0x02, AddressingModes.Immediate, 0x03, oCpu => oCpu.memory[3] = 4);
             family.register(goodOpCode, anotherGoodOpCode);
             family.execute(cpu, goodOpCode.value);
             family.execute(cpu, anotherGoodOpCode.value);

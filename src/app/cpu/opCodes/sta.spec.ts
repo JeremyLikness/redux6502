@@ -21,7 +21,7 @@ interface ITestStoreAccumulator {
     test: string;
 }
 
-let tests: ITestStoreAccumulator[] = [{
+const tests: ITestStoreAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0x85,
@@ -115,7 +115,7 @@ describe('sta', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ StaFamily ]
+            declarations: [StaFamily]
         });
 
         sta = new StaFamily();

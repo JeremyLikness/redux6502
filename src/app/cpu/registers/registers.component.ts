@@ -15,7 +15,7 @@ export class RegistersComponent implements OnInit {
 
   public cpu: Cpu;
 
-  constructor(@Inject(CPU_STORE)public store: Store<Cpu>) {
+  constructor( @Inject(CPU_STORE) public store: Store<Cpu>) {
     this.updateRegisters();
   }
 
@@ -28,7 +28,7 @@ export class RegistersComponent implements OnInit {
   }
 
   public registerSet(bit: number): boolean {
-    let mask = Math.pow(2, bit);
+    const mask = Math.pow(2, bit);
     return !!(this.cpu.rP & mask);
   }
 

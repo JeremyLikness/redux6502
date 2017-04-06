@@ -13,7 +13,7 @@ describe('jsr', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ JsrFamily ]
+            declarations: [JsrFamily]
         });
 
         jsr = new JsrFamily();

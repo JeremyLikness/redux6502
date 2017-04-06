@@ -19,7 +19,7 @@ interface ITestOrAccumulator {
     test: string;
 }
 
-let tests: ITestOrAccumulator[] = [{
+const tests: ITestOrAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0x09,
@@ -108,7 +108,7 @@ describe('OR', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ OrFamily ]
+            declarations: [OrFamily]
         });
 
         or = new OrFamily();

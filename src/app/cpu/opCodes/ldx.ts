@@ -20,7 +20,7 @@ class LdxBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(LDX, value, mode, size, cpu => {
-            let target = cpu.getValue(mode), pc = size - 1;
+            const target = cpu.getValue(mode), pc = size - 1;
             cpu.rX = target;
             cpu.rP = setFlags(cpu.rP, cpu.rX);
             cpu.rPC += pc;

@@ -5,7 +5,8 @@ import {
     ICpu,
     AddressingModes,
     hexHelper,
-    computeBranch } from '../cpu/globals';
+    computeBranch
+} from '../cpu/globals';
 
 import { Memory } from '../cpu/constants';
 
@@ -14,7 +15,8 @@ import { ILabel, findLabel } from './labels';
 import {
     LABEL_NOT_DEFINED,
     OUT_OF_RANGE,
-    NOT_IMPLEMENTED } from './constants';
+    NOT_IMPLEMENTED
+} from './constants';
 
 export interface ICompiledLine {
     address: Address; // address for line
@@ -27,7 +29,7 @@ export interface ICompiledLine {
 }
 
 export interface ICompilerResult {
-    labels: ILabel[]; // distinct labels  
+    labels: ILabel[]; // distinct labels
     memoryTags: number; // count of tags (includes label math: LDA MEMORY + 5)
     compiledLines: ICompiledLine[]; // actual compiled code
     lines: number; // total lines parsed
@@ -46,34 +48,34 @@ export const newCompiledLine = () => ({
 } as ICompiledLine);
 
 export const decompileOp = (cpu: ICpu, address: Address) => {
-    let opCode = cpu.memory[address];
-    let operation = cpu.fetch(opCode);
-    let name = operation.name;
+    const opCode = cpu.memory[address];
+    const operation = cpu.fetch(opCode);
+    const name = operation.name;
     let parms = '';
     switch (operation.mode) {
         case AddressingModes.Absolute:
-            parms = `$${hexHelper(cpu.memory[address + 2],2)}${hexHelper(cpu.memory[address + 1],2)}`;
+            parms = `$${hexHelper(cpu.memory[address + 2], 2)}${hexHelper(cpu.memory[address + 1], 2)}`;
             break;
         case AddressingModes.AbsoluteX:
-            parms = `$${hexHelper(cpu.memory[address + 2],2)}${hexHelper(cpu.memory[address + 1],2)}, X`;
+            parms = `$${hexHelper(cpu.memory[address + 2], 2)}${hexHelper(cpu.memory[address + 1], 2)}, X`;
             break;
         case AddressingModes.AbsoluteY:
-            parms = `$${hexHelper(cpu.memory[address + 2],2)}${hexHelper(cpu.memory[address + 1],2)}, Y`;
+            parms = `$${hexHelper(cpu.memory[address + 2], 2)}${hexHelper(cpu.memory[address + 1], 2)}, Y`;
             break;
         case AddressingModes.Immediate:
-            parms = `#$${hexHelper(cpu.memory[address + 1],2)}`;
+            parms = `#$${hexHelper(cpu.memory[address + 1], 2)}`;
             break;
         case AddressingModes.IndexedIndirectX:
-            parms = `($${hexHelper(cpu.memory[address + 1],2)}, X)`;
+            parms = `($${hexHelper(cpu.memory[address + 1], 2)}, X)`;
             break;
         case AddressingModes.Indirect:
             parms = `($${hexHelper(cpu.memory[address + 2], 2)}${hexHelper(cpu.memory[address + 1], 2)})`;
             break;
         case AddressingModes.IndirectIndexedY:
-            parms = `($${hexHelper(cpu.memory[address + 1],2)}), Y`;
+            parms = `($${hexHelper(cpu.memory[address + 1], 2)}), Y`;
             break;
         case AddressingModes.Relative:
-            let offset = computeBranch(address, cpu.memory[address + 1]);
+            const offset = computeBranch(address, cpu.memory[address + 1]);
             parms = `$${hexHelper(offset, 4)}`;
             break;
         case AddressingModes.Single:
@@ -93,7 +95,8 @@ export const decompileOp = (cpu: ICpu, address: Address) => {
 };
 
 export const decompileOps = (cpu: ICpu, startAddress: Address, lines = 10) => {
-    let addr = startAddress, result: string[] = [], count = lines;
+    let addr = startAddress;
+    const result: string[] = [], count = lines;
     while (lines && addr <= Memory.Size) {
         result.push(decompileOp(cpu, addr));
         addr += cpu.fetch(cpu.memory[addr]).size;
@@ -103,11 +106,12 @@ export const decompileOps = (cpu: ICpu, startAddress: Address, lines = 10) => {
 };
 
 export const dumpMemory = (cpu: ICpu, startAddress: Address, lines = 0x08) => {
-    let addr = startAddress, result: string[] = [], count = lines;
+    let addr = startAddress;
+    const result: string[] = [], count = lines;
     while (lines && addr < Memory.Size) {
         let dumpLine = `$${hexHelper(addr, 4)}: `;
         for (let offs = 0; offs < 0x10 && addr + offs < Memory.Size; offs += 1) {
-            dumpLine += `${hexHelper(cpu.memory[addr + offs],2)} `;
+            dumpLine += `${hexHelper(cpu.memory[addr + offs], 2)} `;
         }
         result.push(dumpLine.trim());
         addr += 0x10;

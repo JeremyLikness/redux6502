@@ -27,7 +27,7 @@ export interface ILabelParseResult {
 }
 
 export const findLabel: (label: string, labels: ILabel[]) => ILabel = (label: string, labels: ILabel[]) => {
-    let labelResult: ILabel = null;
+    const labelResult: ILabel = null;
     for (let idx = 0; idx < labels.length; idx += 1) {
         if (labels[idx].labelName === label && labels[idx].dependentLabelName === undefined) {
             return labels[idx];
@@ -38,13 +38,13 @@ export const findLabel: (label: string, labels: ILabel[]) => ILabel = (label: st
 
 // handles labels based on math, i.e. MYLABEL = THATLABEL + 5
 export const parseLabelMath = (input: string, labels: ILabel[]) => {
-    let matches = CompilerPatterns.labelMath.exec(input),
+    const matches = CompilerPatterns.labelMath.exec(input),
         method = 'Parse Label Math:';
     if (matches === null || matches.length !== 5) {
         throw new Error(`${method} ${INVALID_LABEL_MATH} ${input}`);
     }
-    let labelName = matches[1].trim();
-    let otherLabel = matches[2].trim();
+    const labelName = matches[1].trim();
+    const otherLabel = matches[2].trim();
     if (findLabel(labelName, labels)) {
         throw new Error(`${method} ${DUPLICATE_LABEL} ${labelName}`);
     }
@@ -65,16 +65,16 @@ export const parseLabelMath = (input: string, labels: ILabel[]) => {
 
 // takes all labels that depend on other labels and resolves them
 export const resolveLabels = (labels: ILabel[]) => {
-    let result: ILabel[] = [], method = 'Resolve Dependent Labels:';
+    const result: ILabel[] = [], method = 'Resolve Dependent Labels:';
     labels.forEach(label => {
         result.push(Object.assign({}, label));
     });
     for (let idx = 0; idx < labels.length; idx += 1) {
-        let instance = result[idx];
+        const instance = result[idx];
         if (instance.dependentLabelName === undefined) {
             continue;
         }
-        let target = findLabel(instance.dependentLabelName, labels);
+        const target = findLabel(instance.dependentLabelName, labels);
         if (target === null) {
             throw new Error(`${method} ${BAD_LABEL} ${instance.labelName}` +
                 ` depends on ${instance.dependentLabelName}`);
@@ -95,50 +95,50 @@ export const parseAbsoluteLabel = (
     labels: ILabel[],
     targetExpr: RegExp,
     labelExpr: RegExp) => {
-        let result = {
-            parameter,
-            compiledLine: Object.assign({}, compiledLine)
-        };
-        let matchArray: RegExpMatchArray = null;
-        if (!parameter.match(targetExpr)) {
-            if (matchArray = parameter.match(labelExpr)) {
-                let label: string = matchArray[1],
-                    labelInstance: ILabel = findLabel(label, labels);
-                if (labelInstance !== null) {
-                    let value: Address = labelInstance.address;
-                    result.parameter = parameter.replace(matchArray[1], value.toString(10));
-                } else {
-                    result.compiledLine.label = label;
-                    result.compiledLine.processed = false;
-                    result.parameter = parameter.replace(matchArray[1], '65535');
-                }
+    const result = {
+        parameter,
+        compiledLine: Object.assign({}, compiledLine)
+    };
+    let matchArray: RegExpMatchArray = null;
+    if (!parameter.match(targetExpr)) {
+        if (matchArray = parameter.match(labelExpr)) {
+            const label: string = matchArray[1],
+                labelInstance: ILabel = findLabel(label, labels);
+            if (labelInstance !== null) {
+                const value: Address = labelInstance.address;
+                result.parameter = parameter.replace(matchArray[1], value.toString(10));
+            } else {
+                result.compiledLine.label = label;
+                result.compiledLine.processed = false;
+                result.parameter = parameter.replace(matchArray[1], '65535');
             }
         }
-        return result;
+    }
+    return result;
 };
 
 // finds all compiled lines with a label, then replaces with the label value
 export const updateLabels = (compilerResult: ICompilerResult) => {
-    let result = Object.assign({}, compilerResult, {
+    const result = Object.assign({}, compilerResult, {
         labels: [...compilerResult.labels],
         compiledLines: [...compilerResult.compiledLines]
     }), method = 'Process Compiled Labels:';
 
     for (let idx = 0; idx < result.labels.length; idx += 1) {
-        let label = Object.assign({}, result.labels[idx]);
+        const label = Object.assign({}, result.labels[idx]);
         result.labels[idx] = label;
     }
 
     for (let idx = 0; idx < result.compiledLines.length; idx += 1) {
 
-        let compiledLine = Object.assign({}, result.compiledLines[idx]);
+        const compiledLine = Object.assign({}, result.compiledLines[idx]);
         result.compiledLines[idx] = compiledLine;
 
         if (compiledLine.processed) {
             continue;
         }
 
-        let instance = findLabel(compiledLine.label, result.labels);
+        const instance = findLabel(compiledLine.label, result.labels);
 
         if (instance === null) {
             throw new Error(`${method} ${LABEL_NOT_DEFINED} ${compiledLine.label}`);
@@ -159,8 +159,8 @@ export const updateLabels = (compilerResult: ICompilerResult) => {
                 }
                 compiledLine.code[1] = offset;
             } else {
-                // LDA <MYLABEL <-- get lower byte of MYLABEL address 
-                let value = compiledLine.high ? (instance.address >> Memory.BitsInByte) : instance.address;
+                // LDA <MYLABEL <-- get lower byte of MYLABEL address
+                const value = compiledLine.high ? (instance.address >> Memory.BitsInByte) : instance.address;
                 compiledLine.code[1] = value & Memory.ByteMask;
             }
             compiledLine.processed = true;

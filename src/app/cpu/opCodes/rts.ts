@@ -6,9 +6,9 @@ Affects Flags: none
 MODE           SYNTAX       HEX LEN TIM
 Implied       RTS           $60  1   6
 
-RTS pulls the top two bytes off the stack (low byte first) and transfers program control to that address+1. 
+RTS pulls the top two bytes off the stack (low byte first) and transfers program control to that address+1.
 It is used, as expected, to exit a subroutine invoked via JSR which pushed the address-1.
-RTS is frequently used to implement a jump table where addresses-1 are pushed onto the stack and accessed via RTS eg. 
+RTS is frequently used to implement a jump table where addresses-1 are pushed onto the stack and accessed via RTS eg.
 to access the second of four routines:
 
  LDX #1
@@ -41,7 +41,7 @@ export class RtsFamily extends OpCodeFamily {
     constructor() {
         super(RTS);
         super.register(new BaseOpCode(RTS, 0x60, AddressingModes.Single, 0x01, cpu => {
-            let loByte = cpu.stackPop() + 0x01,
+            const loByte = cpu.stackPop() + 0x01,
                 hiByte = cpu.stackPop() << Memory.BitsInByte,
                 addr: Address = loByte + hiByte;
             cpu.rPC = addr;

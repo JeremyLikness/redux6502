@@ -28,13 +28,13 @@ const freezeLabels = (labels: ILabel[]) => {
     Object.freeze(labels);
 };
 
-describe ('labels', () => {
+describe('labels', () => {
 
     let labels: ILabel[] = [];
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ findLabel ]
+            declarations: [findLabel]
         });
 
         labels = [{
@@ -66,7 +66,7 @@ describe ('labels', () => {
 
     });
 
-    describe ('parseLabelMath', () => {
+    describe('parseLabelMath', () => {
         let mathLabels: ILabel[];
 
         beforeEach(() => {
@@ -81,27 +81,27 @@ describe ('labels', () => {
             }];
         });
 
-        it ('throws on invalid label math', () => {
+        it('throws on invalid label math', () => {
             expect(() => parseLabelMath('NEW = FOO + 2 + 4', mathLabels)).toThrow();
         });
 
-        it ('throws on duplicate label name', () => {
+        it('throws on duplicate label name', () => {
             expect(() => parseLabelMath('FOO = BAR + 1', mathLabels)).toThrow();
         });
 
-        it ('throws on self-referencing label math', () => {
+        it('throws on self-referencing label math', () => {
             expect(() => parseLabelMath('FOO = FOO + 1', mathLabels)).toThrow();
         });
 
-        it ('sets the offset forward when label math is positive', () => {
-            let result = parseLabelMath('NEW = FOO + 1', mathLabels);
+        it('sets the offset forward when label math is positive', () => {
+            const result = parseLabelMath('NEW = FOO + 1', mathLabels);
             expect(result.labelName).toBe('NEW');
             expect(result.dependentLabelName).toBe('FOO');
             expect(result.offset).toBe(1);
         });
 
-        it ('sets the offset backwards when label math is negative', () => {
-            let result = parseLabelMath('NEW = BAR - 1', mathLabels);
+        it('sets the offset backwards when label math is negative', () => {
+            const result = parseLabelMath('NEW = BAR - 1', mathLabels);
             expect(result.labelName).toBe('NEW');
             expect(result.dependentLabelName).toBe('BAR');
             expect(result.offset).toBe(-1);
@@ -111,7 +111,7 @@ describe ('labels', () => {
     describe('parseAbsoluteLabel', () => {
 
         it('properly ignores an absolute hex address', () => {
-            let result = parseAbsoluteLabel(
+            const result = parseAbsoluteLabel(
                 '$C000',
                 newCompiledLine(),
                 labels,
@@ -121,7 +121,7 @@ describe ('labels', () => {
         });
 
         it('properly ignores a decimal absolute address', () => {
-            let result = parseAbsoluteLabel(
+            const result = parseAbsoluteLabel(
                 '49152',
                 newCompiledLine(),
                 labels,
@@ -131,10 +131,10 @@ describe ('labels', () => {
         });
 
         it('sets the line to not processed and address to 65535 when label is not found', () => {
-            let newLine = newCompiledLine();
+            const newLine = newCompiledLine();
             newLine.processed = true;
             Object.freeze(newLine);
-            let result = parseAbsoluteLabel(
+            const result = parseAbsoluteLabel(
                 'TEST',
                 newLine,
                 labels,
@@ -146,7 +146,7 @@ describe ('labels', () => {
         });
 
         it('returns the parameter as an absolute address when the label is found', () => {
-            let result = parseAbsoluteLabel(
+            const result = parseAbsoluteLabel(
                 'BAR',
                 newCompiledLine(),
                 labels,
@@ -171,8 +171,8 @@ describe ('labels', () => {
             };
         });
 
-        it ('ignores lines that are processed', () => {
-            let line = newCompiledLine();
+        it('ignores lines that are processed', () => {
+            const line = newCompiledLine();
             line.processed = true;
             line.label = 'foo';
             compiled.labels.push({
@@ -182,12 +182,12 @@ describe ('labels', () => {
             });
             compiled.compiledLines.push(line);
             freezeResult(compiled);
-            let result = updateLabels(compiled);
+            const result = updateLabels(compiled);
             expect(result).toEqual(compiled);
         });
 
-        it ('throws an exception when label cannot be found', () => {
-            let line = newCompiledLine();
+        it('throws an exception when label cannot be found', () => {
+            const line = newCompiledLine();
             line.label = 'foo';
             compiled.labels.push({
                 address: 0xC000,
@@ -199,7 +199,7 @@ describe ('labels', () => {
         });
 
         it('throws when an offset is out of range', () => {
-            let line = newCompiledLine();
+            const line = newCompiledLine();
             line.address = 0xC000;
             line.mode = AddressingModes.Relative;
             line.code = [0x00, 0x00];
@@ -214,7 +214,7 @@ describe ('labels', () => {
         });
 
         it('computes the branch forward when a label is after the compiled line', () => {
-            let line = newCompiledLine();
+            const line = newCompiledLine();
             line.address = 0xC000;
             line.mode = AddressingModes.Relative;
             line.code = [0x00, 0x00];
@@ -226,12 +226,12 @@ describe ('labels', () => {
             });
             compiled.compiledLines.push(line);
             freezeResult(compiled);
-            let result = updateLabels(compiled);
+            const result = updateLabels(compiled);
             expect(result.compiledLines[0].code[1]).toBe(0x02);
         });
 
         it('computes the branch backwards when a label is before the compiled line', () => {
-            let line = newCompiledLine();
+            const line = newCompiledLine();
             line.address = 0xC000;
             line.mode = AddressingModes.Relative;
             line.code = [0x00, 0x00];
@@ -243,12 +243,12 @@ describe ('labels', () => {
             });
             compiled.compiledLines.push(line);
             freezeResult(compiled);
-            let result = updateLabels(compiled);
+            const result = updateLabels(compiled);
             expect(result.compiledLines[0].code[1]).toBe(0xFC);
         });
 
-        it ('parses the high bit of a label to immediate mode', () => {
-            let line = newCompiledLine();
+        it('parses the high bit of a label to immediate mode', () => {
+            const line = newCompiledLine();
             line.address = 0xC000;
             line.high = true;
             line.mode = AddressingModes.Single;
@@ -261,12 +261,12 @@ describe ('labels', () => {
             });
             compiled.compiledLines.push(line);
             freezeResult(compiled);
-            let result = updateLabels(compiled);
+            const result = updateLabels(compiled);
             expect(result.compiledLines[0].code[1]).toBe(0xBF);
         });
 
-        it ('parses the lo byte of an address to immediate mode', () => {
-            let line = newCompiledLine();
+        it('parses the lo byte of an address to immediate mode', () => {
+            const line = newCompiledLine();
             line.address = 0xC000;
             line.high = false;
             line.mode = AddressingModes.Single;
@@ -279,12 +279,12 @@ describe ('labels', () => {
             });
             compiled.compiledLines.push(line);
             freezeResult(compiled);
-            let result = updateLabels(compiled);
+            const result = updateLabels(compiled);
             expect(result.compiledLines[0].code[1]).toBe(0xFE);
         });
 
-        it ('parses the full address in absolute mode', () => {
-            let line = newCompiledLine();
+        it('parses the full address in absolute mode', () => {
+            const line = newCompiledLine();
             line.address = 0xC000;
             line.high = true;
             line.mode = AddressingModes.Single;
@@ -297,13 +297,13 @@ describe ('labels', () => {
             });
             compiled.compiledLines.push(line);
             freezeResult(compiled);
-            let result = updateLabels(compiled);
+            const result = updateLabels(compiled);
             expect(result.compiledLines[0].code[1]).toBe(0xFE);
             expect(result.compiledLines[0].code[2]).toBe(0xBF);
         });
 
-        it ('throws an exception of the code size is not 2 (relative/immediate) or 3 (absolute)', () => {
-            let line = newCompiledLine();
+        it('throws an exception of the code size is not 2 (relative/immediate) or 3 (absolute)', () => {
+            const line = newCompiledLine();
             line.address = 0xC000;
             line.high = true;
             line.mode = AddressingModes.Single;
@@ -320,7 +320,7 @@ describe ('labels', () => {
 
     });
 
-    describe('resolveLabels' , () => {
+    describe('resolveLabels', () => {
 
         let labelResolve: ILabel[];
 
@@ -329,19 +329,19 @@ describe ('labels', () => {
         });
 
         it('ignores labels with no dependencies', () => {
-            let label = <ILabel>{
+            const label = <ILabel>{
                 labelName: 'foo',
                 address: 0xC000,
                 offset: 0
             };
             labelResolve.push(label);
             freezeLabels(labelResolve);
-            let result = resolveLabels(labelResolve);
+            const result = resolveLabels(labelResolve);
             expect(result).toEqual(labelResolve);
         });
 
         it('throws when dependent label is not found', () => {
-            let label = <ILabel>{
+            const label = <ILabel>{
                 labelName: 'foo',
                 dependentLabelName: 'bar',
                 address: 0xC000,
@@ -352,7 +352,7 @@ describe ('labels', () => {
         });
 
         it('throws when address is out of range', () => {
-            let label = <ILabel>{
+            const label = <ILabel>{
                 labelName: 'foo',
                 address: 0xFFFF,
                 offset: 0
@@ -368,7 +368,7 @@ describe ('labels', () => {
         });
 
         it('updates the label when the dependent label is found', () => {
-            let label = <ILabel>{
+            const label = <ILabel>{
                 labelName: 'foo',
                 address: 0xF000,
                 offset: 0
@@ -381,7 +381,7 @@ describe ('labels', () => {
             labelResolve.push(label);
             labelResolve.push(dependentLabel);
             freezeLabels(labelResolve);
-            let result = resolveLabels(labelResolve);
+            const result = resolveLabels(labelResolve);
             expect(result[0]).toEqual(labelResolve[0]);
             expect(result[1].dependentLabelName).toBeUndefined();
             expect(result[1].address).toBe(0xF00A);

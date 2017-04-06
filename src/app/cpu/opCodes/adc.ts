@@ -11,9 +11,9 @@ Absolute      ADC $4400     $6D  3   4
 Absolute,X    ADC $4400,X   $7D  3   4+
 Absolute,Y    ADC $4400,Y   $79  3   4+
 Indirect,X    ADC ($44,X)   $61  2   6
-Indirect,Y    ADC ($44),Y   $71  2   5+ 
+Indirect,Y    ADC ($44),Y   $71  2   5+
 
-ADC results are dependant on the setting of the decimal flag. In decimal mode, addition is carried out on the assumption 
+ADC results are dependant on the setting of the decimal flag. In decimal mode, addition is carried out on the assumption
 that the values involved are packed BCD (Binary Coded Decimal).
 
 There is no way to add without carry.
@@ -28,7 +28,7 @@ class AdcBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(ADC, value, mode, size, cpu => {
-            let target = cpu.getValue(mode), pc = size - 1,
+            const target = cpu.getValue(mode), pc = size - 1,
                 result = addWithCarry(cpu.rP, cpu.rA, target);
             cpu.rA = result.result;
             cpu.rP = result.flag;

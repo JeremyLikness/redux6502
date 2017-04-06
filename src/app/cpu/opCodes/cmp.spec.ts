@@ -19,7 +19,7 @@ interface ITestCompareAccumulator {
     test: string;
 }
 
-let compareTests: ITestCompareAccumulator[] = [{
+const compareTests: ITestCompareAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0xC9,
@@ -108,7 +108,7 @@ describe('CMP', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ CmpFamily ]
+            declarations: [CmpFamily]
         });
 
         cmp = new CmpFamily();

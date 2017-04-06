@@ -17,7 +17,7 @@ interface ITestCompareY {
     test: string;
 }
 
-let compareTests: ITestCompareY[] = [{
+const compareTests: ITestCompareY[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0xC0,
@@ -53,7 +53,7 @@ describe('CPY', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ CpyFamily ]
+            declarations: [CpyFamily]
         });
 
         cpy = new CpyFamily();

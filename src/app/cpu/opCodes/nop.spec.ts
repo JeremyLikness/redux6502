@@ -11,7 +11,7 @@ describe('nop', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ NopFamily ]
+            declarations: [NopFamily]
         });
 
         nop = new NopFamily();
@@ -21,7 +21,7 @@ describe('nop', () => {
 
     it('should do nothing', () => {
         cpu.memory[cpu.rPC] = 0xEA;
-        let expected = cloneCpu(cpu);
+        const expected = cloneCpu(cpu);
         nop.execute(cpu, 0xEA);
         expect(cpu).toEqual(expected);
     });

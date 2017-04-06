@@ -13,7 +13,7 @@ describe('DEC', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ DecFamily ]
+            declarations: [DecFamily]
         });
 
         dec = new DecFamily();
@@ -21,21 +21,21 @@ describe('DEC', () => {
 
     });
 
-    it ('should set sign flag when result is signed', () => {
+    it('should set sign flag when result is signed', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0x00;
         dec.execute(cpu, 0xC6);
         expect(cpu.rP & Flags.NegativeFlag).toBeTruthy();
     });
 
-    it ('should set zero flag when result is zero', () => {
+    it('should set zero flag when result is zero', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0x01;
         dec.execute(cpu, 0xC6);
         expect(cpu.rP & Flags.ZeroFlag).toBeTruthy();
     });
 
-    it ('should reset sign flag when result is unsigned', () => {
+    it('should reset sign flag when result is unsigned', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0x80;
         cpu.rP = Flags.NegativeFlag;
@@ -43,7 +43,7 @@ describe('DEC', () => {
         expect(cpu.rP & Flags.NegativeFlag).toBeFalsy();
     });
 
-    it ('should reset zero flag when result is not zero', () => {
+    it('should reset zero flag when result is not zero', () => {
         cpu.memory[cpu.rPC] = 0x00;
         cpu.memory[0x00] = 0x02;
         cpu.rP = Flags.ZeroFlag;

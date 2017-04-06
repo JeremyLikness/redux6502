@@ -103,6 +103,6 @@ const storeProvider: FactoryProvider = {
     StxFamily,
     StyFamily
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

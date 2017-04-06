@@ -15,14 +15,14 @@ import { Store } from 'redux';
 })
 export class CompilerComponent implements OnInit {
 
-  public error: boolean = false;
-  public success: boolean = false;
+  public error = false;
+  public success = false;
 
   public message: string;
-  public source: string = '';
+  public source = '';
   public compiled: ICompilerResult = null;
 
-  constructor(public compiler: Compiler, @Inject(CPU_STORE)public store: Store<Cpu>) { }
+  constructor(public compiler: Compiler, @Inject(CPU_STORE) public store: Store<Cpu>) { }
 
   public compile(): void {
     if (this.source.length) {
@@ -36,7 +36,7 @@ export class CompilerComponent implements OnInit {
       } catch (e) {
         this.success = false;
         this.error = true;
-        this.message = e;
+        this.message = e.message;
       }
     }
   }
@@ -56,7 +56,7 @@ export class CompilerComponent implements OnInit {
       loAddr = Memory.Size,
       hiAddr = 0x0;
     for (let idx = 0; idx < this.compiled.compiledLines.length; idx += 1) {
-      let line = this.compiled.compiledLines[idx];
+      const line = this.compiled.compiledLines[idx];
       if (line.address !== address) {
         if (address === null) {
           this.store.dispatch(cpuSetPC(line.address));
@@ -73,7 +73,7 @@ export class CompilerComponent implements OnInit {
       if (address < loAddr) {
         loAddr = address;
       }
-      let temp = buffer.concat(line.code);
+      const temp = buffer.concat(line.code);
       buffer = temp;
       address += line.code.length;
       if (address > hiAddr) {
@@ -86,9 +86,8 @@ export class CompilerComponent implements OnInit {
     }
     this.success = true;
     this.error = false;
-    this.message = `Successfully loaded ${bytes} bytes to memory from $${hexHelper(loAddr,4)} to $${hexHelper(hiAddr, 4)}`;
+    this.message = `Successfully loaded ${bytes} bytes to memory from $${hexHelper(loAddr, 4)} to $${hexHelper(hiAddr, 4)}`;
   }
-
 
   ngOnInit() {
     this.message = 'Ready to compile.';

@@ -16,7 +16,7 @@ interface IBranchTest {
     PC: Address;
 }
 
-let testBranches: IBranchTest[] = [{
+const testBranches: IBranchTest[] = [{
     opCode: 0x10,
     flag: Flags.NegativeFlagSet,
     set: true,
@@ -88,7 +88,7 @@ let testBranches: IBranchTest[] = [{
     set: false,
     PC: 0xC002,
     test: 'BCS advances PC when carry flag is not set'
-},  {
+}, {
     opCode: 0xD0,
     flag: Flags.ZeroFlagSet,
     set: true,
@@ -121,7 +121,7 @@ describe('branches', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ BranchOps ]
+            declarations: [BranchOps]
         });
 
         branchOps = new BranchOps();

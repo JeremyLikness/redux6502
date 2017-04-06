@@ -20,7 +20,8 @@ import {
     INVALID_OP,
     MEMORY_OVERFLOW,
     STACK_OVERFLOW,
-    STACK_EMPTY } from './constants';
+    STACK_EMPTY
+} from './constants';
 
 import { InvalidOpCode } from './opcode.base';
 
@@ -68,11 +69,11 @@ export class Cpu implements ICpu {
     constructor() {
         OP_CODES.forEach(family =>
             family.codes.forEach(code =>
-        this._opCodeMap[code] = family));
+                this._opCodeMap[code] = family));
     }
 
     public fetch(opCode: OpCodeValue): IOpCode {
-        let op = this._opCodeMap[opCode];
+        const op = this._opCodeMap[opCode];
         if (op) {
             return op.fetch(this, opCode);
         }
@@ -80,9 +81,9 @@ export class Cpu implements ICpu {
     }
 
     public execute(): void {
-        let opCode = this.memory[this.rPC];
+        const opCode = this.memory[this.rPC];
         this.rPC += 1;
-        let opFamily = this._opCodeMap[opCode];
+        const opFamily = this._opCodeMap[opCode];
         if (opFamily) {
             opFamily.execute(this, opCode);
             if (this.rPC > Memory.Max) {
@@ -107,12 +108,12 @@ export class Cpu implements ICpu {
     }
 
     public addrPop(offset: Byte = 0): Byte {
-        let value: Byte = this.peek((this.rPC + offset) & Memory.Max);
+        const value: Byte = this.peek((this.rPC + offset) & Memory.Max);
         return value;
     }
 
     public addrPopWord(): Word {
-        let word = this.addrPop() + (this.addrPop(1) << Memory.BitsInByte);
+        const word = this.addrPop() + (this.addrPop(1) << Memory.BitsInByte);
         return word;
     }
 
@@ -125,35 +126,35 @@ export class Cpu implements ICpu {
     }
 
     public addrIndirect(): Address {
-        let addressBaseLow: Byte = this.addrPop();
-        let addressBaseHigh: Byte = this.addrPop(0x01);
-        let addressNextLow: Byte = (addressBaseLow + 1) & Memory.ByteMask;
-        let addressLocation: Address = addressBaseLow + (addressBaseHigh << Memory.BitsInByte);
-        let addressLocationNext: Address = addressNextLow + (addressBaseHigh << Memory.BitsInByte);
-        let newAddress: Address = this.peek(addressLocation) + (this.peek(addressLocationNext) << Memory.BitsInByte);
+        const addressBaseLow: Byte = this.addrPop();
+        const addressBaseHigh: Byte = this.addrPop(0x01);
+        const addressNextLow: Byte = (addressBaseLow + 1) & Memory.ByteMask;
+        const addressLocation: Address = addressBaseLow + (addressBaseHigh << Memory.BitsInByte);
+        const addressLocationNext: Address = addressNextLow + (addressBaseHigh << Memory.BitsInByte);
+        const newAddress: Address = this.peek(addressLocation) + (this.peek(addressLocationNext) << Memory.BitsInByte);
         return newAddress & Memory.Max;
     }
 
     public addrIndexedIndirectX(): Address {
-        let zeroPage: ZeroPage = (this.addrPop() + this.rX) & Memory.ByteMask;
-        let address: Address = this.peek(zeroPage) + (this.peek(zeroPage + 1) << Memory.BitsInByte);
+        const zeroPage: ZeroPage = (this.addrPop() + this.rX) & Memory.ByteMask;
+        const address: Address = this.peek(zeroPage) + (this.peek(zeroPage + 1) << Memory.BitsInByte);
         return address;
     }
 
     public addrIndirectIndexedY(): Address {
-        let zeroPage: ZeroPage = this.addrPop();
-        let target: Address = this.peek(zeroPage) + (this.peek(zeroPage + 1) << Memory.BitsInByte)
+        const zeroPage: ZeroPage = this.addrPop();
+        const target: Address = this.peek(zeroPage) + (this.peek(zeroPage + 1) << Memory.BitsInByte)
             + this.rY;
         return target & Memory.Max;
     }
 
     public addrZeroPageX(): Address {
-        let zeroPage: ZeroPage = (this.addrPop() + this.rX) & Memory.ByteMask;
+        const zeroPage: ZeroPage = (this.addrPop() + this.rX) & Memory.ByteMask;
         return zeroPage;
     }
 
     public addrZeroPageY(): ZeroPage {
-        let zeroPage: ZeroPage = (this.addrPop() + this.rY) & Memory.ByteMask;
+        const zeroPage: ZeroPage = (this.addrPop() + this.rY) & Memory.ByteMask;
         return zeroPage;
     }
 
@@ -172,7 +173,7 @@ export class Cpu implements ICpu {
             case AddressingModes.Indirect:
                 return this.addrIndirect();
             case AddressingModes.Relative:
-                let branch = this.addrPop();
+                const branch = this.addrPop();
                 return computeBranch(this.rPC, branch);
             case AddressingModes.ZeroPage:
                 return this.addrPop();
@@ -186,7 +187,7 @@ export class Cpu implements ICpu {
     }
 
     public getValue(mode: AddressingModes): Byte {
-        let addr = this.addrForMode(mode);
+        const addr = this.addrForMode(mode);
         switch (mode) {
             case AddressingModes.Absolute:
                 return this.peek(addr);
@@ -226,7 +227,7 @@ export class Cpu implements ICpu {
 
     public stackPop(): Byte {
         if (this.rSP < Memory.Stack) {
-            let value = this.peek(this.rSP + Memory.Stack);
+            const value = this.peek(this.rSP + Memory.Stack);
             this.rSP += 1;
             return value;
         } else {
@@ -235,9 +236,9 @@ export class Cpu implements ICpu {
     }
 }
 export const cloneCpu = (cpu: Cpu) => {
-    let clonedStats = Object.assign(new CpuStats(), cpu.stats);
-    let clonedControls = Object.assign(new CpuControls, cpu.controls);
-    let clonedCpu = Object.assign(new Cpu(), cpu);
+    const clonedStats = Object.assign(new CpuStats(), cpu.stats);
+    const clonedControls = Object.assign(new CpuControls, cpu.controls);
+    const clonedCpu = Object.assign(new Cpu(), cpu);
     clonedCpu.stats = clonedStats;
     clonedCpu.controls = clonedControls;
     clonedCpu.memory = [...cpu.memory];
@@ -246,14 +247,14 @@ export const cloneCpu = (cpu: Cpu) => {
 
 export const initialCpuState = () => {
 
-    let cpu = new Cpu();
+    const cpu = new Cpu();
 
     cpu.rA = cpu.rX = cpu.rY = cpu.rP = 0x00;
     cpu.rPC = Memory.DefaultStart;
     cpu.rSP = Memory.Stack;
     cpu.memory = Array(Memory.Size).fill(0x00);
 
-    let stats = new CpuStats();
+    const stats = new CpuStats();
     stats.started = null;
     stats.ellapsedMilliseconds = 0;
     stats.instructionsPerSecond = 0;
@@ -261,7 +262,7 @@ export const initialCpuState = () => {
     stats.instructionCount = 0;
     cpu.stats = stats;
 
-    let controls = new CpuControls();
+    const controls = new CpuControls();
     controls.runningState = false;
     controls.errorState = false;
     cpu.controls = controls;

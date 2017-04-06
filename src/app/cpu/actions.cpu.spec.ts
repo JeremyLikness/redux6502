@@ -1,4 +1,5 @@
-import { Actions,
+import {
+    Actions,
     cpuPoke,
     cpuStop,
     cpuHalt,
@@ -21,21 +22,23 @@ describe('actions', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ cpuPoke ]
+            declarations: [cpuPoke]
         });
     });
 
     it('should create poke action when cpuPoke is called', () => {
-      expect(cpuPoke(1, [2])).toEqual({
-        type: Actions.Poke,
-        address: 1,
-        value: [2]});
+        expect(cpuPoke(1, [2])).toEqual({
+            type: Actions.Poke,
+            address: 1,
+            value: [2]
+        });
     });
 
     it('should create set program counter action when cpuSetPC is called', () => {
-      expect(cpuSetPC(1)).toEqual({
-        type: Actions.SetPC,
-        address: 1});
+        expect(cpuSetPC(1)).toEqual({
+            type: Actions.SetPC,
+            address: 1
+        });
     });
 
     it('should create run action when cpuRun is called', () => {
@@ -45,23 +48,23 @@ describe('actions', () => {
         });
     });
 
-    let tuples: IActionPair[] = [
-        {action: cpuStop, actionType: Actions.Stop},
-        {action: cpuHalt, actionType: Actions.Halt},
-        {action: cpuReset, actionType: Actions.Reset},
-        {action: cpuStep, actionType: Actions.Step},
-        {action: cpuStart, actionType: Actions.Start},
-        {action: cpuDebug, actionType: Actions.Debug}
+    const tuples: IActionPair[] = [
+        { action: cpuStop, actionType: Actions.Stop },
+        { action: cpuHalt, actionType: Actions.Halt },
+        { action: cpuReset, actionType: Actions.Reset },
+        { action: cpuStep, actionType: Actions.Step },
+        { action: cpuStart, actionType: Actions.Start },
+        { action: cpuDebug, actionType: Actions.Debug }
     ];
 
     tuples.forEach(tuple => {
 
         it('should create the ' + Actions[tuple.actionType] +
-        ' action when ' +
-        tuple.action + ' is called', () => {
-            expect(tuple.action()).toEqual({
-                type: tuple.actionType
+            ' action when ' +
+            tuple.action + ' is called', () => {
+                expect(tuple.action()).toEqual({
+                    type: tuple.actionType
+                });
             });
-        });
     });
 });

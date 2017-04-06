@@ -7,5 +7,5 @@ import 'font-awesome/css/font-awesome.css';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = '6502 Emulator (NG2, TS, Redux)';
+  title = '6502 Emulator (NG4, TS, Redux)';
 }

@@ -28,7 +28,7 @@ describe('initialCpuState', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ initialCpuState ]
+            declarations: [initialCpuState]
         });
     });
 
@@ -52,7 +52,7 @@ describe('poke', () => {
     let cpu: Cpu = null;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({ declarations: [ poke ]});
+        TestBed.configureTestingModule({ declarations: [poke] });
         cpu = initialCpuState();
     });
 
@@ -82,26 +82,26 @@ describe('poke', () => {
 describe('setFlags', () => {
 
     beforeEach(() => {
-        TestBed.configureTestingModule({ declarations: [ setFlags ]});
+        TestBed.configureTestingModule({ declarations: [setFlags] });
     });
 
     it('should set the negative flag when high bit value set', () => {
-        let result = setFlags(Flags.InitialState, 0x80);
+        const result = setFlags(Flags.InitialState, 0x80);
         expect(result & Flags.NegativeFlag).toBeTruthy();
     });
 
     it('should reset the negative flag when high bit value not set', () => {
-        let result = setFlags(0xFF & Flags.ZeroFlagReset, 0x7F);
+        const result = setFlags(0xFF & Flags.ZeroFlagReset, 0x7F);
         expect(result & Flags.NegativeFlag).toBeFalsy();
     });
 
     it('should set the zero flag when value is zero', () => {
-        let result = setFlags(Flags.InitialState, 0x00);
+        const result = setFlags(Flags.InitialState, 0x00);
         expect(result & Flags.ZeroFlag).toBeTruthy();
     });
 
     it('should reset the zero flag when value is not zero', () => {
-        let result = setFlags(0xFF & Flags.NegativeFlagReset, 0x01);
+        const result = setFlags(0xFF & Flags.NegativeFlagReset, 0x01);
         expect(result & Flags.ZeroFlag).toBeFalsy();
     });
 });
@@ -112,7 +112,7 @@ describe('cloneCpu', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ initialCpuState ]
+            declarations: [initialCpuState]
         });
 
         cpu = initialCpuState();
@@ -124,7 +124,7 @@ describe('cloneCpu', () => {
 
     it('should clone the cpu', () => {
         Object.freeze(cpu);
-        let newCpu = cloneCpu(cpu);
+        const newCpu = cloneCpu(cpu);
         newCpu.rX = 22; // change something to prove it is a copy
         expect(newCpu.rA).toBe(1);
     });
@@ -132,7 +132,7 @@ describe('cloneCpu', () => {
     it('should clone the memory', () => {
         Object.freeze(cpu.memory);
         Object.freeze(cpu);
-        let newCpu = cloneCpu(cpu);
+        const newCpu = cloneCpu(cpu);
         newCpu.memory[2] = 3; // change something to prove it a copy
         expect(newCpu.memory[1]).toBe(2);
     });
@@ -140,7 +140,7 @@ describe('cloneCpu', () => {
     it('should clone the stats', () => {
         Object.freeze(cpu.stats);
         Object.freeze(cpu);
-        let newCpu = cloneCpu(cpu);
+        const newCpu = cloneCpu(cpu);
         newCpu.stats.ellapsedMilliseconds = 22;
         expect(newCpu.stats.started).toEqual(cpu.stats.started);
     });
@@ -148,7 +148,7 @@ describe('cloneCpu', () => {
     it('should clone the controls', () => {
         Object.freeze(cpu.controls);
         Object.freeze(cpu);
-        let newCpu = cloneCpu(cpu);
+        const newCpu = cloneCpu(cpu);
         newCpu.controls.autoRefresh = true;
         expect(newCpu.controls.errorState).toBe(true);
     });
@@ -160,7 +160,7 @@ describe('operations', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ initialCpuState ]
+            declarations: [initialCpuState]
         });
 
         cpu = initialCpuState();
@@ -173,9 +173,9 @@ describe('operations', () => {
         });
 
         it('should run the op code and advance the program counter', () => {
-            let pc = cpu.rPC;
-            cpu.memory[cpu.rPC] = 0xA9; // LDA immediate 
-            cpu.memory[cpu.rPC + 1] = 0x7F; // LDA #$7F 
+            const pc = cpu.rPC;
+            cpu.memory[cpu.rPC] = 0xA9; // LDA immediate
+            cpu.memory[cpu.rPC + 1] = 0x7F; // LDA #$7F
             cpu.execute();
             expect(cpu.rPC).toBe(pc + 0x02);
             expect(cpu.rA).toBe(0x7F);
@@ -183,7 +183,7 @@ describe('operations', () => {
 
         it('should throw an exception if the program counter rolls past end of memory', () => {
             cpu.rPC = Memory.Max;
-            cpu.memory[Memory.Max] = 0xA9; // LDA immediate 
+            cpu.memory[Memory.Max] = 0xA9; // LDA immediate
             expect(() => cpu.execute()).toThrow();
         });
     });
@@ -205,12 +205,12 @@ describe('operations', () => {
     describe('setFlag', () => {
 
         it('should set the flag when setAction is true', () => {
-            let newFlag = cpu.setFlag(0x0, Flags.CarryFlag);
+            const newFlag = cpu.setFlag(0x0, Flags.CarryFlag);
             expect(newFlag).toBe(Flags.CarryFlagSet);
         });
 
         it('should reset the flag when setAction is false', () => {
-            let newFlag = cpu.setFlag(Memory.ByteMask, Flags.CarryFlag, false);
+            const newFlag = cpu.setFlag(Memory.ByteMask, Flags.CarryFlag, false);
             expect(newFlag).toBe(Flags.CarryFlagReset);
         });
     });
@@ -257,7 +257,7 @@ describe('operations', () => {
         });
     });
 
-    // C000 0x20 = C000 + 20 = C020 
+    // C000 0x20 = C000 + 20 = C020
     // C000 0x82 = C000 - (100 - 82) = C000 - 7E = BF82
     describe('computeBranch', () => {
         it('computes an address forward when offset less than 128', () => {
@@ -292,7 +292,7 @@ describe('operations', () => {
         });
     });
 
-    // 200: 00 C0 => C000: 20 D0 => D020 
+    // 200: 00 C0 => C000: 20 D0 => D020
     describe('addrIndirect', () => {
         it('uses the memory location to lookup a separate memory location to compute the new location', () => {
             cpu.memory[0x200] = 0x00;
@@ -315,7 +315,7 @@ describe('operations', () => {
         });
     });
 
-    // C000: 02 RX: 02 => 04: 20 D0 => D020 
+    // C000: 02 RX: 02 => 04: 20 D0 => D020
     describe('addrIndexedIndirectX', () => {
         it('uses a zero page address offset by the X register to compute the new location', () => {
             cpu.memory[0xc000] = 0x02;
@@ -328,7 +328,7 @@ describe('operations', () => {
         });
     });
 
-    // 00: 02 02: 00 C0 RY: 10 => C010 
+    // 00: 02 02: 00 C0 RY: 10 => C010
     describe('addrIndirectIndexedY', () => {
         it('uses the address to get a zero page, computes an offset from the zero page, then adds the Y register offset', () => {
             cpu.memory[0x00] = 0x02;
@@ -341,7 +341,7 @@ describe('operations', () => {
         });
     });
 
-    // 00: 80 RX: 10 => 0x90 
+    // 00: 80 RX: 10 => 0x90
     describe('addrZeroPageX', () => {
         it('uses the address to find a zero page, then offsets it by the X register', () => {
             cpu.memory[0x00] = 0x80;
@@ -363,19 +363,19 @@ describe('operations', () => {
         });
     });
 
-    // RAM: C000: 01 02 03 04 05 06 07 08 09 0A 0B 0C 
+    // RAM: C000: 01 02 03 04 05 06 07 08 09 0A 0B 0C
     // RAM: 2000: 00 C0 00 10 01 10 00
-    // RAM: 05: 03 C0 FF 
-    // RAM: 10: 03 C0 
-    // REGISTERS: RX: 0x05 RY: 0x06 
-    // Address setup: 
-    // Absolute: 2000: 00 C0 => 01 
-    // AbsoluteX: 2000: 00 C0 => 06 
-    // AbsoluteY: 2000: 00 C0 => 07 
-    // Immediate: C00B => 0C 
+    // RAM: 05: 03 C0 FF
+    // RAM: 10: 03 C0
+    // REGISTERS: RX: 0x05 RY: 0x06
+    // Address setup:
+    // Absolute: 2000: 00 C0 => 01
+    // AbsoluteX: 2000: 00 C0 => 06
+    // AbsoluteY: 2000: 00 C0 => 07
+    // Immediate: C00B => 0C
     // IndexedIndirectX: 2002 => 04
     // IndirectIndexedY: 2003 => 0A
-    // ZeroPageX: 2004 => C0 
+    // ZeroPageX: 2004 => C0
     // ZeroPageY: 2004 => FF
     // Indirect: 2005 => 0010 => C003 => 04
 
@@ -386,7 +386,7 @@ describe('operations', () => {
         description: string;
     }
 
-    let tests: IGetValueTest[] = [ {
+    const tests: IGetValueTest[] = [{
         pc: 0x2000,
         mode: AddressingModes.Absolute,
         expected: 0x01,
@@ -475,39 +475,39 @@ describe('operations', () => {
 
     describe('stackPush', () => {
 
-        it ('adds the value to the stack', () => {
-            let stackPosition = cpu.rSP - 1;
+        it('adds the value to the stack', () => {
+            const stackPosition = cpu.rSP - 1;
             cpu.stackPush(0x7F);
             expect(cpu.memory[stackPosition + Memory.Stack]).toBe(0x7F);
         });
 
-        it ('reduces the stack pointer', () => {
-            let stackPosition = cpu.rSP - 1;
+        it('reduces the stack pointer', () => {
+            const stackPosition = cpu.rSP - 1;
             cpu.stackPush(0x7F);
             expect(cpu.rSP).toBe(stackPosition);
         });
 
-        it ('enforces an 8-bit value', () => {
-            let stackPosition = cpu.rSP - 1;
+        it('enforces an 8-bit value', () => {
+            const stackPosition = cpu.rSP - 1;
             cpu.stackPush(0x17F);
             expect(cpu.memory[stackPosition + Memory.Stack]).toBe(0x7F);
         });
 
-        it ('throws when the stack is full', () => {
+        it('throws when the stack is full', () => {
             cpu.rSP = -1;
             expect(() => cpu.stackPush(0x7F)).toThrow();
         });
     });
 
     describe('stackPop', () => {
-        it ('returns the last value pushed to the stack', () => {
+        it('returns the last value pushed to the stack', () => {
             cpu.stackPush(0x7F);
             expect(cpu.stackPop()).toBe(0x7F);
         });
 
         it('advances the stack pointer', () => {
             cpu.stackPush(0x7F);
-            let pointer = cpu.rSP + 1;
+            const pointer = cpu.rSP + 1;
             cpu.stackPop();
             expect(cpu.rSP).toBe(pointer);
         });

@@ -20,7 +20,7 @@ class CpyBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(CPY, value, mode, size, cpu => {
-            let target = cpu.getValue(mode), pc = size - 1;
+            const target = cpu.getValue(mode), pc = size - 1;
             cpu.rP = compareWithFlag(cpu.rP, cpu.rY, target);
             cpu.rPC += pc;
         });

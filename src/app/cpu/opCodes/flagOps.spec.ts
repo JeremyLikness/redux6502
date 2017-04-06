@@ -14,7 +14,7 @@ interface ITestFlag {
     test: string;
 }
 
-let flagTests: ITestFlag[] = [{
+const flagTests: ITestFlag[] = [{
     opCode: 0x18,
     flag: Flags.CarryFlag,
     set: false,
@@ -48,7 +48,7 @@ describe('flags', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ FlagFamily ]
+            declarations: [FlagFamily]
         });
 
         flags = new FlagFamily();

@@ -15,12 +15,12 @@ describe('CpuControlComponent', () => {
   let fixture: ComponentFixture<CpuControlComponent>;
 
   beforeEach(async(() => {
-    let store = createStore(cpuReducer);
+    const store = createStore(cpuReducer);
     TestBed.configureTestingModule({
-      declarations: [ CpuControlComponent ],
-      providers: [ { provide: CPU_STORE, useValue: store }]
+      declarations: [CpuControlComponent],
+      providers: [{ provide: CPU_STORE, useValue: store }]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

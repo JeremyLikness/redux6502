@@ -1,17 +1,17 @@
 import { Flag } from './globals';
 
 export class Memory {
-    public static Max: number = 0xFFFF; // 65535
+    public static Max = 0xFFFF; // 65535
     public static Size: number = Memory.Max + 0x01; // 65536
-    public static ByteMask: number = 0xFF; // force to byte 
-    public static NibbleMask: number = 0x0F; // force to nibble 
-    public static HighNibbleMask: number = 0xF0; // force to nibble with higher bits
-    public static Stack: number = 0x0100; // stack (255 bytes)
-    public static BitsInNibble: number = 4; // bits in a nibble
-    public static BitsInByte: number = 8; // bits in a byte
-    public static DefaultStart: number = 0x0200; // default pc start (after zero page and stack)
-    public static BranchBack: number = 0x7F; // branch test for forward or backwards
-    public static BranchOffset: number = 0x100; // offset to compute backwards branches
+    public static ByteMask = 0xFF; // force to byte
+    public static NibbleMask = 0x0F; // force to nibble
+    public static HighNibbleMask = 0xF0; // force to nibble with higher bits
+    public static Stack = 0x0100; // stack (255 bytes)
+    public static BitsInNibble = 4; // bits in a nibble
+    public static BitsInByte = 8; // bits in a byte
+    public static DefaultStart = 0x0200; // default pc start (after zero page and stack)
+    public static BranchBack = 0x7F; // branch test for forward or backwards
+    public static BranchOffset = 0x100; // offset to compute backwards branches
 }
 
 export class Flags {

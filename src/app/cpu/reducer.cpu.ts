@@ -21,8 +21,8 @@ const step = (cpu: Cpu) => {
 
 const timelapse = (cpu: Cpu) => {
     if (cpu.stats.started) {
-        let now = new Date(),
-        diff = (now.getTime() - cpu.stats.started.getTime());
+        const now = new Date(),
+            diff = (now.getTime() - cpu.stats.started.getTime());
         cpu.stats.ellapsedMilliseconds = diff;
         cpu.stats.instructionsPerSecond = cpu.stats.instructionCount / (diff / 1000);
     }
@@ -30,74 +30,74 @@ const timelapse = (cpu: Cpu) => {
 
 export const cpuReducer: (state: Cpu, action: Action) => Cpu =
     (state: Cpu, action: Action) => {
-    switch (action.type) {
+        switch (action.type) {
 
-        case Actions.SetPC:
-            let setCpu = cloneCpu(state),
-                setAction = action as ISetPCAction;
-            setCpu.rPC = setAction.address & Memory.Max;
-            return setCpu;
+            case Actions.SetPC:
+                const setCpu = cloneCpu(state),
+                    setAction = action as ISetPCAction;
+                setCpu.rPC = setAction.address & Memory.Max;
+                return setCpu;
 
-        case Actions.Poke:
-            let pokeCpu = cloneCpu(state),
-                pokeAction = action as IPokeAction;
-            poke(pokeCpu, pokeAction.address, pokeAction.value);
-            return pokeCpu;
+            case Actions.Poke:
+                const pokeCpu = cloneCpu(state),
+                    pokeAction = action as IPokeAction;
+                poke(pokeCpu, pokeAction.address, pokeAction.value);
+                return pokeCpu;
 
-        case Actions.Halt:
-            let haltCpu = cpuReducer(state, {
-                type: Actions.Stop
-            });
-            haltCpu.controls.errorState = true;
-            haltCpu.controls.errorMessage = HALT;
-            return haltCpu;
+            case Actions.Halt:
+                const haltCpu = cpuReducer(state, {
+                    type: Actions.Stop
+                });
+                haltCpu.controls.errorState = true;
+                haltCpu.controls.errorMessage = HALT;
+                return haltCpu;
 
-        case Actions.Reset:
-            return initialCpuState();
+            case Actions.Reset:
+                return initialCpuState();
 
-        case Actions.Start:
-            let startCpu = cloneCpu(state);
-            if (startCpu.controls.runningState || startCpu.controls.errorState) {
+            case Actions.Start:
+                const startCpu = cloneCpu(state);
+                if (startCpu.controls.runningState || startCpu.controls.errorState) {
+                    return startCpu;
+                }
+                startCpu.controls.runningState = true;
+                startCpu.stats.instructionCount = 0;
+                startCpu.stats.lastCheck = 0;
+                startCpu.stats.started = new Date();
                 return startCpu;
-            }
-            startCpu.controls.runningState = true;
-            startCpu.stats.instructionCount = 0;
-            startCpu.stats.lastCheck = 0;
-            startCpu.stats.started = new Date();
-            return startCpu;
 
-        case Actions.Step:
-            let stepCpu = cloneCpu(state);
-            if (state.controls.errorState === true || state.controls.runningState === false) {
+            case Actions.Step:
+                const stepCpu = cloneCpu(state);
+                if (state.controls.errorState === true || state.controls.runningState === false) {
+                    return stepCpu;
+                }
+                step(stepCpu);
+                timelapse(stepCpu);
                 return stepCpu;
-            }
-            step(stepCpu);
-            timelapse(stepCpu);
-            return stepCpu;
 
-        case Actions.Run:
-            let runCpu = cloneCpu(state),
-                runAction = action as IRunAction,
-                iterations = runAction.iterations;
-            while (runCpu.controls.errorState === false && runCpu.controls.runningState === true && iterations) {
-                step(runCpu);
-                iterations -= 1;
-            }
-            timelapse(runCpu);
-            return runCpu;
+            case Actions.Run:
+                const runCpu = cloneCpu(state),
+                    runAction = action as IRunAction;
+                let iterations = runAction.iterations;
+                while (runCpu.controls.errorState === false && runCpu.controls.runningState === true && iterations) {
+                    step(runCpu);
+                    iterations -= 1;
+                }
+                timelapse(runCpu);
+                return runCpu;
 
-        case Actions.Stop:
-            let stopCpu = cloneCpu(state);
-            stopCpu.controls.runningState = false;
-            return stopCpu;
+            case Actions.Stop:
+                const stopCpu = cloneCpu(state);
+                stopCpu.controls.runningState = false;
+                return stopCpu;
 
-        case Actions.Debug:
-            let debugCpu = cloneCpu(state);
-            debugCpu.debug = true;
-            return debugCpu;
+            case Actions.Debug:
+                const debugCpu = cloneCpu(state);
+                debugCpu.debug = true;
+                return debugCpu;
 
-        default:
-            return initialCpuState();
-    }
+            default:
+                return initialCpuState();
+        }
 
-};
+    };

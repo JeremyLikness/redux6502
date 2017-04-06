@@ -13,14 +13,14 @@ describe('RTS', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ RtsFamily ]
+            declarations: [RtsFamily]
         });
 
         rts = new RtsFamily();
         cpu = initialCpuState();
         cpu.rPC = 0xC000;
-        let hiByte = ((cpu.rPC - 1) >> Memory.BitsInByte) & Memory.ByteMask,
-                loByte = (cpu.rPC - 1) & Memory.ByteMask;
+        const hiByte = ((cpu.rPC - 1) >> Memory.BitsInByte) & Memory.ByteMask,
+            loByte = (cpu.rPC - 1) & Memory.ByteMask;
         cpu.stackPush(hiByte);
         cpu.stackPush(loByte);
         cpu.rPC = 0x100;

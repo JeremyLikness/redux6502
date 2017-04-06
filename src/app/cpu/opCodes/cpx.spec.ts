@@ -17,7 +17,7 @@ interface ITestCompareX {
     test: string;
 }
 
-let compareTests: ITestCompareX[] = [{
+const compareTests: ITestCompareX[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0xE0,
@@ -53,7 +53,7 @@ describe('CPX', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ CpxFamily ]
+            declarations: [CpxFamily]
         });
 
         cpx = new CpxFamily();

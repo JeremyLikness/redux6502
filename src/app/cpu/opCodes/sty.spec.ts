@@ -11,7 +11,7 @@ describe('STY', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ StyFamily ]
+            declarations: [StyFamily]
         });
 
         sty = new StyFamily();

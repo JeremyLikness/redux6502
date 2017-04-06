@@ -12,7 +12,7 @@ describe('BIT', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ BitFamily ]
+            declarations: [BitFamily]
         });
 
         bit = new BitFamily();
@@ -24,39 +24,39 @@ describe('BIT', () => {
 
     describe('testBit', () => {
         it('should set the zero flag when AND results in 0', () => {
-            let result = testBit(0x0, 0x0, 0x03);
+            const result = testBit(0x0, 0x0, 0x03);
             expect(result & Flags.ZeroFlag).toBeTruthy();
         });
 
         it('should reset the zero flag when AND does not result in zero', () => {
-            let result = testBit(0xFF, 0x01, 0x03);
+            const result = testBit(0xFF, 0x01, 0x03);
             expect(result & Flags.ZeroFlag).toBeFalsy();
         });
 
         it('should set the negative flag if bit 7 of the target is set', () => {
-            let result = testBit(0x0, 0x01, Flags.NegativeFlagSet);
+            const result = testBit(0x0, 0x01, Flags.NegativeFlagSet);
             expect(result & Flags.NegativeFlag).toBeTruthy();
         });
 
         it('should reset the negative flag if bit 7 of the target is not set', () => {
-            let result = testBit(0xFF, 0x01, 0x01);
+            const result = testBit(0xFF, 0x01, 0x01);
             expect(result & Flags.NegativeFlag).toBeFalsy();
         });
 
         it('should set the overflow flag if bit 6 of the target is set', () => {
-            let result = testBit(0x0, 0x01, Flags.OverflowFlagSet);
+            const result = testBit(0x0, 0x01, Flags.OverflowFlagSet);
             expect(result & Flags.OverflowFlag).toBeTruthy();
         });
 
         it('should reset the overflow flag if bit 6 of the target is not set', () => {
-            let result = testBit(0xFF, 0x01, 0x01);
+            const result = testBit(0xFF, 0x01, 0x01);
             expect(result & Flags.OverflowFlag).toBeFalsy();
         });
     });
 
     describe('zero page', () => {
 
-        it ('tests against the correct memory address', () => {
+        it('tests against the correct memory address', () => {
             cpu.memory[0x44] = parseInt('11000110', 2);
             bit.execute(cpu, 0x24);
             expect(cpu.rP & Flags.ZeroFlag).toBeFalsy();
@@ -68,7 +68,7 @@ describe('BIT', () => {
 
     describe('absolute', () => {
 
-        it ('tests against the correct memory address', () => {
+        it('tests against the correct memory address', () => {
             cpu.memory[0xC044] = parseInt('11000110', 2);
             bit.execute(cpu, 0x2C);
             expect(cpu.rP & Flags.ZeroFlag).toBeFalsy();

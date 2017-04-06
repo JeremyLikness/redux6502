@@ -19,10 +19,10 @@ interface ITestSubtractAccumulator {
     test: string;
 }
 
-// these tests just ensure SBC accesses the correct byte 
+// these tests just ensure SBC accesses the correct byte \
 // for in-depth tests for the add operation and flags, look at math.spec
 
-let tests: ITestSubtractAccumulator[] = [{
+const tests: ITestSubtractAccumulator[] = [{
     programCounter: 0x00,
     programCounterAfter: 0x01,
     opCode: 0xE9,
@@ -111,7 +111,7 @@ describe('SBC', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ SbcFamily ]
+            declarations: [SbcFamily]
         });
 
         sbc = new SbcFamily();

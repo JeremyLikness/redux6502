@@ -7,7 +7,7 @@ MODE           SYNTAX       HEX LEN TIM
 Zero Page     BIT $44       $24  2   3
 Absolute      BIT $4400     $2C  3   4
 
-BIT sets the Z flag as though the value in the address tested were ANDed with the accumulator. 
+BIT sets the Z flag as though the value in the address tested were ANDed with the accumulator.
 The S and V flags are set to match bits 7 and 6 respectively in the value stored at the tested address.
 BIT is often used to skip one or two following bytes as in:
 
@@ -60,7 +60,7 @@ export class BitFamily extends OpCodeFamily {
                         cpu.rA,
                         cpu.getValue(AddressingModes.ZeroPage));
                     cpu.rPC += 1;
-            }),
+                }),
             new BaseOpCode(
                 BIT,
                 0x2C,
@@ -72,7 +72,7 @@ export class BitFamily extends OpCodeFamily {
                         cpu.rA,
                         cpu.getValue(AddressingModes.Absolute));
                     cpu.rPC += 2;
-            })
+                })
         );
     }
 }

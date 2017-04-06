@@ -34,12 +34,13 @@ import { IOpCode, AddressingModes, Address, Byte } from '../cpu/globals';
 import { Memory, BIT } from '../cpu/constants';
 import { Cpu, initialCpuState } from '../cpu/cpuState';
 
-interface AddressMap { [ addressMode: number]: IOpCode; };
+interface AddressMap { [addressMode: number]: IOpCode; };
 
 interface OpCodeMap { [opCodeName: string]: AddressMap; };
 
 export const moveAddress = (input: string) => {
-    let address: Address = null, method = 'Move Address:';
+    let address: Address = null;
+    const method = 'Move Address:';
 
     if (input.match(CompilerPatterns.memorySet)) {
 
@@ -72,7 +73,7 @@ export class Compiler {
 
         OP_CODES.forEach(family => {
             family.codes.forEach(code => {
-                let operation = family.fetch(this._cpu, code);
+                const operation = family.fetch(this._cpu, code);
                 if (!this._map[operation.name]) {
                     this._map[operation.name] = {};
                 }
@@ -82,18 +83,18 @@ export class Compiler {
     }
 
     // compiles source and returns it in a structure that can be parsed
-    // otherwise it throws an exception 
+    // otherwise it throws an exception
     public compile(source: string): ICompilerResult {
-        let start = new Date();
-        let sourceLines = source.split('\n');
-        let result = this.compileAndParseLabels(sourceLines);
-        let end = new Date();
+        const start = new Date();
+        const sourceLines = source.split('\n');
+        const result = this.compileAndParseLabels(sourceLines);
+        const end = new Date();
         result.ellapsedTimeMilliseconds = end.getTime() - start.getTime();
         return result;
     }
 
     public compileAndParseLabels(sourceLines: string[]): ICompilerResult {
-        let result: ICompilerResult = {
+        const result: ICompilerResult = {
             labels: [],
             memoryTags: 0,
             compiledLines: [],
@@ -101,7 +102,8 @@ export class Compiler {
             bytes: 0,
             ellapsedTimeMilliseconds: 0
         };
-        let address = Memory.DefaultStart, method = 'Compile and Parse Labels:';
+        let address = Memory.DefaultStart;
+        const method = 'Compile and Parse Labels:';
         for (let idx = 0; idx < sourceLines.length; idx += 1) {
 
             try {
@@ -122,21 +124,21 @@ export class Compiler {
                 result.lines += 1;
 
                 // check if the address is being moved
-                let testAddress = moveAddress(input);
+                const testAddress = moveAddress(input);
 
                 if (testAddress) {
                     address = testAddress;
                     continue;
                 }
 
-                // label math 
+                // label math
                 if (input.match(CompilerPatterns.labelMath)) {
                     result.labels.push(parseLabelMath(input, result.labels));
                     continue;
                 }
 
                 // memory tag, i.e. $C000: LDA #$00 <-- go to 49152
-                let hex = !!input.match(CompilerPatterns.memoryLabelHex);
+                const hex = !!input.match(CompilerPatterns.memoryLabelHex);
                 if (hex || input.match(CompilerPatterns.memoryLabelDec)) {
                     result.memoryTags += 1;
                     let label = hex ? CompilerPatterns.memoryLabelHex.exec(input)[1] :
@@ -145,17 +147,17 @@ export class Compiler {
                     // strip out the label
                     input = input.replace(`${label}:`, '');
                     label = label.replace('$', '');
-                    let checkAddress = parseInt(label, hex ? 16 : 10);
+                    const checkAddress = parseInt(label, hex ? 16 : 10);
 
                     if (checkAddress < 0 || checkAddress > Memory.Max) {
-                        throw new Error (`${method} ${OUT_OF_RANGE} ${label}`);
+                        throw new Error(`${method} ${OUT_OF_RANGE} ${label}`);
                     }
 
                     address = checkAddress;
                 } else if (input.match(CompilerPatterns.regularLabel)) {
-                    let labelName = CompilerPatterns.regularLabel.exec(input)[1].trim();
+                    const labelName = CompilerPatterns.regularLabel.exec(input)[1].trim();
                     if (findLabel(labelName, result.labels)) {
-                        throw new Error (`${method} ${DUPLICATE_LABEL} ${labelName}`);
+                        throw new Error(`${method} ${DUPLICATE_LABEL} ${labelName}`);
                     }
                     result.labels.push(<ILabel>{
                         address,
@@ -170,7 +172,7 @@ export class Compiler {
                     continue;
                 }
 
-                let compiledLine = this.compileLine(result, address, input);
+                const compiledLine = this.compileLine(result, address, input);
                 result.compiledLines.push(compiledLine);
                 address += compiledLine.code.length;
                 result.bytes += compiledLine.code.length;
@@ -185,7 +187,7 @@ export class Compiler {
     }
 
     private compileLine(compilerResult: ICompilerResult, address: Address, input: string): ICompiledLine {
-        let result = <ICompiledLine>{
+        const result = <ICompiledLine>{
             address,
             code: [],
             opCode: null,
@@ -203,12 +205,13 @@ export class Compiler {
 
     public parseOpCode(labels: ILabel[], opCodeExpression: string, compiledLine: ICompiledLine): ICompiledLine {
 
-        let matches: RegExpExecArray = CompilerPatterns.opCode.exec(opCodeExpression),
+        const matches: RegExpExecArray = CompilerPatterns.opCode.exec(opCodeExpression),
             opCodeName: string = matches[1],
             operations = this._map[opCodeName],
-            radix = 10,
-            processed = true,
             method = 'Parse Individual Op Code:';
+
+        let radix = 10,
+            processed = true;
 
         if (operations === undefined && opCodeName !== DCB) {
             throw new Error(`${method} ${INVALID_OP_NAME}${opCodeName}`);
@@ -220,7 +223,7 @@ export class Compiler {
             return this.processDcb(parameter, compiledLine);
         }
 
-        let hex = parameter.indexOf('$') >= 0;
+        const hex = parameter.indexOf('$') >= 0;
 
         if (hex) {
             parameter = parameter.replace('$', '');
@@ -237,7 +240,7 @@ export class Compiler {
 
         let matchArray: RegExpMatchArray;
 
-        let idxIndrXTest = hex ? CompilerPatterns.indirectXHex : CompilerPatterns.indirectX;
+        const idxIndrXTest = hex ? CompilerPatterns.indirectXHex : CompilerPatterns.indirectX;
 
         if (matchArray = parameter.match(idxIndrXTest)) {
             return this.processIndexedIndirect(
@@ -251,7 +254,7 @@ export class Compiler {
                 AddressingModes.IndexedIndirectX);
         }
 
-        let indIdxYTest = hex ? CompilerPatterns.indirectYHex : CompilerPatterns.indirectY;
+        const indIdxYTest = hex ? CompilerPatterns.indirectYHex : CompilerPatterns.indirectY;
 
         if (matchArray = parameter.match(indIdxYTest)) {
             return this.processIndexedIndirect(
@@ -265,18 +268,18 @@ export class Compiler {
                 AddressingModes.IndirectIndexedY);
         }
 
-        let immediateWithoutLabelTest = hex ? CompilerPatterns.immediateHex : CompilerPatterns.immediate;
+        const immediateWithoutLabelTest = hex ? CompilerPatterns.immediateHex : CompilerPatterns.immediate;
 
-        let compiledLineResult = Object.assign({}, compiledLine);
+        const compiledLineResult = Object.assign({}, compiledLine);
 
         // if it matches, parse the label into an immediate value or #0 for later replacement
         if (!parameter.match(immediateWithoutLabelTest)) {
             if (matchArray = parameter.match(CompilerPatterns.immediateLabel)) {
                 compiledLineResult.high = matchArray[1] === '>';
-                let label = matchArray[2];
-                let instance = findLabel(label, labels);
+                const label = matchArray[2];
+                const instance = findLabel(label, labels);
                 if (instance !== null) {
-                    let value = compiledLineResult.high ? (instance.address >> Memory.BitsInByte) : instance.address;
+                    const value = compiledLineResult.high ? (instance.address >> Memory.BitsInByte) : instance.address;
                     parameter = parameter.replace(matchArray[0], '#' + (value & Memory.ByteMask).toString(10));
                 } else {
                     compiledLineResult.label = label;
@@ -288,8 +291,8 @@ export class Compiler {
 
         // any label above for immediate will get picked up here
         if (matchArray = parameter.match(immediateWithoutLabelTest)) {
-            let rawValue = matchArray[1];
-            let value = parseInt(rawValue, radix);
+            const rawValue = matchArray[1];
+            const value = parseInt(rawValue, radix);
             if (value < 0 || value > Memory.ByteMask) {
                 throw new Error(`${IMMEDIATE_OUT_OF_RANGE} ${value}`);
             }
@@ -299,13 +302,13 @@ export class Compiler {
                 throw new Error(`${INVALID_ASSEMBLY} ${opCodeExpression}`);
             }
 
-            let operationMap = this._map[opCodeName];
+            const operationMap = this._map[opCodeName];
 
             if (operationMap === undefined) {
                 throw new Error(`${INVALID_ASSEMBLY} ${opCodeExpression}`);
             }
 
-            let operation = operationMap[AddressingModes.Immediate];
+            const operation = operationMap[AddressingModes.Immediate];
 
             if (operation === undefined) {
                 throw new Error(`${NO_IMMEDIATE_SUPPORT} ${opCodeName}`);
@@ -329,43 +332,43 @@ export class Compiler {
         outOfRange: string,
         noSupport: string,
         mode: AddressingModes): ICompiledLine {
-            let result = Object.assign({}, compiledLine),
-                rawValue = matchArray[1],
-                index = matchArray[2],
-                value = parseInt(rawValue, radix),
-                method = 'Process Indexed Indirect:';
+        const result = Object.assign({}, compiledLine),
+            rawValue = matchArray[1],
+            index = matchArray[2],
+            value = parseInt(rawValue, radix),
+            method = 'Process Indexed Indirect:';
 
-            if (value < 0 || value > Memory.ByteMask) {
-                throw new Error(`${method} ${outOfRange} ${value}`);
-            }
+        if (value < 0 || value > Memory.ByteMask) {
+            throw new Error(`${method} ${outOfRange} ${value}`);
+        }
 
-            let parms = parameter.replace('(', '')
-                .replace(')', '')
-                .replace(index, '')
-                .replace(rawValue, '')
-                .trim();
+        const parms = parameter.replace('(', '')
+            .replace(')', '')
+            .replace(index, '')
+            .replace(rawValue, '')
+            .trim();
 
-            if (parms.match(CompilerPatterns.notWhitespace)) {
-                throw new Error(`${method} ${INVALID_ASSEMBLY} ${parameter}`);
-            }
+        if (parms.match(CompilerPatterns.notWhitespace)) {
+            throw new Error(`${method} ${INVALID_ASSEMBLY} ${parameter}`);
+        }
 
-            let operation = this._map[opCodeName][mode];
+        const operation = this._map[opCodeName][mode];
 
-            if (operation === undefined) {
-                throw new Error(`${method} ${opCodeName} ${noSupport} ${parameter}`);
-            }
+        if (operation === undefined) {
+            throw new Error(`${method} ${opCodeName} ${noSupport} ${parameter}`);
+        }
 
-            result.opCode = operation.value;
-            result.mode = mode;
-            result.code.push(result.opCode);
-            result.code.push(value);
-            result.processed = true;
+        result.opCode = operation.value;
+        result.mode = mode;
+        result.code.push(result.opCode);
+        result.code.push(value);
+        result.processed = true;
 
-            return result;
+        return result;
     }
 
     private processSingle(opCodeName: string, compiledLine: ICompiledLine): ICompiledLine {
-        let result = Object.assign({}, compiledLine),
+        const result = Object.assign({}, compiledLine),
             operation = this._map[opCodeName][AddressingModes.Single],
             method = 'Process Single Op Code:';
         if (operation === undefined) {
@@ -379,18 +382,18 @@ export class Compiler {
     }
 
     private processDcb(parameter: string, compiledLine: ICompiledLine): ICompiledLine {
-        let method = 'Process Bytes (DCB):';
+        const method = 'Process Bytes (DCB):';
 
         if (parameter === '') {
             throw new Error(`${method} ${INVALID_DCB}`);
         }
 
-        let compiledLineResult = Object.assign({}, compiledLine);
+        const compiledLineResult = Object.assign({}, compiledLine);
 
         compiledLineResult.processed = true;
         compiledLineResult.opCode = 0x0;
 
-        let values = parameter.split(',');
+        const values = parameter.split(',');
 
         if (values.length === 0) {
             throw new Error(`${method} ${INVALID_DCB}`);
@@ -402,7 +405,7 @@ export class Compiler {
             }
             let value: Byte = 0x0;
             let entry = values[idx];
-            let hex = entry.indexOf('$') >= 0;
+            const hex = entry.indexOf('$') >= 0;
             if (hex) {
                 entry = entry.replace('$', '');
                 value = parseInt(entry, 16);
@@ -425,60 +428,61 @@ export class Compiler {
         compiledLine: ICompiledLine,
         hex: boolean): ICompiledLine {
 
-            let compiledLineResult = Object.assign({}, compiledLine),
+        const compiledLineResult = Object.assign({}, compiledLine),
             test = hex ? CompilerPatterns.absoluteHex : CompilerPatterns.absolute,
             method = 'Process Branch Op Code:';
 
-            compiledLineResult.processed = true;
+        compiledLineResult.processed = true;
 
-            let result = parseAbsoluteLabel(
-                parameter,
-                compiledLineResult,
-                labels,
-                test,
-                CompilerPatterns.absoluteLabel),
+        const result = parseAbsoluteLabel(
+            parameter,
+            compiledLineResult,
+            labels,
+            test,
+            CompilerPatterns.absoluteLabel);
 
-            matchArray: RegExpMatchArray;
+        let matchArray: RegExpMatchArray;
 
-            // absolute 
-            if (matchArray = result.parameter.match(test)) {
+        // absolute
+        if (matchArray = result.parameter.match(test)) {
 
-                let rawValue = matchArray[1],
+            const rawValue = matchArray[1],
                 value = parseInt(rawValue, radix);
-                if (value < 0 || value > Memory.Max) {
-                    throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
-                }
-
-                result.parameter = result.parameter.replace(rawValue, '').trim();
-
-                if (result.parameter.match(CompilerPatterns.notWhitespace)) {
-                    throw new Error(`${method} ${INVALID_ASSEMBLY} ${parameter}`);
-                }
-
-                result.compiledLine.opCode = this._map[opCodeName][AddressingModes.Relative].value;
-                result.compiledLine.mode = AddressingModes.Relative;
-                result.compiledLine.code.push(result.compiledLine.opCode);
-
-                let offset: number, validate = result.compiledLine.processed;
-
-                if (value <= compiledLine.address) {
-                    offset = Memory.ByteMask - ((compiledLine.address + 1) - value);
-                    if (validate && (offset < 0x80 || offset > 0xFF)) {
-                        throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
-                    }
-                } else {
-                    offset = (value - compiledLine.address) - 2;
-                    if (validate && (offset < 0 || offset > 0x7F)) {
-                        throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
-                    }
-                }
-
-                result.compiledLine.code.push(offset & Memory.ByteMask);
-            } else {
-                throw new Error(`${method} ${INVALID_BRANCH} ${parameter}`);
+            if (value < 0 || value > Memory.Max) {
+                throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
             }
 
-            return result.compiledLine;
+            result.parameter = result.parameter.replace(rawValue, '').trim();
+
+            if (result.parameter.match(CompilerPatterns.notWhitespace)) {
+                throw new Error(`${method} ${INVALID_ASSEMBLY} ${parameter}`);
+            }
+
+            result.compiledLine.opCode = this._map[opCodeName][AddressingModes.Relative].value;
+            result.compiledLine.mode = AddressingModes.Relative;
+            result.compiledLine.code.push(result.compiledLine.opCode);
+
+            let offset: number;
+            const validate = result.compiledLine.processed;
+
+            if (value <= compiledLine.address) {
+                offset = Memory.ByteMask - ((compiledLine.address + 1) - value);
+                if (validate && (offset < 0x80 || offset > 0xFF)) {
+                    throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
+                }
+            } else {
+                offset = (value - compiledLine.address) - 2;
+                if (validate && (offset < 0 || offset > 0x7F)) {
+                    throw new Error(`${method} ${OUT_OF_RANGE} ${value}`);
+                }
+            }
+
+            result.compiledLine.code.push(offset & Memory.ByteMask);
+        } else {
+            throw new Error(`${method} ${INVALID_BRANCH} ${parameter}`);
+        }
+
+        return result.compiledLine;
     }
 
 }

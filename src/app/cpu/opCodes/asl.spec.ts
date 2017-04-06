@@ -10,8 +10,8 @@ describe('ASL', () => {
 
     let asl: AslFamily = null;
     let cpu: Cpu = null;
-    let noCarry = parseInt('01000000', 2);
-    let carry = parseInt('10000000', 2);
+    const noCarry = parseInt('01000000', 2);
+    const carry = parseInt('10000000', 2);
 
     const checkResult = (src: Byte, result: Byte) => {
         expect(result).toBe((src * 2) & Memory.ByteMask);
@@ -31,7 +31,7 @@ describe('ASL', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ AslFamily ]
+            declarations: [AslFamily]
         });
 
         asl = new AslFamily();

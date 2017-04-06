@@ -21,8 +21,8 @@ export class BaseOpCode implements IOpCode {
         public mode: AddressingModes,
         public size: Byte,
         logic: (cpu: ICpu) => void) {
-            this._execute = logic;
-         }
+        this._execute = logic;
+    }
 
     public execute(cpu: ICpu): void {
         this._execute(cpu);
@@ -31,7 +31,7 @@ export class BaseOpCode implements IOpCode {
 
 export class InvalidOpCode extends BaseOpCode {
     constructor(public value: OpCodeValue) {
-        super(INVALID, value, AddressingModes.Single, 0x01, cpu => {});
+        super(INVALID, value, AddressingModes.Single, 0x01, cpu => { });
     }
 }
 
@@ -43,7 +43,7 @@ export class OpCodeFamily implements IOpCodes {
 
     public codes: OpCodeValue[] = [];
 
-    constructor(public name: string) {}
+    constructor(public name: string) { }
 
     public register(...ops: IOpCode[]) {
         ops.forEach(opCode => {
@@ -53,7 +53,7 @@ export class OpCodeFamily implements IOpCodes {
     }
 
     public fetch(cpu: ICpu, opCode: OpCodeValue): IOpCode {
-        let operation = this._codeMap[opCode];
+        const operation = this._codeMap[opCode];
         if (operation !== undefined) {
             return operation;
         }
@@ -61,7 +61,7 @@ export class OpCodeFamily implements IOpCodes {
     }
 
     public execute(cpu: ICpu, opCode: OpCodeValue) {
-        let operation = this.fetch(cpu, opCode);
+        const operation = this.fetch(cpu, opCode);
         if (operation.name !== INVALID) {
             operation.execute(cpu);
         } else {

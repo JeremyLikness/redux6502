@@ -11,7 +11,7 @@ describe('Compiler', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            declarations: [ Compiler ]
+            declarations: [Compiler]
         });
 
         compiler = new Compiler();
@@ -23,19 +23,19 @@ describe('Compiler', () => {
 
     describe('moveAddress', () => {
 
-        it ('returns null for no move', () => {
+        it('returns null for no move', () => {
             expect(moveAddress('LDA #$00')).toBeNull();
         });
 
-        it ('throws an exception when move is out of range', () => {
+        it('throws an exception when move is out of range', () => {
             expect(() => moveAddress('* = $FFFFF')).toThrow();
         });
 
-        it ('parses hexadecimal addresses', () => {
+        it('parses hexadecimal addresses', () => {
             expect(moveAddress('*= $C000')).toBe(0xC000);
         });
 
-        it ('parses decimal addresses', () => {
+        it('parses decimal addresses', () => {
             expect(moveAddress('* =49152 ')).toBe(0xC000);
         });
 
@@ -44,12 +44,12 @@ describe('Compiler', () => {
     describe('compile', () => {
 
         it('computes the stats', () => {
-            let result = compiler.compile('* = $C000\n' +
-            'LABEL: asl\n' +
-            'LABEL2 = LaBEL + 6\n' +
-            '$C001: ASL\n' +
-            'BMI LABEL\n' +
-            'BPL LABEL2');
+            const result = compiler.compile('* = $C000\n' +
+                'LABEL: asl\n' +
+                'LABEL2 = LaBEL + 6\n' +
+                '$C001: ASL\n' +
+                'BMI LABEL\n' +
+                'BPL LABEL2');
 
             expect(result.bytes).toBe(6);
             expect(result.compiledLines.length).toBe(4);
@@ -63,28 +63,28 @@ describe('Compiler', () => {
     describe('compileAndParseLabels', () => {
 
         it('ignores comments', () => {
-            let result = compiler.compileAndParseLabels([' ;comment']);
+            const result = compiler.compileAndParseLabels([' ;comment']);
             expect(result.lines).toBe(0);
             expect(result.bytes).toBe(0);
         });
 
-        it ('ignores empty lines', () => {
-            let result = compiler.compileAndParseLabels([' ',
+        it('ignores empty lines', () => {
+            const result = compiler.compileAndParseLabels([' ',
                 'ASL',
                 ' ']);
             expect(result.lines).toBe(1);
             expect(result.bytes).toBe(1);
         });
 
-        it ('supports moving the address', () => {
-            let result = compiler.compileAndParseLabels(['* = $C000', 'ASL']);
+        it('supports moving the address', () => {
+            const result = compiler.compileAndParseLabels(['* = $C000', 'ASL']);
             expect(result.lines).toBe(2);
             expect(result.bytes).toBe(1);
             expect(result.compiledLines[0].address).toBe(0xC000);
         });
 
         it('supports labels', () => {
-            let result = compiler.compileAndParseLabels([
+            const result = compiler.compileAndParseLabels([
                 'LABEL: ASL'
             ]);
             expect(result.bytes).toBe(1);
@@ -93,8 +93,8 @@ describe('Compiler', () => {
             expect(result.labels[0].address).toBe(Memory.DefaultStart);
         });
 
-        it ('supports label math', () => {
-            let result = compiler.compileAndParseLabels([
+        it('supports label math', () => {
+            const result = compiler.compileAndParseLabels([
                 'FIRST: ASL',
                 'SECOND = FIRST + 5'
             ]);
@@ -103,29 +103,29 @@ describe('Compiler', () => {
             expect(result.labels[1].address).toBe(result.labels[0].address + 5);
         });
 
-        it ('supports hex memory tags', () => {
-            let result = compiler.compileAndParseLabels([
+        it('supports hex memory tags', () => {
+            const result = compiler.compileAndParseLabels([
                 '$C000: ASL'
             ]);
             expect(result.bytes).toBe(1);
             expect(result.compiledLines[0].address).toBe(0xC000);
         });
 
-        it ('supports decimal memory tags', () => {
-            let result = compiler.compileAndParseLabels([
+        it('supports decimal memory tags', () => {
+            const result = compiler.compileAndParseLabels([
                 '49152: ASL'
             ]);
             expect(result.bytes).toBe(1);
             expect(result.compiledLines[0].address).toBe(0xC000);
         });
 
-        it ('throws when memory tag is out of range', () => {
+        it('throws when memory tag is out of range', () => {
             expect(() => compiler.compileAndParseLabels([
                 '65536: ASL'
             ])).toThrow();
         });
 
-        it ('throws on invalid assembly', () => {
+        it('throws on invalid assembly', () => {
             expect(() => compiler.compileAndParseLabels([
                 '65536: XYZ $FOO'
             ])).toThrow();
@@ -157,13 +157,13 @@ describe('Compiler', () => {
 
             it('loads decimal bytes', () => {
                 Object.freeze(compiledLine);
-                let result = compiler.parseOpCode([], 'DCB 255, 10', compiledLine);
+                const result = compiler.parseOpCode([], 'DCB 255, 10', compiledLine);
                 expect(result.code).toEqual([255, 10]);
             });
 
             it('loads hexadecimal bytes', () => {
                 Object.freeze(compiledLine);
-                let result = compiler.parseOpCode([], 'DCB $10, $FA', compiledLine);
+                const result = compiler.parseOpCode([], 'DCB $10, $FA', compiledLine);
                 expect(result.code).toEqual([0x10, 0xFA]);
             });
         });
@@ -171,21 +171,21 @@ describe('Compiler', () => {
         describe('branches', () => {
 
             it('handles an absolute label', () => {
-                let labels: ILabel[] = [{
+                const labels: ILabel[] = [{
                     address: 0xC000,
                     labelName: 'FOO',
                     offset: 0
                 }];
                 compiledLine.address = 0xC002;
                 Object.freeze(compiledLine);
-                let result = compiler.parseOpCode(labels, 'BMI FOO', compiledLine);
+                const result = compiler.parseOpCode(labels, 'BMI FOO', compiledLine);
                 expect(result.code).toEqual([0x30, 0xFC]);
             });
 
             it('handles an absolute address', () => {
                 compiledLine.address = 0xC002;
                 Object.freeze(compiledLine);
-                let result = compiler.parseOpCode([], 'BMI $C000', compiledLine);
+                const result = compiler.parseOpCode([], 'BMI $C000', compiledLine);
                 expect(result.code).toEqual([0x30, 0xFC]);
             });
 
@@ -204,13 +204,13 @@ describe('Compiler', () => {
 
         describe('single mode', () => {
 
-            it ('throws if operation does not support single mode', () => {
+            it('throws if operation does not support single mode', () => {
                 expect(() => compiler.parseOpCode([], 'LDA', compiledLine)).toThrow();
             });
 
-            it ('sets the op code successfully', () => {
+            it('sets the op code successfully', () => {
                 Object.freeze(compiledLine);
-                let result = compiler.parseOpCode([], 'ASL', compiledLine);
+                const result = compiler.parseOpCode([], 'ASL', compiledLine);
                 expect(result.code).toEqual([0x0A]);
             });
 
@@ -226,13 +226,13 @@ describe('Compiler', () => {
                 expect(() => compiler.parseOpCode([], 'LDA ($10,X) YZ', compiledLine)).toThrow();
             });
 
-            it ('throws if the op code does not support the addressing mode', () => {
+            it('throws if the op code does not support the addressing mode', () => {
                 expect(() => compiler.parseOpCode([], 'LDX ($10, X)', compiledLine)).toThrow();
             });
 
-            it ('compiles the indexed indirect x code properly', () => {
+            it('compiles the indexed indirect x code properly', () => {
                 Object.freeze(compiledLine);
-                let result = compiler.parseOpCode([], 'LDA ($10,X)', compiledLine);
+                const result = compiler.parseOpCode([], 'LDA ($10,X)', compiledLine);
                 expect(result.code).toEqual([0xA1, 0x10]);
             });
 
@@ -248,13 +248,13 @@ describe('Compiler', () => {
                 expect(() => compiler.parseOpCode([], 'LDA ($10),Y YZ', compiledLine)).toThrow();
             });
 
-            it ('throws if the op code does not support the addressing mode', () => {
+            it('throws if the op code does not support the addressing mode', () => {
                 expect(() => compiler.parseOpCode([], 'LDY ($10), Y', compiledLine)).toThrow();
             });
 
-            it ('compiles the indirected indexed Y code properly', () => {
+            it('compiles the indirected indexed Y code properly', () => {
                 Object.freeze(compiledLine);
-                let result = compiler.parseOpCode([], 'LDA ($10),Y', compiledLine);
+                const result = compiler.parseOpCode([], 'LDA ($10),Y', compiledLine);
                 expect(result.code).toEqual([0xB1, 0x10]);
             });
 
@@ -266,31 +266,31 @@ describe('Compiler', () => {
 
                 it('gets the low value of a label address', () => {
                     Object.freeze(compiledLine);
-                    let labels: ILabel[] = [{
+                    const labels: ILabel[] = [{
                         address: 0xCC11,
                         labelName: 'MYLABEL',
                         offset: 0
                     }];
-                    let result = compiler.parseOpCode(labels, 'LDA #<MYLABEL', compiledLine);
+                    const result = compiler.parseOpCode(labels, 'LDA #<MYLABEL', compiledLine);
                     expect(result.code).toEqual([0xA9, 0x11]);
                     expect(result.processed).toBe(true);
                 });
 
                 it('gets the high value of a label address', () => {
                     Object.freeze(compiledLine);
-                    let labels: ILabel[] = [{
+                    const labels: ILabel[] = [{
                         address: 0xCC11,
                         labelName: 'MYLABEL',
                         offset: 0
                     }];
-                    let result = compiler.parseOpCode(labels, 'LDA #>MYLABEL', compiledLine);
+                    const result = compiler.parseOpCode(labels, 'LDA #>MYLABEL', compiledLine);
                     expect(result.code).toEqual([0xA9, 0xCC]);
                     expect(result.processed).toBe(true);
                 });
 
                 it('sets processed to false and puts 0 value when label not found', () => {
                     Object.freeze(compiledLine);
-                    let result = compiler.parseOpCode([], 'LDA #>MYLABEL', compiledLine);
+                    const result = compiler.parseOpCode([], 'LDA #>MYLABEL', compiledLine);
                     expect(result.code).toEqual([0xA9, 0x00]);
                     expect(result.processed).toBe(false);
                 });
@@ -325,7 +325,7 @@ describe('Compiler', () => {
 
                 it('compiles valid code', () => {
                     Object.freeze(compiledLine);
-                    let result = compiler.parseOpCode([], 'LDA #$C0', compiledLine);
+                    const result = compiler.parseOpCode([], 'LDA #$C0', compiledLine);
                     expect(result.code).toEqual([0xA9, 0xC0]);
                 });
 

@@ -20,7 +20,7 @@ class LdyBase extends BaseOpCode {
 
     constructor(value: OpCodeValue, mode: AddressingModes, size: Byte) {
         super(LDY, value, mode, size, cpu => {
-            let target = cpu.getValue(mode), pc = size - 1;
+            const target = cpu.getValue(mode), pc = size - 1;
             cpu.rY = target;
             cpu.rP = setFlags(cpu.rP, cpu.rY);
             cpu.rPC += pc;

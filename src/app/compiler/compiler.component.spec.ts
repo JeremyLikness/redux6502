@@ -20,13 +20,13 @@ describe('CompilerComponent', () => {
   let fixture: ComponentFixture<CompilerComponent>;
 
   beforeEach(async(() => {
-    let store = createStore(cpuReducer);
+    const store = createStore(cpuReducer);
     TestBed.configureTestingModule({
-      declarations: [ CompilerComponent ],
-      imports: [ CommonModule, FormsModule ],
-      providers: [ Compiler, { provide: CPU_STORE, useValue: store } ]
+      declarations: [CompilerComponent],
+      imports: [CommonModule, FormsModule],
+      providers: [Compiler, { provide: CPU_STORE, useValue: store }]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -50,34 +50,34 @@ describe('CompilerComponent', () => {
   describe('compile', () => {
 
     it('sets error/success flags and message on success', () => {
-      let result: ICompilerResult = {
-           ellapsedTimeMilliseconds: 5,
-           labels: [],
-           bytes: 0,
-           memoryTags: 0,
-           compiledLines: [],
-           lines: 0
-         };
-       component.compiler = <any>{
-         compile: (src: string) => result
-       };
-       component.source = 'temp';
-       component.compile();
-       expect(component.compiled).toBe(result);
-       expect(component.error).toBe(false);
-       expect(component.success).toBe(true);
-       expect(component.message.length).toBeGreaterThan(0);
+      const result: ICompilerResult = {
+        ellapsedTimeMilliseconds: 5,
+        labels: [],
+        bytes: 0,
+        memoryTags: 0,
+        compiledLines: [],
+        lines: 0
+      };
+      component.compiler = <any>{
+        compile: (src: string) => result
+      };
+      component.source = 'temp';
+      component.compile();
+      expect(component.compiled).toBe(result);
+      expect(component.error).toBe(false);
+      expect(component.success).toBe(true);
+      expect(component.message.length).toBeGreaterThan(0);
     });
 
     it('sets error message on failure', () => {
       component.compiler = <any>{
-         compile: (src: string) => { throw 'Test Error'; }
-       };
-       component.source = 'temp';
-       component.compile();
-       expect(component.error).toBe(true);
-       expect(component.success).toBe(false);
-       expect(component.message).toEqual('Test Error');
+        compile: (src: string) => { throw Error('Test Error'); }
+      };
+      component.source = 'temp';
+      component.compile();
+      expect(component.error).toBe(true);
+      expect(component.success).toBe(false);
+      expect(component.message).toEqual('Test Error');
     });
   });
 
@@ -120,20 +120,20 @@ describe('CompilerComponent', () => {
       };
     });
 
-    it ('sets error when no compiler result', () => {
+    it('sets error when no compiler result', () => {
       component.load();
       expect(component.error).toBe(true);
       expect(component.success).toBe(false);
       expect(component.message.length).toBeGreaterThan(0);
     });
 
-    it ('sets the program counter to the first address encountered', () => {
+    it('sets the program counter to the first address encountered', () => {
       component.compiled = result;
       component.load();
       expect(component.store.getState().rPC).toEqual(0xD000);
     });
 
-    it ('batches poke statements based on contiguous bytes', () => {
+    it('batches poke statements based on contiguous bytes', () => {
       component.compiled = result;
       let count = 0;
       component.store.subscribe(() => count += 1);
@@ -141,7 +141,7 @@ describe('CompilerComponent', () => {
       expect(count).toBe(3); // 1 setPC and 2 cpuPoke
     });
 
-    it ('sets success and updates the status on successful load', () => {
+    it('sets success and updates the status on successful load', () => {
       component.compiled = result;
       component.load();
       expect(component.success).toBe(true);
